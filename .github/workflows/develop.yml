@@ -1,0 +1,30 @@
+name: NodeJS with Webpack
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+
+    - name: Build
+      run: |
+        npm install
+        npm run build
+
+    - name: Upload build directory
+      uses: actions/upload-artifact@v3
+      with:
+        name: build
+        path: build
