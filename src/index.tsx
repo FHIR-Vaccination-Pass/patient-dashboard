@@ -3,14 +3,31 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <BrowserRouter>
+        <Routes>
+            <Route path="/app" element={<App/>}/>
+            <Route
+                path="/404"
+                element={
+                    <main style={{ padding: "1rem" }}>
+                        <p>404: ääätsch, there's nothing here!</p>
+                    </main>
+                }
+            />
+            <Route
+                path="*"
+                element={
+                    <Navigate to="/404" replace />
+                }
+            />
+        </Routes>
+    </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
