@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
-import {ChakraProvider} from '@chakra-ui/react'
+import {BrowserRouter, Link, Navigate, Route, Routes} from "react-router-dom";
+import {Button, ChakraProvider} from '@chakra-ui/react'
 import {theme} from "./theme/theme";
 
 const root = ReactDOM.createRoot(
@@ -19,7 +19,7 @@ root.render(
                     path="/404"
                     element={
                         <main style={{padding: "1rem"}}>
-                            <p>404: ääätsch, there's nothing here!</p>
+                            <p>404: ääätsch, there's nothing here! Go back with this <Link to="/app"><Button colorScheme='teal' variant='outline' size='xs'>Button</Button></Link></p>
                         </main>
                     }
                 />
