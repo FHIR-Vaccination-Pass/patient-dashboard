@@ -12,7 +12,7 @@ export default function SignUp() {
       bg={'background.900'}
       centerContent
     >
-      <Stack isInline spacing={2} align='center' justify={'center'}>
+      <Stack isInline spacing={12} align='center' justify={'center'}>
         <SignupCard />
         <Flex w={'full'}>
           <SyringeIllustartion

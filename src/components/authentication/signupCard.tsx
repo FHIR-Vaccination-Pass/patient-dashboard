@@ -29,7 +29,7 @@ export default function SignupCard() {
       justify={'center'}
     >
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-        <Stack align={'center'}>
+        <Stack align={'center'} w={'35vw'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
             Sign up
           </Heading>
@@ -49,13 +49,13 @@ export default function SignupCard() {
         >
           <Stack spacing={4}>
             <HStack>
-              <Box>
+              <Box w={'50%'}>
                 <FormControl id='firstName' isRequired>
                   <FormLabel>First Name</FormLabel>
                   <Input type='text' />
                 </FormControl>
               </Box>
-              <Box>
+              <Box w={'50%'}>
                 <FormControl id='lastName'>
                   <FormLabel>Last Name</FormLabel>
                   <Input type='text' />

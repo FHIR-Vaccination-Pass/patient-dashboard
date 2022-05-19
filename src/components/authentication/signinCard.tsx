@@ -24,7 +24,7 @@ export default function SignInCard() {
       justify={'center'}
     >
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-        <Stack align={'center'}>
+        <Stack align={'center'} w={'35vw'}>
           <Heading fontSize={'4xl'}>Sign in</Heading>
           <Text fontSize={'lg'} color={'gray.600'}>
             to your personal{' '}
