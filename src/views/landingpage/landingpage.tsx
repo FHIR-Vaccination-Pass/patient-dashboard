@@ -15,7 +15,7 @@ export default function Landingpage() {
     <Container
       overflowY={'hidden'}
       maxW={'10xl'}
-      maxH={'100vh'}
+      h={'100vh'}
       bg={'background.900'}
     >
       <Stack
