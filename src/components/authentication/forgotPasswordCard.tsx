@@ -16,10 +16,11 @@ type ForgotPasswordFormInputs = {
 export default function ForgotPasswordForm(): JSX.Element {
   return (
     <Flex
+      w={'full'}
+      minW={'50vw'}
       minH={'100vh'}
       align={'center'}
       justify={'center'}
-      bg={useColorModeValue('gray.50', 'gray.800')}
     >
       <Stack
         spacing={4}

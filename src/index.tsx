@@ -8,6 +8,7 @@ import { theme } from './theme/theme';
 import Landingpage from './views/landingpage/landingpage';
 import SignIn from './views/Authentication/SignIn';
 import SignUp from './views/Authentication/SignUp';
+import ForgotPassword from './views/Authentication/ForgotPassword';
 
 const root = document.getElementById('root') as HTMLElement;
 ReactDOM.render(
@@ -17,6 +18,7 @@ ReactDOM.render(
         <Route path='/' element={<Landingpage />} />
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
+        <Route path='/forgotpassword' element={<ForgotPassword />} />
         <Route
           path='/404'
           element={

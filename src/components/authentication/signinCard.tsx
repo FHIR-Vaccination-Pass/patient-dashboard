@@ -56,7 +56,7 @@ export default function SignInCard() {
               >
                 <Checkbox>Remember me</Checkbox>
                 <Link to='/forgotpassword' color={'blue.400'}>
-                  Forgot password?
+                  <Text color={'blue.400'}>Forgot password?</Text>
                 </Link>
               </Stack>
               <Stack spacing={4}>
