@@ -6,22 +6,21 @@ import {
   Heading,
   Input,
   Stack,
-  useColorModeValue,
 } from '@chakra-ui/react';
 
 export default function ResetPasswordForm(): JSX.Element {
   return (
     <Flex
+      w={'full'}
+      minW={'50vw'}
       minH={'100vh'}
       align={'center'}
       justify={'center'}
-      bg={useColorModeValue('gray.50', 'gray.800')}
     >
       <Stack
         spacing={4}
         w={'full'}
         maxW={'md'}
-        bg={useColorModeValue('white', 'gray.700')}
         rounded={'xl'}
         boxShadow={'lg'}
         p={6}
