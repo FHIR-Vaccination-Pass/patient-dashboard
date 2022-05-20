@@ -1,9 +1,11 @@
-import { Container, Flex, Stack } from '@chakra-ui/react';
+import { Container, Flex, Stack, useBreakpointValue } from '@chakra-ui/react';
 import { SyringeIllustartion } from './SyringeIllustartion';
 import React from 'react';
-import SignupCard from '../../components/authentication/signupCard';
+import SignUpCard from '../../components/authentication/signupCard';
 
 export default function SignUp() {
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
   return (
     <Container
       overflowY={'hidden'}
@@ -12,15 +14,19 @@ export default function SignUp() {
       bg={'background.900'}
       centerContent
     >
-      <Stack isInline spacing={12} align='center' justify={'center'}>
-        <SignupCard />
-        <Flex w={'full'}>
-          <SyringeIllustartion
-            height={{ sm: '22rem', lg: '26rem' }}
-            maxW={'40vw'}
-          />
-        </Flex>
-      </Stack>
+      {isMobile ? (
+        <SignUpCard />
+      ) : (
+        <Stack isInline spacing={12} align='center' justify={'center'}>
+          <SignUpCard />
+          <Flex w={'full'}>
+            <SyringeIllustartion
+              height={{ sm: '22rem', lg: '26rem' }}
+              maxW={'40vw'}
+            />
+          </Flex>
+        </Stack>
+      )}
     </Container>
   );
 }

@@ -23,8 +23,8 @@ export default function SignInCard() {
       align={'center'}
       justify={'center'}
     >
-      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-        <Stack align={'center'} w={'35vw'}>
+      <Stack spacing={8} mx={2} w={'100%'} maxW={'lg'} py={12} px={2}>
+        <Stack align={'center'}>
           <Heading fontSize={'4xl'}>Sign in</Heading>
           <Text fontSize={'lg'} color={'gray.600'}>
             to your personal{' '}
@@ -38,7 +38,6 @@ export default function SignInCard() {
           bg={useColorModeValue('white', 'gray.700')}
           boxShadow={'lg'}
           p={8}
-          w={'35vw'}
         >
           <Stack spacing={4}>
             <FormControl id='email'>

@@ -28,8 +28,8 @@ export default function SignupCard() {
       align={'center'}
       justify={'center'}
     >
-      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-        <Stack align={'center'} w={'35vw'}>
+      <Stack spacing={8} mx={2} w={'100%'} maxW={'lg'} py={12} px={2}>
+        <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
             Sign up
           </Heading>
@@ -45,7 +45,6 @@ export default function SignupCard() {
           bg={useColorModeValue('white', 'gray.700')}
           boxShadow={'lg'}
           p={8}
-          w={'35vw'}
         >
           <Stack spacing={4}>
             <HStack>
