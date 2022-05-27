@@ -1,6 +1,6 @@
 import { Icon, IconProps } from '@chakra-ui/react';
 
-export const SyringeIllustartion = (props: IconProps) => {
+export const SyringeIllustration = (props: IconProps) => {
   return (
     <Icon
       width='100%'

@@ -1,9 +1,9 @@
 import { Container, Flex, Stack, useBreakpointValue } from '@chakra-ui/react';
-import { SyringeIllustartion } from '../Authentication/SyringeIllustartion';
-import SignInCard from '../../components/authentication/signinCard';
+import { SyringeIllustration } from './SyringeIllustration';
 import React from 'react';
+import ForgotPasswordForm from '../../components/authentication/forgotPasswordCard';
 
-export default function SignIn() {
+export default function ForgotPassword() {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   return (
@@ -15,12 +15,12 @@ export default function SignIn() {
       centerContent
     >
       {isMobile ? (
-        <SignInCard />
+        <ForgotPasswordForm />
       ) : (
         <Stack isInline spacing={12} align='center' justify={'center'}>
-          <SignInCard />
+          <ForgotPasswordForm />
           <Flex w={'full'}>
-            <SyringeIllustartion
+            <SyringeIllustration
               height={{ sm: '22rem', lg: '26rem' }}
               maxW={'40vw'}
             />
