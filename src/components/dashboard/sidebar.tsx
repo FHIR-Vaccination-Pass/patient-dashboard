@@ -1,11 +1,13 @@
 import {
   Avatar,
+  Box,
   BoxProps,
-  CloseButton,
   Divider,
   Flex,
   Heading,
   Icon,
+  Menu,
+  MenuButton,
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
@@ -15,6 +17,7 @@ import {
   FaAngleLeft,
   FaAngleRight,
   FaBookMedical,
+  FaCog,
   FaRegCalendarAlt,
   FaSyringe,
 } from 'react-icons/fa';
@@ -97,41 +100,65 @@ export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
         ))}
       </Flex>
 
-      <Flex
-        p='5%'
-        flexDir='column'
-        w='100%'
-        alignItems={navSize == 'small' ? 'center' : 'flex-start'}
-        mt={4}
-      >
-        <Flex h='20' alignItems='center' mx='8' justifyContent='space-between'>
-          <CloseButton
-            display={{ base: 'flex', md: 'none' }}
-            onClick={onClose}
-          />
-        </Flex>
-        <Divider />
+      <Box>
         <Flex
-          mt={4}
-          mb={4}
-          alignSelf='center'
-          onClick={() => {
-            if (navSize == 'small') changeNavSize('large');
-            else changeNavSize('small');
-          }}
+          mt={2}
+          flexDir='column'
+          p='5%'
+          w='100%'
+          alignItems={navSize == 'small' ? 'center' : 'flex-start'}
         >
-          <Icon
-            as={navSize == 'small' ? FaAngleRight : FaAngleLeft}
-            justifySelf={'center'}
-            alignSelf={'center'}
-            fontSize='xl'
-            color={'gray.500'}
+          <NavItem
+            icon={FaCog}
+            title={'Settings'}
+            active={false}
+            navSize={navSize}
+            link={'settings'}
+            onClose={onClose}
           />
-          <Flex flexDir='column' display={navSize == 'small' ? 'none' : 'flex'}>
-            <Text size='sm'>Collapse</Text>
+          <Divider />
+          <Flex align='center' w={navSize == 'small' ? 'unset' : '100%'}>
+            <Menu placement='right'>
+              <Flex
+                borderRadius={'15px'}
+                p={3}
+                pt={1}
+                pb={1}
+                mt={2}
+                mb={2}
+                _hover={{
+                  textDecor: 'none',
+                  backgroundColor: 'brand.10',
+                }}
+                w={'100%'}
+                color={'gray.500'}
+                onClick={() => {
+                  if (navSize == 'small') changeNavSize('large');
+                  else changeNavSize('small');
+                }}
+              >
+                <MenuButton>
+                  <Flex>
+                    <Icon
+                      as={navSize == 'small' ? FaAngleRight : FaAngleLeft}
+                      justifySelf={'center'}
+                      alignSelf={'center'}
+                      fontSize='xl'
+                    />
+                    <Text
+                      align={'left'}
+                      ml={2}
+                      display={navSize == 'small' ? 'none' : 'flex'}
+                    >
+                      Collapse
+                    </Text>
+                  </Flex>
+                </MenuButton>
+              </Flex>
+            </Menu>
           </Flex>
         </Flex>
-      </Flex>
+      </Box>
     </Flex>
   );
 };

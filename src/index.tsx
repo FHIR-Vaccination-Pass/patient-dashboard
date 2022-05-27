@@ -17,6 +17,7 @@ import { VaccineHistory } from './views/dashbaord/vaccineHistory';
 import { VaccineRecommendations } from './views/dashbaord/vaccineRecommendations';
 import { VaccineWiki } from './views/dashbaord/vaccineWiki';
 import { Profile } from './views/dashbaord/profile';
+import { Settings } from './views/dashbaord/settings';
 
 const root = document.getElementById('root') as HTMLElement;
 ReactDOM.render(
@@ -33,6 +34,7 @@ ReactDOM.render(
           <Route path='recommendations' element={<VaccineRecommendations />} />
           <Route path='wiki' element={<VaccineWiki />} />
           <Route path='profile' element={<Profile />} />
+          <Route path='settings' element={<Settings />} />
         </Route>
         <Route path='/resetpassword' element={<ResetPassword />} />
         <Route path='/404' element={<NotFound />} />

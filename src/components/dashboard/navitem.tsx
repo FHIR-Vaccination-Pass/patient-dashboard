@@ -30,42 +30,42 @@ export const NavItem = ({
   return (
     <Flex
       onClick={onClose}
-      mb={4}
       align='center'
       w={navSize == 'small' ? 'unset' : '100%'}
     >
       <Menu placement='right'>
-        <Link
-          as={ReactLink}
-          borderRadius={'5px'}
-          to={link}
-          backgroundColor={active ? 'brand.300' : '#fff'}
-          p={3}
-          _hover={{
-            textDecor: 'none',
-            backgroundColor: 'brand.500',
-            color: 'white',
-          }}
-          w={'100%'}
-          color={'gray.500'}
-        >
-          <MenuButton>
-            <Flex>
-              <Icon
-                as={icon}
-                justifySelf={'center'}
-                alignSelf={'center'}
-                fontSize='xl'
-              />
-              <Text
-                align={'left'}
-                ml={2}
-                display={navSize == 'small' ? 'none' : 'flex'}
-              >
-                {title}
-              </Text>
-            </Flex>
-          </MenuButton>
+        <Link as={ReactLink} to={link} w={'100%'} textDecor='none !important'>
+          <Flex
+            borderRadius={'15px'}
+            p={3}
+            pt={1}
+            pb={1}
+            mt={2}
+            mb={2}
+            _hover={{
+              textDecor: 'none',
+              backgroundColor: 'brand.10',
+            }}
+            color={'gray.500'}
+          >
+            <MenuButton>
+              <Flex>
+                <Icon
+                  as={icon}
+                  justifySelf={'center'}
+                  alignSelf={'center'}
+                  fontSize='xl'
+                />
+                <Text
+                  align={'left'}
+                  ml={2}
+                  display={navSize == 'small' ? 'none' : 'flex'}
+                >
+                  {title}
+                </Text>
+              </Flex>
+            </MenuButton>
+          </Flex>
         </Link>
       </Menu>
     </Flex>
