@@ -98,11 +98,10 @@ export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
           />
         </Flex>
         <Divider />
-
         <Flex
           mt={4}
           mb={4}
-          align='center'
+          alignSelf='center'
           onClick={() => {
             if (navSize == 'small') changeNavSize('large');
             else changeNavSize('small');
@@ -115,11 +114,7 @@ export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
             fontSize='xl'
             color={'gray.500'}
           />
-          <Flex
-            flexDir='column'
-            ml={4}
-            display={navSize == 'small' ? 'none' : 'flex'}
-          >
+          <Flex flexDir='column' display={navSize == 'small' ? 'none' : 'flex'}>
             <Text size='sm'>Collapse</Text>
           </Flex>
         </Flex>
