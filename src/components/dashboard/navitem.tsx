@@ -8,25 +8,35 @@ import {
   MenuButton,
   Text,
 } from '@chakra-ui/react';
+import { Link as ReactLink } from 'react-router-dom';
 
 interface NavItemProps extends FlexProps {
   icon: IconType;
   title: string;
   active: boolean;
   navSize: String;
+  link: string;
 }
 
-export const NavItem = ({ icon, title, active, navSize }: NavItemProps) => {
+export const NavItem = ({
+  icon,
+  title,
+  active,
+  navSize,
+  link,
+}: NavItemProps) => {
   return (
     <Flex mb={4} align='center' w={navSize == 'small' ? 'unset' : '100%'}>
       <Menu placement='right'>
         <Link
+          as={ReactLink}
+          borderRadius={'5px'}
+          to={link}
           backgroundColor={active ? 'brand.300' : '#fff'}
           p={3}
-          borderRadius={8}
           _hover={{
             textDecor: 'none',
-            backgroundColor: 'brand.300',
+            backgroundColor: 'brand.500',
             color: 'white',
           }}
           w={'100%'}

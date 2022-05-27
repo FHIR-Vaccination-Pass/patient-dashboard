@@ -27,12 +27,13 @@ interface SidebarProps extends BoxProps {
 interface LinkItemProps {
   name: string;
   icon: IconType;
+  link: string;
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'History', icon: FaSyringe },
-  { name: 'Recommendations', icon: FaRegCalendarAlt },
-  { name: 'Wiki', icon: FaBookMedical },
+  { name: 'History', icon: FaSyringe, link: 'history' },
+  { name: 'Recommendations', icon: FaRegCalendarAlt, link: 'recommendations' },
+  { name: 'Wiki', icon: FaBookMedical, link: 'wiki' },
 ];
 
 export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
@@ -52,9 +53,9 @@ export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
       {...rest}
     >
       <Flex
-        p='5%'
         mt={4}
         flexDir='column'
+        p='5%'
         w='100%'
         alignItems={navSize == 'small' ? 'center' : 'flex-start'}
       >
@@ -72,14 +73,15 @@ export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
           </Flex>
         </Flex>
         <Divider mb={2} />
-        {LinkItems.map((link) => (
+        {LinkItems.map((navLink) => (
           <NavItem
-            title={link.name}
-            icon={link.icon}
+            title={navLink.name}
+            icon={navLink.icon}
             navSize={navSize}
             active={false}
+            link={navLink.link}
           >
-            {link.name}
+            {navLink.name}
           </NavItem>
         ))}
       </Flex>
