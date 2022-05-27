@@ -12,8 +12,8 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { MobileMenu } from './mobileMenu';
-import VaccinationPass from '../../assets/VaccinationPass.png';
-import VaccinationPassIcon from '../../assets/VaccinationPassIcon.png';
+import VaccinationPass from '../../../assets/VaccinationPass.png';
+import VaccinationPassIcon from '../../../assets/VaccinationPassIcon.png';
 import { Link } from 'react-router-dom';
 
 interface DashboardProps extends BoxProps {

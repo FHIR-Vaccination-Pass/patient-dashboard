@@ -1,9 +1,11 @@
 import { Grid, GridItem } from '@chakra-ui/react';
+import { VaccineHistoryWidget } from '../../components/dashboard/vaccineHistoryWidget/vaccineHistoryWidget';
 
 export function Overview() {
   return (
     <Grid
       minH='100%'
+      maxH={'80vh'}
       templateRows={'repeat(12, 1fr)'}
       templateColumns='repeat(12, 1fr)'
       gap={1}
@@ -16,12 +18,9 @@ export function Overview() {
         bg={'gray.300'}
       ></GridItem>
 
-      <GridItem
-        display={{ base: 'none', md: 'grid' }}
-        rowSpan={12}
-        colSpan={4}
-        bg={'gray.100'}
-      ></GridItem>
+      <GridItem display={{ base: 'none', md: 'grid' }} rowSpan={12} colSpan={4}>
+        <VaccineHistoryWidget />
+      </GridItem>
 
       <GridItem
         display={{ base: 'none', md: 'grid' }}
