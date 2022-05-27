@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
-import { Button, ChakraProvider } from '@chakra-ui/react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { ChakraProvider } from '@chakra-ui/react';
 import { theme } from './theme/theme';
 import { LandingPage } from './views/LandingPage';
 import SignIn from './views/Authentication/SignIn';
@@ -11,6 +11,8 @@ import SignUp from './views/Authentication/SignUp';
 import ForgotPassword from './views/Authentication/ForgotPassword';
 import ResetPassword from './views/Authentication/ResetPassword';
 import NotFound from './views/NotFound';
+import Dashboard from './views/dashbaord/dashboard';
+import { Overview } from './views/dashbaord/overview';
 
 const root = document.getElementById('root') as HTMLElement;
 ReactDOM.render(
@@ -21,6 +23,9 @@ ReactDOM.render(
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/forgotpassword' element={<ForgotPassword />} />
+        <Route path='/dashboard' element={<Dashboard />}>
+          <Route path='' element={<Overview />} />
+        </Route>
         <Route path='/resetpassword' element={<ResetPassword />} />
         <Route path='/404' element={<NotFound />} />
         <Route path='*' element={<Navigate to='/404' replace />} />
