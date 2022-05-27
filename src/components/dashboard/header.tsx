@@ -5,6 +5,7 @@ import {
   Flex,
   Heading,
   Image,
+  Input,
   Modal,
   Text,
   useColorModeValue,
@@ -13,6 +14,7 @@ import React from 'react';
 import { MobileMenu } from './mobileMenu';
 import VaccinationPass from '../../assets/VaccinationPass.png';
 import VaccinationPassIcon from '../../assets/VaccinationPassIcon.png';
+import { Link } from 'react-router-dom';
 
 interface DashboardProps extends BoxProps {
   onOpen: () => void;
@@ -29,7 +31,7 @@ export const DashboardHeader = ({
   return (
     <Flex
       flexDir='row'
-      justifyContent={{ base: 'space-between', md: 'end' }}
+      justifyContent={{ base: 'space-between', md: 'stretch' }}
       h={'100%'}
       pos='sticky'
       w={'100%'}
@@ -46,7 +48,7 @@ export const DashboardHeader = ({
       >
         <Flex p='5%' flexDir='column' w='100%' alignItems={'flex-start'}>
           <Flex align='center' onClick={onOpen}>
-            <Avatar size='sm' src='avatar-1.jpg' />
+            <Avatar size='md' src='avatar-1.jpg' />
             <Flex flexDir='column' ml={4} display={'flex'}>
               <Heading as='h3' size='sm'>
                 Sylwia Weller
@@ -71,27 +73,49 @@ export const DashboardHeader = ({
         bg={useColorModeValue('white', 'gray.900')}
         boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
         borderRadius={'20px'}
-        w={'30vw'}
+        w={'80%'}
         mt={'10px'}
         mr={'10px'}
         p={'10px'}
-        flexBasis={'content'}
+        flexBasis={'stretch'}
         alignItems={'center'}
+        display={{ base: 'none', md: 'flex' }}
       >
-        <Image
-          src={VaccinationPass}
-          w={'200px'}
-          h={'40px'}
-          align={'center'}
-          display={{ base: 'none', md: 'block' }}
+        <Input
+          ml={'20px'}
+          mr={'20px'}
+          variant='unstyled'
+          focusBorderColor='base.700'
+          placeholder='Search'
         />
-        <Image
-          src={VaccinationPassIcon}
-          w={'40px'}
-          h={'40px'}
-          align={'center'}
-          display={{ base: 'block', md: 'none' }}
-        />
+      </Flex>
+      <Flex
+        bg={useColorModeValue('white', 'gray.900')}
+        boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
+        borderRadius={'20px'}
+        w={'250px'}
+        mt={'10px'}
+        mr={'10px'}
+        p={'10px'}
+        alignItems={'center'}
+        _hover={{ boxShadow: '0 4px 12px 0 rgba(0, 0, 0, 0.30)' }}
+      >
+        <Link to={'/dashboard'}>
+          <Image
+            src={VaccinationPass}
+            w={'200px'}
+            h={'40px'}
+            align={'center'}
+            display={{ base: 'none', md: 'block' }}
+          />
+          <Image
+            src={VaccinationPassIcon}
+            w={'40px'}
+            h={'40px'}
+            align={'center'}
+            display={{ base: 'block', md: 'none' }}
+          />
+        </Link>
       </Flex>
     </Flex>
   );
