@@ -18,14 +18,19 @@ interface NavItemProps extends FlexProps {
 
 export const NavItem = ({ icon, title, active, navSize }: NavItemProps) => {
   return (
-    <Flex mb={4} align='center'>
+    <Flex mb={4} align='center' w={navSize == 'small' ? 'unset' : '100%'}>
       <Menu placement='right'>
         <Link
-          backgroundColor={active ? '#AEC8CA' : '#fff'}
+          backgroundColor={active ? 'brand.300' : '#fff'}
           p={3}
           borderRadius={8}
-          _hover={{ textDecor: 'none', backgroundColor: '#AEC8CA' }}
-          w={navSize == 'large' ? '100%' : 'inherit'}
+          _hover={{
+            textDecor: 'none',
+            backgroundColor: 'brand.300',
+            color: 'white',
+          }}
+          w={'100%'}
+          color={'gray.500'}
         >
           <MenuButton>
             <Flex>
@@ -34,7 +39,6 @@ export const NavItem = ({ icon, title, active, navSize }: NavItemProps) => {
                 justifySelf={'center'}
                 alignSelf={'center'}
                 fontSize='xl'
-                color={active ? '#82AAAD' : 'gray.500'}
               />
               <Text
                 align={'left'}
