@@ -13,6 +13,10 @@ import ResetPassword from './views/Authentication/ResetPassword';
 import NotFound from './views/NotFound';
 import Dashboard from './views/dashbaord/dashboard';
 import { Overview } from './views/dashbaord/overview';
+import { VaccineHistory } from './views/dashbaord/vaccineHistory';
+import { VaccineRecommendations } from './views/dashbaord/vaccineRecommendations';
+import { VaccineWiki } from './views/dashbaord/vaccineWiki';
+import { Profile } from './views/dashbaord/profile';
 
 const root = document.getElementById('root') as HTMLElement;
 ReactDOM.render(
@@ -25,6 +29,10 @@ ReactDOM.render(
         <Route path='/forgotpassword' element={<ForgotPassword />} />
         <Route path='/dashboard' element={<Dashboard />}>
           <Route path='' element={<Overview />} />
+          <Route path='history' element={<VaccineHistory />} />
+          <Route path='recommendations' element={<VaccineRecommendations />} />
+          <Route path='wiki' element={<VaccineWiki />} />
+          <Route path='profile' element={<Profile />} />
         </Route>
         <Route path='/resetpassword' element={<ResetPassword />} />
         <Route path='/404' element={<NotFound />} />
