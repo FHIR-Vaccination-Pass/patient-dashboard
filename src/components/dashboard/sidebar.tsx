@@ -19,6 +19,7 @@ import {
   FaSyringe,
 } from 'react-icons/fa';
 import { NavItem } from './navitem';
+import { Link } from 'react-router-dom';
 
 interface SidebarProps extends BoxProps {
   onClose: () => void;
@@ -53,25 +54,34 @@ export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
       {...rest}
     >
       <Flex
-        mt={4}
+        mt={2}
         flexDir='column'
         p='5%'
         w='100%'
         alignItems={navSize == 'small' ? 'center' : 'flex-start'}
       >
-        <Flex mb={4} align='center'>
-          <Avatar size='sm' src='avatar-1.jpg' />
+        <Link to={'profile'}>
           <Flex
-            flexDir='column'
-            ml={4}
-            display={navSize == 'small' ? 'none' : 'flex'}
+            mb={4}
+            align='center'
+            borderRadius={'25px'}
+            p={navSize == 'small' ? '2px' : '10px'}
+            _hover={{ boxShadow: '0 4px 12px 0 rgba(0, 0, 0, 0.10)' }}
           >
-            <Heading as='h3' size='sm'>
-              Sylwia Weller
-            </Heading>
-            <Text color='gray'>Admin</Text>
+            <Avatar size='md' src='avatar-1.jpg' />
+            <Flex
+              flexDir='column'
+              ml={2}
+              display={navSize == 'small' ? 'none' : 'flex'}
+            >
+              <Heading as='h3' size='sm'>
+                Sylwia Weller
+              </Heading>
+              <Text color='gray'>Admin</Text>
+            </Flex>
           </Flex>
-        </Flex>
+        </Link>
+
         <Divider mb={2} />
         {LinkItems.map((navLink) => (
           <NavItem
@@ -80,6 +90,7 @@ export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
             navSize={navSize}
             active={false}
             link={navLink.link}
+            onClose={onClose}
           >
             {navLink.name}
           </NavItem>

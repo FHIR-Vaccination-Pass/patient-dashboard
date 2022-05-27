@@ -16,6 +16,7 @@ interface NavItemProps extends FlexProps {
   active: boolean;
   navSize: String;
   link: string;
+  onClose: () => void;
 }
 
 export const NavItem = ({
@@ -24,9 +25,15 @@ export const NavItem = ({
   active,
   navSize,
   link,
+  onClose,
 }: NavItemProps) => {
   return (
-    <Flex mb={4} align='center' w={navSize == 'small' ? 'unset' : '100%'}>
+    <Flex
+      onClick={onClose}
+      mb={4}
+      align='center'
+      w={navSize == 'small' ? 'unset' : '100%'}
+    >
       <Menu placement='right'>
         <Link
           as={ReactLink}
