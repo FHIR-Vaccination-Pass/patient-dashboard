@@ -11,10 +11,6 @@ import {
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 
-type ForgotPasswordFormInputs = {
-  email: string;
-};
-
 export default function ForgotPasswordForm(): JSX.Element {
   return (
     <Flex
