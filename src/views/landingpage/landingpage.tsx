@@ -37,7 +37,7 @@ export default function Landingpage() {
         <Text color={'brand.700'} maxW={'4xl'}>
           Never miss a vaccination again. Our digital vaccination-pass makes it
           easy for you to track all your vaccinations, schedule appointments
-          with your doctor and get all teh information you need on a vaccine.
+          with your doctor and get all the information you need on a vaccine.
           Our automated timeline generation for your personal vaccination
           appointments will help you to stay on track.
         </Text>

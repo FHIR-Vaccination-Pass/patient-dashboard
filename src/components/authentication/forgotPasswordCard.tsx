@@ -3,11 +3,13 @@ import {
   Flex,
   FormControl,
   Heading,
+  HStack,
   Input,
   Stack,
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 
 type ForgotPasswordFormInputs = {
   email: string;
@@ -49,15 +51,23 @@ export default function ForgotPasswordForm(): JSX.Element {
           />
         </FormControl>
         <Stack spacing={6}>
-          <Button
-            bg={'blue.400'}
-            color={'white'}
-            _hover={{
-              bg: 'blue.500',
-            }}
-          >
-            Request Reset
-          </Button>
+          <HStack justify={'space-between'}>
+            <Link to='/signin'>
+              <Button variant={'outline'} color={'blue.400'}>
+                Cancel
+              </Button>
+            </Link>
+            <Button
+              bg={'blue.400'}
+              color={'white'}
+              _hover={{
+                bg: 'blue.500',
+              }}
+              width={'80%'}
+            >
+              Request Reset
+            </Button>
+          </HStack>
         </Stack>
       </Stack>
     </Flex>
