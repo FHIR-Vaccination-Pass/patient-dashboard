@@ -10,7 +10,7 @@ import {
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default function Landingpage() {
+export default function LandingPage() {
   return (
     <Container
       overflowY={'hidden'}
@@ -61,7 +61,7 @@ export default function Landingpage() {
         </Stack>
         <Center>
           <Image
-            src={'assets/landingpage/injection.svg'}
+            src={'assets/LandingPage/injection.svg'}
             height={{ sm: '24rem', lg: '28rem' }}
             mt={{ base: 12, sm: 16 }}
           />

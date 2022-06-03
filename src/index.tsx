@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import { Button, ChakraProvider } from '@chakra-ui/react';
 import { theme } from './theme/theme';
-import Landingpage from './views/landingpage/landingpage';
+import { LandingPage } from './views/LandingPage';
 import SignIn from './views/Authentication/SignIn';
 import SignUp from './views/Authentication/SignUp';
 import ForgotPassword from './views/Authentication/ForgotPassword';
@@ -16,7 +16,7 @@ ReactDOM.render(
   <ChakraProvider theme={theme}>
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Landingpage />} />
+        <Route path='/' element={<LandingPage />} />
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/forgotpassword' element={<ForgotPassword />} />
