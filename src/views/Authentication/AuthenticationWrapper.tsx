@@ -1,5 +1,10 @@
-import { Container, Flex, Stack, useBreakpointValue } from '@chakra-ui/react';
-import { SyringeIllustartion } from './SyringeIllustartion';
+import {
+  Container,
+  Flex,
+  Image,
+  Stack,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 import React, { FC } from 'react';
 
 const AuthenticationWrapper: FC = ({ children }) => {
@@ -19,7 +24,8 @@ const AuthenticationWrapper: FC = ({ children }) => {
         <Stack isInline spacing={12} align='center' justify={'center'}>
           {children}
           <Flex w={'full'}>
-            <SyringeIllustartion
+            <Image
+              src={'assets/auth/syringe.svg'}
               height={{ sm: '22rem', lg: '26rem' }}
               maxW={'40vw'}
             />
