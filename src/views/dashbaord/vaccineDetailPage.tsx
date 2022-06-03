@@ -5,9 +5,9 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
-  Text,
   HStack,
   VStack,
+  Heading,
 } from '@chakra-ui/react';
 import './vaccineWiki.css';
 
@@ -65,9 +65,9 @@ export function VaccineDetailPage() {
   };
   return (
     <VStack>
-      <Text fontSize={'lg'} align={'left'}>
+      <Heading style={{ alignSelf: 'flex-start' }} fontSize={'lg'} mt={5}>
         {vaccination.name}
-      </Text>
+      </Heading>
       <HStack>
         <div className={'vaccination-description'}>
           <span>
