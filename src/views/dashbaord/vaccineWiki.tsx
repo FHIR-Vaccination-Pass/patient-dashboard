@@ -10,7 +10,7 @@ import {
 import {getSomeVaccinations, Vaccination} from "../../assets/models/vaccination";
 import './vaccineWiki.css';
 import {ChevronRightIcon} from "@chakra-ui/icons";
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 export function VaccineWiki() {
     const vaccinations: Vaccination[] = getSomeVaccinations();

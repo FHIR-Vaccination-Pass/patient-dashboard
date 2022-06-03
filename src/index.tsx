@@ -32,9 +32,8 @@ ReactDOM.render(
           <Route path='' element={<Overview />} />
           <Route path='history' element={<VaccineHistory />} />
           <Route path='recommendations' element={<VaccineRecommendations />} />
-          <Route path='wiki' element={<VaccineWiki />}>
-            <Route path='*' element={<VaccineDetailPage />} />
-          </Route>
+          <Route path='wiki' element={<VaccineWiki />}/>
+          <Route path='wiki/*' element={<VaccineDetailPage />} />
           <Route path='profile' element={<Profile />} />
           <Route path='settings' element={<Settings />} />
         </Route>
