@@ -1,12 +1,12 @@
 import {
   Button,
+  Center,
   Container,
-  Flex,
   Heading,
+  Image,
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { InjectionIllustartion } from './InjectionIllustartion';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -59,12 +59,13 @@ export default function Landingpage() {
             </Button>
           </Link>
         </Stack>
-        <Flex w={'full'}>
-          <InjectionIllustartion
+        <Center>
+          <Image
+            src={'assets/landingpage/injection.svg'}
             height={{ sm: '24rem', lg: '28rem' }}
             mt={{ base: 12, sm: 16 }}
           />
-        </Flex>
+        </Center>
       </Stack>
     </Container>
   );
