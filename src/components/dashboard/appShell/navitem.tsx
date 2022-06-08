@@ -31,7 +31,7 @@ export const NavItem = ({
     <Flex
       onClick={onClose}
       align='center'
-      w={navSize == 'small' ? 'unset' : '100%'}
+      w={navSize === 'small' ? 'unset' : '100%'}
     >
       <Menu placement='right'>
         <Link as={ReactLink} to={link} w={'100%'} textDecor='none !important'>
@@ -59,7 +59,7 @@ export const NavItem = ({
                 <Text
                   align={'left'}
                   ml={2}
-                  display={navSize == 'small' ? 'none' : 'flex'}
+                  display={navSize === 'small' ? 'none' : 'flex'}
                 >
                   {title}
                 </Text>
