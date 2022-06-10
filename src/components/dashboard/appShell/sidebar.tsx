@@ -1,18 +1,17 @@
 import {
-  Avatar,
   Box,
   BoxProps,
   Divider,
   Flex,
-  Heading,
   Icon,
+  Image,
   Menu,
   MenuButton,
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { IconType } from 'react-icons';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   FaAngleLeft,
   FaAngleRight,
@@ -23,6 +22,8 @@ import {
 } from 'react-icons/fa';
 import { NavItem } from './navitem';
 import { Link } from 'react-router-dom';
+import VaccinationPass from '../../../assets/VaccinationPass.png';
+import VaccinationPassIcon from '../../../assets/VaccinationPassIcon.png';
 
 interface SidebarProps extends BoxProps {
   onClose: () => void;
@@ -59,29 +60,31 @@ export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
       <Flex
         mt={2}
         flexDir='column'
-        p='5%'
+        p='4%'
         w='100%'
         alignItems={navSize === 'small' ? 'center' : 'flex-start'}
       >
-        <Link to={'profile'}>
+        <Link to={'/dashboard'}>
           <Flex
             mb={4}
             align='center'
-            borderRadius={'25px'}
-            p={navSize === 'small' ? '2px' : '10px'}
+            borderRadius={'20px'}
+            p={navSize === 'small' ? '2px' : '5px'}
             _hover={{ boxShadow: '0 4px 12px 0 rgba(0, 0, 0, 0.10)' }}
           >
-            <Avatar size='md' src='avatar-1.jpg' />
-            <Flex
-              flexDir='column'
-              ml={2}
-              display={navSize === 'small' ? 'none' : 'flex'}
-            >
-              <Heading as='h3' size='sm'>
-                Sylwia Weller
-              </Heading>
-              <Text color='gray'>Admin</Text>
-            </Flex>
+            <Image
+              src={VaccinationPassIcon}
+              w={'50px'}
+              h={'50px'}
+              align={'center'}
+              display={navSize === 'small' ? 'block' : 'none'}
+            />
+            <Image
+              src={VaccinationPass}
+              w={'250px'}
+              align={'center'}
+              display={navSize === 'small' ? 'none' : 'block'}
+            />
           </Flex>
         </Link>
 
