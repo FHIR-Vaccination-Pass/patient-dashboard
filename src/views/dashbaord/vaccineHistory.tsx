@@ -1,9 +1,26 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Chrono, TimelineItem } from 'react-chrono';
 
 export function VaccineHistory() {
+  const items: TimelineItem[] = [
+    {
+      title: 'May 1940',
+      cardTitle: 'Dunkirk',
+      url: 'http://www.history.com',
+      cardSubtitle:
+        'Men of the British Expeditionary Force (BEF) wade out to..',
+      cardDetailedText:
+        'Men of the British Expeditionary Force (BEF) wade out to..',
+      media: {
+        type: 'IMAGE',
+        source: {
+          url: 'http://someurl/image.jpg',
+        },
+      },
+    },
+  ];
   return (
-    <Box bg={'gray.100'}>
-      <Text> Hey History! </Text>
-    </Box>
+    <div style={{ width: '500px', height: '400px' }}>
+      <Chrono items={items} />
+    </div>
   );
 }
