@@ -32,7 +32,7 @@ export default function Dashboard() {
           ></DashboardHeader>
         </GridItem>
         <GridItem rowSpan={{ base: 10, md: 11 }} colSpan={{ base: 12, md: 11 }}>
-          <Box h={'95%'} pl='4' pr='4' pt='2'>
+          <Box h={'95%'} pl='0' pr='4' pt='2'>
             <Outlet />
           </Box>
         </GridItem>

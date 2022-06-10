@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
+  Button,
   Divider,
   HStack,
   IconButton,
@@ -14,7 +15,7 @@ import {
   Vaccination,
 } from '../../assets/models/vaccination';
 import './vaccineWiki.css';
-import { ChevronRightIcon } from '@chakra-ui/icons';
+import { ArrowForwardIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
 
 export function VaccineWiki() {
@@ -46,6 +47,16 @@ export function VaccineWiki() {
                     </span>{' '}
                     {vaccination.description}
                   </span>
+                  <Link to={`/dashboard/wiki/${vaccination.name}`}>
+                    <Button
+                      rightIcon={<ArrowForwardIcon />}
+                      variant='outline'
+                      colorScheme={'aviGreen'}
+                      mt={'20px'}
+                    >
+                      Learn more
+                    </Button>
+                  </Link>
                 </div>
                 <HStack
                   style={{ height: '70px', position: 'absolute', right: 0 }}

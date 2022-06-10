@@ -15,10 +15,10 @@ import Dashboard from './views/dashbaord/dashboard';
 import { Overview } from './views/dashbaord/overview';
 import { VaccineHistory } from './views/dashbaord/vaccineHistory';
 import { VaccineRecommendations } from './views/dashbaord/vaccineRecommendations';
-import { VaccineWiki } from './views/dashbaord/vaccineWiki';
+import { VaccineWiki } from './views/Wiki/vaccineWiki';
 import { Profile } from './views/dashbaord/profile';
 import { Settings } from './views/dashbaord/settings';
-import { VaccineDetailPage } from './views/dashbaord/vaccineDetailPage';
+import { VaccineDetailPage } from './views/Wiki/vaccineDetailPage';
 
 const root = document.getElementById('root') as HTMLElement;
 ReactDOM.render(
