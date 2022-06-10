@@ -3,17 +3,16 @@ import {
   Box,
   BoxProps,
   Flex,
-  Heading,
   Image,
   Input,
   Modal,
-  Text,
   useColorModeValue,
 } from '@chakra-ui/react';
 import React from 'react';
 import { MobileMenu } from './mobileMenu';
 import { Link } from 'react-router-dom';
 import VaccinationPass from '../../../assets/VaccinationPass.png';
+import { ProfileDrawer } from './profileDrawer';
 
 interface DashboardProps extends BoxProps {
   onOpen: () => void;
@@ -110,17 +109,7 @@ export const DashboardHeader = ({
         display={{ base: 'none', md: 'flex' }}
       >
         <Flex p='5%' flexDir='column' w='100%' alignItems={'flex-start'}>
-          <Link to={'profile'}>
-            <Flex align='center'>
-              <Avatar size='md' src='avatar-1.jpg' />
-              <Flex flexDir='column' ml={4} display={'flex'}>
-                <Heading as='h3' size='sm'>
-                  Sylwia Weller
-                </Heading>
-                <Text color='gray'>Admin</Text>
-              </Flex>
-            </Flex>
-          </Link>
+          <ProfileDrawer />
         </Flex>
       </Box>
     </Flex>
