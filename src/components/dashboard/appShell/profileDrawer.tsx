@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Avatar,
+  Box,
   Button,
   Drawer,
   DrawerBody,
@@ -11,10 +12,12 @@ import {
   DrawerOverlay,
   Flex,
   Heading,
+  HStack,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import { FaSignOutAlt } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 export function ProfileDrawer() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -38,12 +41,21 @@ export function ProfileDrawer() {
             <Flex>
               <Avatar size='2xl' src='avatar-1.jpg' />
             </Flex>
-            <DrawerHeader
-              style={{ marginLeft: '-25px', marginBottom: '-15px' }}
-            >
-              {profile.name}
-            </DrawerHeader>
-            <Text color='gray'>{profile.role}</Text>
+            <HStack>
+              <Box>
+                <DrawerHeader
+                  style={{ marginLeft: '-25px', marginBottom: '-15px' }}
+                >
+                  {profile.name}
+                </DrawerHeader>
+                <Text color='gray'>{profile.role}</Text>
+              </Box>
+              <Link to={'/profile'}>
+                <Button colorScheme='teal' variant='ghost'>
+                  View Profile
+                </Button>
+              </Link>
+            </HStack>
 
             <DrawerBody></DrawerBody>
           </div>

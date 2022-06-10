@@ -108,7 +108,13 @@ export const DashboardHeader = ({
         mr={'10px'}
         display={{ base: 'none', md: 'flex' }}
       >
-        <Flex p='5%' flexDir='column' w='100%' alignItems={'flex-start'}>
+        <Flex
+            p='5%'
+            flexDir='column'
+            w='100%'
+            alignItems={'flex-start'}
+            cursor={'pointer'}
+        >
           <ProfileDrawer />
         </Flex>
       </Box>
