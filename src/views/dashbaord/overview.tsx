@@ -8,7 +8,7 @@ export function Overview() {
       maxH={'80vh'}
       templateRows={'repeat(12, 1fr)'}
       templateColumns='repeat(12, 1fr)'
-      gap={1}
+      gap={5}
     >
       {/* Desktop */}
       <GridItem
@@ -30,12 +30,9 @@ export function Overview() {
       ></GridItem>
 
       {/* Mobile */}
-      <GridItem
-        display={{ base: 'grid', md: 'none' }}
-        colSpan={12}
-        rowSpan={4}
-        bg={'gray.100'}
-      ></GridItem>
+      <GridItem display={{ base: 'grid', md: 'none' }} colSpan={12} rowSpan={4}>
+        <VaccineHistoryWidget />
+      </GridItem>
 
       <GridItem
         display={{ base: 'grid', md: 'none' }}
