@@ -128,3 +128,8 @@ dist
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Self-signed certificates for local development
+**/*.p12
+**/*.pem
+**/*.key

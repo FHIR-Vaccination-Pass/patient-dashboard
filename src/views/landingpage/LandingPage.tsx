@@ -42,7 +42,7 @@ export default function LandingPage() {
           appointments will help you to stay on track.
         </Text>
         <Stack spacing={6} direction={'row'}>
-          <Link to={'signin'}>
+          <Link to={'/dashboard'}>
             <Button
               rounded={'full'}
               px={10}
@@ -51,11 +51,6 @@ export default function LandingPage() {
               _hover={{ bg: 'brand.500' }}
             >
               Sign in
-            </Button>
-          </Link>
-          <Link to={'signup'}>
-            <Button rounded={'full'} px={10} color={'brand.800'}>
-              Sign up
             </Button>
           </Link>
         </Stack>

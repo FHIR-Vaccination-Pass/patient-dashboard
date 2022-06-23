@@ -10,10 +10,12 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MobileMenu } from './mobileMenu';
 import { Link } from 'react-router-dom';
 import VaccinationPass from '../../../assets/VaccinationPass.png';
+import { useKeycloak } from '@react-keycloak/web';
+import { KeycloakProfile } from 'keycloak-js';
 
 interface DashboardProps extends BoxProps {
   onOpen: () => void;
@@ -27,6 +29,12 @@ export const DashboardHeader = ({
   isOpen,
   ...rest
 }: DashboardProps) => {
+  const { keycloak } = useKeycloak();
+  const [profile, setProfile] = useState<KeycloakProfile | undefined>();
+  useEffect(() => {
+    keycloak.loadUserProfile().then((p) => setProfile(p));
+  }, [keycloak, keycloak.authenticated]);
+
   return (
     <Flex
       flexDir='row'
@@ -115,7 +123,7 @@ export const DashboardHeader = ({
               <Avatar size='md' src='avatar-1.jpg' />
               <Flex flexDir='column' ml={4} display={'flex'}>
                 <Heading as='h3' size='sm'>
-                  Sylwia Weller
+                  {keycloak.subject}
                 </Heading>
                 <Text color='gray'>Admin</Text>
               </Flex>
