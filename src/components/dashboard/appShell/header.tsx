@@ -5,7 +5,6 @@ import {
   Flex,
   Heading,
   Image,
-  Input,
   Modal,
   Text,
   useColorModeValue,
@@ -31,8 +30,7 @@ export const DashboardHeader = ({
     <Flex
       flexDir='row'
       justifyContent={{ base: 'space-between', md: 'stretch' }}
-      h={'100%'}
-      pos='sticky'
+      h={'100px'}
       w={'100%'}
       {...rest}
     >
@@ -40,31 +38,15 @@ export const DashboardHeader = ({
         bg={useColorModeValue('white', 'gray.900')}
         boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
         borderRadius={'20px'}
-        w={'100%'}
-        mt={'10px'}
-        mr={'10px'}
-        p={'10px'}
-        alignItems={'center'}
-        display={{ base: 'none', md: 'flex' }}
-      >
-        <Input
-          ml={'20px'}
-          mr={'20px'}
-          variant='unstyled'
-          focusBorderColor='base.700'
-          placeholder='Search'
-        />
-      </Flex>
-      <Flex
-        bg={useColorModeValue('white', 'gray.900')}
-        boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
-        borderRadius={'20px'}
         mt={'10px'}
         ml={'10px'}
         p={'10px'}
+        h={'60px'}
         alignItems={'center'}
         display={{ base: 'block', md: 'none' }}
         _hover={{ boxShadow: '0 4px 12px 0 rgba(0, 0, 0, 0.30)' }}
+        position='fixed'
+        zIndex={'99'}
       >
         <Link to={'/dashboard'}>
           <Image src={VaccinationPass} w={'200px'} align={'center'} />
@@ -77,9 +59,13 @@ export const DashboardHeader = ({
         boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
         borderRadius={'20px'}
         w={'60px'}
+        h={'60px'}
         mt={'10px'}
         mr={'10px'}
         display={{ base: 'flex', md: 'none' }}
+        position='fixed'
+        right={'0'}
+        zIndex={'99'}
       >
         <Flex m='auto' flexDir='column' w='100%' alignItems={'center'}>
           <Flex align='center' onClick={onOpen}>
@@ -104,10 +90,12 @@ export const DashboardHeader = ({
         bg={useColorModeValue('white', 'gray.900')}
         boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
         borderRadius={'20px'}
-        w={'350px'}
+        w={'250px'}
         mt={'10px'}
         mr={'10px'}
         display={{ base: 'none', md: 'flex' }}
+        position={'absolute'}
+        right={'0'}
       >
         <Flex p='5%' flexDir='column' w='100%' alignItems={'flex-start'}>
           <Link to={'profile'}>

@@ -12,9 +12,13 @@ import {
   Th,
   Tbody,
   Tr,
+  Image,
+  Box,
 } from '@chakra-ui/react';
 import './vaccineWiki.css';
 import { InfoIcon } from '@chakra-ui/icons';
+import React from 'react';
+import WorldMap from '../../assets/WorldMaps/WorldMap.svg';
 
 export function VaccineDetailPage() {
   const vaccination = {
@@ -70,66 +74,77 @@ export function VaccineDetailPage() {
     relevantLocations: ['Global'],
   };
   return (
-    <Flex
-      bg={useColorModeValue('white', 'gray.900')}
-      boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
-      borderRadius={'30px'}
-      h={'95vh'}
-      style={{ marginLeft: '0px !important' }}
-    >
-      <HStack style={{ position: 'relative' }}>
-        <IconButton
-          colorScheme='aviGreen'
-          aria-label='information'
-          size='lg'
-          icon={<InfoIcon />}
-          style={{ position: 'absolute', top: 0, cursor: 'default' }}
-          borderTopLeftRadius={'30px'}
-          borderBottomLeftRadius={'0px'}
-          borderTopRightRadius={'0px'}
+    <Box>
+      <div>
+        <Image
+          src={WorldMap}
+          style={{ aspectRatio: '2000 / 857' }}
+          align={'center'}
+          mb={'10px'}
         />
+      </div>
+      <Flex
+        bg={useColorModeValue('white', 'gray.900')}
+        boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
+        borderRadius={'30px'}
+        w={'100%'}
+        style={{ marginBottom: '20px' }}
+        position={'relative'}
+        zIndex={'-1'}
+      >
         <VStack
           style={{
             alignSelf: 'self-start',
-            marginTop: '60px',
-            marginLeft: '60px',
+            width: '100%',
           }}
         >
-          <Heading style={{ alignSelf: 'flex-start' }} fontSize={'lg'}>
-            {vaccination.name}
-          </Heading>
-          <HStack>
-            <div className={'vaccination-description'}>
-              <span>
-                <span className={'accordion-content-header'}>Disease:</span>{' '}
-                {vaccination.name}
-                <br />
-              </span>
-              <span>
+          <IconButton
+            colorScheme='aviGreen'
+            aria-label='information'
+            size='lg'
+            icon={<InfoIcon />}
+            style={{ cursor: 'default', width: '100%' }}
+            borderRadius={'20px 20px 0 0'}
+          />
+          <Box marginLeft={'10px !important'}>
+            <Heading style={{ alignSelf: 'flex-start' }} fontSize={'lg'}>
+              {vaccination.name}
+            </Heading>
+            <HStack>
+              <div className={'vaccination-description'}>
+                <span>
+                  <span className={'accordion-content-header'}>Disease:</span>{' '}
+                  {vaccination.name}
+                  <br />
+                </span>
+                <span>
+                  <span className={'accordion-content-header'}>
+                    Immunization against:
+                  </span>{' '}
+                  {vaccination.immunizationAgainst}
+                  <br />
+                </span>
+                <span>
+                  <span className={'accordion-content-header'}>
+                    Relevant Locations:
+                  </span>{' '}
+                  {vaccination.relevantLocations}
+                  <br />
+                </span>
+                <span>
+                  <span className={'accordion-content-header'}>
+                    Description:
+                  </span>{' '}
+                  {vaccination.description}
+                  <br />
+                </span>
                 <span className={'accordion-content-header'}>
-                  Immunization against:
-                </span>{' '}
-                {vaccination.immunizationAgainst}
+                  Possible vaccines:
+                </span>
                 <br />
-              </span>
-              <span>
-                <span className={'accordion-content-header'}>
-                  Relevant Locations:
-                </span>{' '}
-                {vaccination.relevantLocations}
-                <br />
-              </span>
-              <span>
-                <span className={'accordion-content-header'}>Description:</span>{' '}
-                {vaccination.description}
-                <br />
-              </span>
-              <span className={'accordion-content-header'}>
-                Possible vaccines:
-              </span>
-              <br />
-            </div>
-          </HStack>
+              </div>
+            </HStack>
+          </Box>
           <div
             style={{
               position: 'relative',
@@ -164,7 +179,7 @@ export function VaccineDetailPage() {
             </TableContainer>
           </div>
         </VStack>
-      </HStack>
-    </Flex>
+      </Flex>
+    </Box>
   );
 }

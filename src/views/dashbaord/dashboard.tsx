@@ -10,7 +10,10 @@ export default function Dashboard() {
     <Box>
       <Grid
         minH='100vh'
-        templateRows={{ base: 'repeat(11, 1fr)', md: 'repeat(12, 1fr)' }}
+        templateRows={{
+          base: '75px repeat(11, 1fr)',
+          md: '75px repeat(12, 1fr)',
+        }}
         templateColumns='auto repeat(11, 1fr)'
         gap={1}
       >
@@ -32,7 +35,7 @@ export default function Dashboard() {
           ></DashboardHeader>
         </GridItem>
         <GridItem rowSpan={{ base: 10, md: 11 }} colSpan={{ base: 12, md: 11 }}>
-          <Box h={'95%'} pl='0' pr='4' pt='2'>
+          <Box h={'95%'} pl='4' pr='4' pt='2'>
             <Outlet />
           </Box>
         </GridItem>
