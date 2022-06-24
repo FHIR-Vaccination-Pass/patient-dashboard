@@ -1,12 +1,20 @@
 import {
   Badge,
+  Box,
   BoxProps,
+  Button,
+  Divider,
   Flex,
-  List,
-  ListItem,
+  Heading,
+  Icon,
+  Stack,
+  Text,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { HistoryItems } from './vaccineHistoryMockData';
+import { FaVirus } from 'react-icons/fa';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface VaccineHistoryWidgetProps extends BoxProps {}
 
@@ -15,36 +23,74 @@ export const VaccineHistoryWidget = ({
 }: VaccineHistoryWidgetProps) => {
   const mockData = HistoryItems;
   return (
-    <Flex
+    <Stack
       maxW={'100%'}
       w={'full'}
       bg={useColorModeValue('white', 'gray.800')}
-      boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
-      rounded={'lg'}
+      boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.25)'
+      rounded={'xl'}
       h={'100%'}
-      overflowY={'hidden'}
+      justifyContent={'flex-start'}
+      p={'15px'}
+      overflow={'hidden'}
     >
-      <List spacing={3} p={5} overflowY={'scroll'} mt={4} mb={4}>
-        {mockData.map((item, index) => (
-          <ListItem
+      <Box p={'10px'}>
+        <Heading size={'md'} fontWeight={'bold'}>
+          Your personal vaccination history:{' '}
+        </Heading>
+      </Box>
+      <Divider mb={'10px'} />
+      <Stack overflowY={'scroll'} h={'100%'}>
+        {mockData.slice(0, 5).map((item, index) => (
+          <Stack
             borderRadius={'15px'}
             border={'1px solid'}
             borderColor={'gray.200'}
-            p={2}
-            pt={1}
-            pb={1}
             _hover={{
               textDecor: 'none',
               backgroundColor: 'brand.10',
             }}
           >
-            <Badge mr={2}>{item.date}</Badge> {item.name}{' '}
-            <Badge ml={2} colorScheme={'purple'}>
-              {item.medicalDoctor}
-            </Badge>
-          </ListItem>
+            <Flex>
+              <Icon
+                mt={'auto'}
+                mb={'auto'}
+                ml='3'
+                as={FaVirus}
+                color={'brand.400'}
+                fontSize={'30pt'}
+              />
+              <Box p='3'>
+                <Text fontWeight='bold'>Vaccine Name</Text>
+                <Text fontSize='md'>{item.name}</Text>
+              </Box>
+            </Flex>
+            <Divider />
+            <Flex mt={'0px !important'} wrap={'wrap'}>
+              <Box p='3'>
+                <Badge fontSize={'sm'} colorScheme='blue'>
+                  {item.date}
+                </Badge>
+              </Box>
+              <Box p='3'>
+                <Badge fontSize={'sm'} colorScheme='purple'>
+                  {item.medicalDoctor}
+                </Badge>
+              </Box>
+              <Box p='3'>
+                <Badge fontSize={'sm'} colorScheme='purple'>
+                  {item.desc}
+                </Badge>
+              </Box>
+            </Flex>
+          </Stack>
         ))}
-      </List>
-    </Flex>
+        <Link to={'history'}>
+          <Button w={'full'} colorScheme='brand.700' variant='ghost'>
+            See full vaccination history
+          </Button>
+        </Link>
+      </Stack>
+    </Stack>
   );
 };

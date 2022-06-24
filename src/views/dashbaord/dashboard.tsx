@@ -9,7 +9,7 @@ export default function Dashboard() {
   return (
     <Box>
       <Grid
-        minH='100vh'
+        h='100vh'
         templateRows={{
           base: '75px repeat(11, 1fr)',
           md: '75px repeat(12, 1fr)',
