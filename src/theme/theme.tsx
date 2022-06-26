@@ -18,7 +18,7 @@ const colors = {
     0: '#ffffff',
   },
   aviGreen: {
-    900: '#226a6d',
+    500: '#226a6d',
   },
   aviBeige: {
     900: '#ffe6ce',

@@ -10,7 +10,10 @@ export default function Dashboard() {
     <Box>
       <Grid
         h='100vh'
-        templateRows={{ base: 'repeat(11, 1fr)', md: 'repeat(12, 1fr)' }}
+        templateRows={{
+          base: '75px repeat(11, 1fr)',
+          md: '75px repeat(12, 1fr)',
+        }}
         templateColumns='auto repeat(11, 1fr)'
         gap={1}
       >
