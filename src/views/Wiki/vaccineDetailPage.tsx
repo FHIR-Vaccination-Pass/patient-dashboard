@@ -15,7 +15,6 @@ import {
   Image,
   Box,
 } from '@chakra-ui/react';
-import './vaccineWiki.css';
 import { InfoIcon } from '@chakra-ui/icons';
 import React from 'react';
 import WorldMap from '../../assets/WorldMaps/WorldMap.svg';

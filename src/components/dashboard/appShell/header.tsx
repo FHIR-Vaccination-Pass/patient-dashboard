@@ -3,18 +3,23 @@ import {
   Box,
   BoxProps,
   Flex,
-  Heading,
+  Icon,
+  IconButton,
   Image,
-  Modal,
-  Text,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   useColorModeValue,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import { MobileMenu } from './mobileMenu';
-import { Link } from 'react-router-dom';
-import VaccinationPass from '../../../assets/VaccinationPass.png';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import VaccinationPass from '../../../assets/VaccinationPassV2.png';
 import { useKeycloak } from '@react-keycloak/web';
 import { KeycloakProfile } from 'keycloak-js';
+import { HamburgerIcon } from '@chakra-ui/icons';
+import { IconType } from 'react-icons';
+import { FaBookMedical, FaRegCalendarAlt, FaSyringe } from 'react-icons/fa';
 
 interface DashboardProps extends BoxProps {
   onOpen: () => void;
@@ -22,103 +27,73 @@ interface DashboardProps extends BoxProps {
   isOpen: boolean;
 }
 
-export const DashboardHeader = ({
+interface LinkItemProps {
+  name: string;
+  icon: IconType;
+  link: string;
+}
+
+const LinkItems: Array<LinkItemProps> = [
+  { name: 'History', icon: FaSyringe, link: 'history' },
+  { name: 'Recommendations', icon: FaRegCalendarAlt, link: 'recommendations' },
+  { name: 'Wiki', icon: FaBookMedical, link: 'wiki' },
+];
+
+export const DashboardHeader: FC<DashboardProps> = ({
   onClose,
   onOpen,
   isOpen,
-  ...rest
-}: DashboardProps) => {
+}) => {
   const { keycloak } = useKeycloak();
   const [profile, setProfile] = useState<KeycloakProfile | undefined>();
   useEffect(() => {
     keycloak.loadUserProfile().then((p) => setProfile(p));
   }, [keycloak, keycloak.authenticated]);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   return (
-    <Flex
-      flexDir='row'
-      justifyContent={{ base: 'space-between', md: 'stretch' }}
-      h={'100px'}
-      w={'100%'}
-      {...rest}
-    >
+    <Box display={'block'} ref={menuRef} zIndex={'1000'}>
       <Flex
+        w={'95vw'}
         bg={useColorModeValue('white', 'gray.900')}
-        boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
-        borderRadius={'20px'}
-        mt={'10px'}
-        ml={'10px'}
-        p={'10px'}
-        h={'60px'}
-        alignItems={'center'}
-        display={{ base: 'block', md: 'none' }}
-        _hover={{ boxShadow: '0 4px 12px 0 rgba(0, 0, 0, 0.30)' }}
+        boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.25)'
+        borderRadius={'12px'}
+        m={'10px'}
         position='fixed'
         zIndex={'99'}
+        justifyContent={'space-between'}
+        alignItems={'center'}
+        p={'5px'}
+        h={'55px'}
       >
+        <Menu gutter={14}>
+          <MenuButton
+            as={IconButton}
+            aria-label='Options'
+            icon={<HamburgerIcon />}
+            w={6}
+            h={6}
+            m={'5px'}
+          />
+          <MenuList zIndex={'dropdown'}>
+            {LinkItems.map((navLink) => (
+              <MenuItem
+                onClick={() => {
+                  navigate('/dashboard/' + navLink.link);
+                }}
+                icon={<Icon as={navLink.icon} />}
+              >
+                {navLink.name}
+              </MenuItem>
+            ))}
+          </MenuList>
+        </Menu>
         <Link to={'/dashboard'}>
           <Image src={VaccinationPass} w={'200px'} align={'center'} />
         </Link>
+        <Avatar m={'5px'} w={'35px'} h={'35px'} src='avatar-1.jpg' />
       </Flex>
-
-      {/* Mobile */}
-      <Box
-        bg={useColorModeValue('white', 'gray.900')}
-        boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
-        borderRadius={'20px'}
-        w={'60px'}
-        h={'60px'}
-        mt={'10px'}
-        mr={'10px'}
-        display={{ base: 'flex', md: 'none' }}
-        position='fixed'
-        right={'0'}
-        zIndex={'99'}
-      >
-        <Flex m='auto' flexDir='column' w='100%' alignItems={'center'}>
-          <Flex align='center' onClick={onOpen}>
-            <Avatar size='md' src='avatar-1.jpg' />
-          </Flex>
-        </Flex>
-
-        <Modal
-          isOpen={isOpen}
-          onClose={onClose}
-          size={'full'}
-          isCentered={true}
-        >
-          <MobileMenu isOpen={isOpen} onClose={onClose} onOpen={onOpen}>
-            {' '}
-          </MobileMenu>
-        </Modal>
-      </Box>
-
-      {/* Desktop */}
-      <Box
-        bg={useColorModeValue('white', 'gray.900')}
-        boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
-        borderRadius={'20px'}
-        w={'250px'}
-        mt={'10px'}
-        mr={'10px'}
-        display={{ base: 'none', md: 'flex' }}
-        position={'absolute'}
-        right={'0'}
-      >
-        <Flex p='5%' flexDir='column' w='100%' alignItems={'flex-start'}>
-          <Link to={'profile'}>
-            <Flex align='center'>
-              <Avatar size='md' src='avatar-1.jpg' />
-              <Flex flexDir='column' ml={4} display={'flex'}>
-                <Heading as='h3' size='sm'>
-                  {profile && `${profile?.firstName} ${profile?.lastName}`}
-                </Heading>
-                <Text color='gray'>Admin</Text>
-              </Flex>
-            </Flex>
-          </Link>
-        </Flex>
-      </Box>
-    </Flex>
+    </Box>
   );
 };

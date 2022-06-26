@@ -1,6 +1,5 @@
 import { Box, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
-import { Sidebar } from '../../components/dashboard/appShell/sidebar';
 import { DashboardHeader } from '../../components/dashboard/appShell/header';
 
 export default function Dashboard() {
