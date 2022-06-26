@@ -17,24 +17,14 @@ export default function Dashboard() {
         templateColumns='auto repeat(11, 1fr)'
         gap={1}
       >
-        <GridItem
-          rowSpan={12}
-          colSpan={1}
-          display={{ base: 'none', md: 'flex' }}
-        >
-          <Sidebar
-            onClose={() => onClose}
-            display={{ base: 'none', md: 'flex' }}
-          />
-        </GridItem>
-        <GridItem colSpan={{ base: 12, md: 11 }} pos={'sticky'}>
+        <GridItem colSpan={12} pos={'sticky'}>
           <DashboardHeader
             isOpen={isOpen}
             onClose={onClose}
             onOpen={onOpen}
           ></DashboardHeader>
         </GridItem>
-        <GridItem rowSpan={{ base: 10, md: 11 }} colSpan={{ base: 12, md: 11 }}>
+        <GridItem rowSpan={{ base: 10, md: 11 }} colSpan={12}>
           <Box h={'95%'} pl='4' pr='4' pt='2'>
             <Outlet />
           </Box>
