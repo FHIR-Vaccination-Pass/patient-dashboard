@@ -5,6 +5,8 @@ import reportWebVitals from './reportWebVitals';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import { BrowserRouter } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
+import { Provider as ReduxProvider } from 'react-redux';
+import { store } from './core';
 import { theme } from './theme/theme';
 import AppRoutes from './routes';
 import keycloak from './core/keycloak';
@@ -25,11 +27,13 @@ ReactDOM.render(
       onEvent={eventLogger}
       onTokens={tokenLogger}
     >
-      <ChakraProvider theme={theme}>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </ChakraProvider>
+      <ReduxProvider store={store}>
+        <ChakraProvider theme={theme}>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </ChakraProvider>
+      </ReduxProvider>
     </ReactKeycloakProvider>
   </React.StrictMode>,
   root

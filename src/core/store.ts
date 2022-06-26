@@ -2,16 +2,18 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 import { userSliceReducer } from './services/user/user';
 import { fhirApi } from './services/fhir/fhir';
+import { serverApi } from './services/server/server';
 
 export const store = configureStore({
   reducer: {
     [fhirApi.reducerPath]: fhirApi.reducer,
+    [serverApi.reducerPath]: serverApi.reducer,
     user: userSliceReducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(fhirApi.middleware),
+    getDefaultMiddleware().concat(fhirApi.middleware, serverApi.middleware),
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
