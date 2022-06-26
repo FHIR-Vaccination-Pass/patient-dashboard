@@ -21,9 +21,9 @@ const RequireAuth: FC = ({ children }) => {
     if (initialized && !keycloak.authenticated) {
       keycloak.login();
     }
-  }, [initialized, keycloak]);
+  }, [initialized, keycloak, keycloak?.authenticated]);
 
-  return <>{initialized && keycloak.authenticated && children}</>;
+  return <>{initialized && keycloak?.authenticated && children}</>;
 };
 
 const AppRoutes: FC = () => (
