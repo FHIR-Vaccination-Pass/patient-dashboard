@@ -123,7 +123,7 @@ export const DashboardHeader = ({
               <Avatar size='md' src='avatar-1.jpg' />
               <Flex flexDir='column' ml={4} display={'flex'}>
                 <Heading as='h3' size='sm'>
-                  {`${profile?.firstName} ${profile?.lastName}`}
+                  {profile && `${profile?.firstName} ${profile?.lastName}`}
                 </Heading>
                 <Text color='gray'>Admin</Text>
               </Flex>
