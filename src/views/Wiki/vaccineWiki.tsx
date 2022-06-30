@@ -25,13 +25,7 @@ export function VaccineWiki() {
           <Link to={`/dashboard/wiki/${vaccination.name}`}>
             <HStack>
               <Text>{vaccination.name}</Text>
-              <IconButton
-                aria-label={'Get details'}
-                size={'lg'}
-                colorScheme='Gray'
-                variant='ghost'
-                icon={<ChevronRightIcon />}
-              ></IconButton>
+              <ChevronRightIcon />
             </HStack>
           </Link>
           <Divider mt={'10px'} />
