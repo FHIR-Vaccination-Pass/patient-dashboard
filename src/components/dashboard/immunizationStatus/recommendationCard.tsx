@@ -1,30 +1,39 @@
-import { Badge, Box, BoxProps, Flex, Icon, Text } from '@chakra-ui/react';
+import {
+  Badge,
+  Box,
+  BoxProps,
+  Flex,
+  Icon,
+  Text,
+  useToken,
+} from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { FaViruses } from 'react-icons/fa';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
+import { ImmunizationRecommendation } from '../../../core/models/immunizationRecommendation';
 
 interface RecommendationCardProps extends BoxProps {
-  recommendation: MockRecommendationProps;
+  status: ImmunizationRecommendation;
 }
 
-interface MockRecommendationProps {
-  diseaseName: string;
-  due: string;
-  code: string;
-}
-
-export const RecommendationCard: FC<RecommendationCardProps> = ({
-  recommendation,
-}) => {
+export const RecommendationCard: FC<RecommendationCardProps> = ({ status }) => {
+  const [color] = useToken(
+    // the key within the theme, in this case `theme.colors`
+    'colors',
+    // the subkey(s), resolving to `theme.colors.red.100`
+    [status.backgroundColor]
+    // a single fallback or fallback array matching the length of the previous arg
+  );
   return (
-    <Link to={`/dashboard/wiki/${recommendation.code}`}>
+    <Link to={`/dashboard/wiki/${status.code}`}>
       <Flex
         justifyContent={'space-between'}
         alignItems={'center'}
         borderRadius={'15px'}
         border={'1px solid'}
-        borderColor={'gray.200'}
+        borderColor={status.backgroundColor}
+        boxShadow={`0 0 5px 0.5px ${color}`}
       >
         <Flex>
           <Icon
@@ -36,11 +45,15 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
             fontSize={'30pt'}
           />
           <Box p='3'>
-            <Text fontWeight='bold'>{recommendation.diseaseName}</Text>
+            <Text fontWeight='bold'>{status.diseaseName}</Text>
             <Text>
               Due:
-              <Badge fontSize={'sm'} colorScheme='gray' ml={5}>
-                {recommendation.due}
+              <Badge
+                fontSize={'sm'}
+                colorScheme={status.backgroundColor}
+                ml={5}
+              >
+                {status.due.toDateString()}
               </Badge>
             </Text>
           </Box>

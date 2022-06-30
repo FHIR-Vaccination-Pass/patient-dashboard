@@ -3,16 +3,9 @@ import React from 'react';
 import { FaFolderOpen } from 'react-icons/fa';
 import { ImmunizationStatusCard } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 import { RecommendationCard } from '../../components/dashboard/immunizationStatus/recommendationCard';
-import {
-  CompleteStatus,
-  DefaultStatus,
-  DueStatus,
-  OverdueStatus,
-} from '../../components/dashboard/immunizationStatus/immunizationCardConfigurations';
-import {
-  MockRecommendationProps,
-  MockRecommendations,
-} from '../../core/mockData/mockRecommendation';
+import { DefaultStatus } from '../../components/dashboard/immunizationStatus/immunizationCardConfigurations';
+import { MockRecommendations } from '../../core/mockData/mockRecommendation';
+import { ImmunizationRecommendation } from '../../core/models/immunizationRecommendation';
 
 export function Overview() {
   return (
@@ -24,10 +17,8 @@ export function Overview() {
       <Stack gap={'3px'} pb={10}>
         {/* List recommendations  */}
         {MockRecommendations.length > 0 &&
-          MockRecommendations.map((recommendation: MockRecommendationProps) => (
-            <RecommendationCard
-              recommendation={recommendation}
-            ></RecommendationCard>
+          MockRecommendations.map((status: ImmunizationRecommendation) => (
+            <RecommendationCard status={status}></RecommendationCard>
           ))}
         {/* If no recommendations are listed */}
         {MockRecommendations.length <= 0 && (

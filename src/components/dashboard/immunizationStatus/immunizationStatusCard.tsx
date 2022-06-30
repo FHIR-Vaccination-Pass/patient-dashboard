@@ -1,9 +1,9 @@
 import { Flex, Icon, Stack, Text } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import { ImmunizationStatus } from '../../../core/models/immunizationStatus';
+import { AggregatedImmunizationStatus } from '../../../core/models/aggregatedImmunizationStatus';
 
 interface ImmunizationStatusCardProps {
-  status: ImmunizationStatus;
+  status: AggregatedImmunizationStatus;
 }
 
 export const ImmunizationStatusCard: FC<ImmunizationStatusCardProps> = ({

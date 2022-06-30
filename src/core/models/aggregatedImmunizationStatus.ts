@@ -1,6 +1,6 @@
 import { IconType } from 'react-icons';
 
-export interface ImmunizationStatus {
+export interface AggregatedImmunizationStatus {
   status: string;
   date: Date;
   iconColor: string;

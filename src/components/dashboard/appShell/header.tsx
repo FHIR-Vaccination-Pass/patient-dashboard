@@ -8,6 +8,7 @@ import {
   Modal,
   Text,
   useColorModeValue,
+  useToken,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { MobileMenu } from './mobileMenu';
