@@ -1,78 +1,48 @@
-import {
-  Badge,
-  Box,
-  Flex,
-  Grid,
-  GridItem,
-  Icon,
-  Stack,
-  Text,
-} from '@chakra-ui/react';
-import { ChevronRightIcon, InfoIcon } from '@chakra-ui/icons';
-import { FaViruses } from 'react-icons/fa';
+import { Box, Icon, Stack, Text } from '@chakra-ui/react';
 import React from 'react';
+import { FaFolderOpen } from 'react-icons/fa';
+import { ImmunizationStatusCard } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
+import { RecommendationCard } from '../../components/dashboard/immunizationStatus/recommendationCard';
+import {
+  CompleteStatus,
+  DefaultStatus,
+  DueStatus,
+  OverdueStatus,
+} from '../../components/dashboard/immunizationStatus/immunizationCardConfigurations';
+import {
+  MockRecommendationProps,
+  MockRecommendations,
+} from '../../core/mockData/mockRecommendation';
 
 export function Overview() {
   return (
-    <Grid
-      minH='100%'
-      maxH={'90vh'}
-      templateRows={'repeat(12, 1fr)'}
-      templateColumns='repeat(12, 1fr)'
-      gap={5}
-    >
-      {/* Mobile */}
-      <GridItem colSpan={12} rowSpan={2}>
-        <Flex
-          bg={'gray.100'}
-          borderRadius={'6px'}
-          w={'100%'}
-          h={'100%'}
-          justifyContent={'center'}
-          alignItems={'center'}
-        >
-          <InfoIcon color={'gray.500'} w={10} h={10} m={15} />
-          <Stack>
-            <Text fontWeight='bold' color={'gray.700'}>
-              No immunization record
-            </Text>
-            <Text color={'gray.700'}>
-              Your account is not asscociated with immunization data.
-            </Text>
-          </Stack>
-        </Flex>
-      </GridItem>
-      <GridItem colSpan={12} rowSpan={10}>
-        <Text color={'gray.500'} mb={5}>
-          Upcoming vaccinations
-        </Text>
-
-        <Flex
-          justifyContent={'space-between'}
-          borderRadius={'15px'}
-          border={'1px solid'}
-          borderColor={'gray.200'}
-          alignItems={'center'}
-        >
-          <Flex>
-            <Icon
-              mt={'auto'}
-              mb={'auto'}
-              ml='3'
-              as={FaViruses}
-              color={'brand.400'}
-              fontSize={'30pt'}
-            />
+    <Stack minH='100%' gap={'10px'}>
+      <ImmunizationStatusCard status={DefaultStatus}></ImmunizationStatusCard>
+      <Text color={'gray.500'} mb={5}>
+        Upcoming vaccinations
+      </Text>
+      <Stack gap={'3px'} pb={10}>
+        {/* List recommendations  */}
+        {MockRecommendations.length > 0 &&
+          MockRecommendations.map((recommendation: MockRecommendationProps) => (
+            <RecommendationCard
+              recommendation={recommendation}
+            ></RecommendationCard>
+          ))}
+        {/* If no recommendations are listed */}
+        {MockRecommendations.length <= 0 && (
+          <Stack
+            justifyContent={'space-between'}
+            alignItems={'center'}
+            mt={'45%'}
+          >
+            <Icon as={FaFolderOpen} color={'gray.200'} w={20} h={20} />
             <Box p='3'>
-              <Text fontWeight='bold'>Vaccine Name</Text>
-              <Badge fontSize={'sm'} colorScheme='blue'>
-                item.date
-              </Badge>
+              <Text color={'gray.400'}>No upcoming vaccinations</Text>
             </Box>
-          </Flex>
-          <ChevronRightIcon w={8} h={8} m={4} />
-        </Flex>
-      </GridItem>
-    </Grid>
+          </Stack>
+        )}
+      </Stack>
+    </Stack>
   );
 }
