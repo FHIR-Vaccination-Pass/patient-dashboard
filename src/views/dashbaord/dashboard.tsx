@@ -16,7 +16,7 @@ export default function Dashboard() {
         templateColumns='auto repeat(11, 1fr)'
         gap={1}
       >
-        <GridItem colSpan={12} pos={'sticky'}>
+        <GridItem colSpan={12} display={'flex'} justifyContent={'center'}>
           <DashboardHeader
             isOpen={isOpen}
             onClose={onClose}

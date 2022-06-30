@@ -3,13 +3,9 @@ import {
   Box,
   BoxProps,
   Flex,
-  Icon,
-  IconButton,
   Image,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
+  Portal,
+  useBoolean,
   useColorModeValue,
 } from '@chakra-ui/react';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -20,6 +16,7 @@ import { KeycloakProfile } from 'keycloak-js';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { IconType } from 'react-icons';
 import { FaBookMedical, FaRegCalendarAlt, FaSyringe } from 'react-icons/fa';
+import { NavItem } from './navitem';
 
 interface DashboardProps extends BoxProps {
   onOpen: () => void;
@@ -51,49 +48,63 @@ export const DashboardHeader: FC<DashboardProps> = ({
   }, [keycloak, keycloak.authenticated]);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [hideMenu, setHideMenu] = useBoolean();
 
   return (
-    <Box display={'block'} ref={menuRef} zIndex={'1000'}>
-      <Flex
-        w={'95vw'}
+    <>
+      <Box
         bg={useColorModeValue('white', 'gray.900')}
-        boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.25)'
-        borderRadius={'12px'}
         m={'10px'}
         position='fixed'
-        zIndex={'99'}
-        justifyContent={'space-between'}
-        alignItems={'center'}
-        p={'5px'}
         h={'55px'}
+        w={'95vw'}
+        ref={menuRef}
       >
-        <Menu gutter={14}>
-          <MenuButton
-            as={IconButton}
-            aria-label='Options'
-            icon={<HamburgerIcon />}
-            w={6}
-            h={6}
-            m={'5px'}
-          />
-          <MenuList zIndex={'dropdown'}>
-            {LinkItems.map((navLink) => (
-              <MenuItem
-                onClick={() => {
-                  navigate('/dashboard/' + navLink.link);
-                }}
-                icon={<Icon as={navLink.icon} />}
-              >
-                {navLink.name}
-              </MenuItem>
-            ))}
-          </MenuList>
-        </Menu>
-        <Link to={'/dashboard'}>
-          <Image src={VaccinationPass} w={'200px'} align={'center'} />
-        </Link>
-        <Avatar m={'5px'} w={'35px'} h={'35px'} src='avatar-1.jpg' />
-      </Flex>
-    </Box>
+        <Flex
+          borderRadius={'12px'}
+          boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.25)'
+          justifyContent={'space-between'}
+          alignItems={'center'}
+          zIndex={1000}
+          p={'5px'}
+        >
+          <HamburgerIcon w={6} h={6} m={'4px'} onClick={setHideMenu.toggle} />
+          <Link to={'/dashboard'}>
+            <Image src={VaccinationPass} w={'200px'} align={'center'} />
+          </Link>
+          <Avatar m={'5px'} w={'35px'} h={'35px'} src='avatar-1.jpg' />
+        </Flex>
+      </Box>
+
+      <Portal containerRef={menuRef}>
+        <Box
+          visibility={hideMenu ? 'visible' : 'hidden'}
+          opacity={hideMenu ? '1' : '0'}
+          bg={useColorModeValue('white', 'gray.900')}
+          boxShadow='0 4px 12px 0 rgba(0, 20, 0, 0.25)'
+          borderRadius={'0 0 12px 12px'}
+          position='fixed'
+          zIndex={'-5'}
+          w={'90vw'}
+          p={'5px'}
+          m={'2.5vw'}
+          mt={'0px'}
+          transition={'visibility 0s, opacity 0.25s ease-in-out'}
+        >
+          {LinkItems.map((navLink) => (
+            <NavItem
+              title={navLink.name}
+              icon={navLink.icon}
+              navSize={'large'}
+              active={false}
+              link={navLink.link}
+              onClose={setHideMenu.toggle}
+            >
+              {navLink.name}
+            </NavItem>
+          ))}
+        </Box>
+      </Portal>
+    </>
   );
 };
