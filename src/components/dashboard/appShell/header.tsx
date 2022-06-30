@@ -9,7 +9,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import VaccinationPass from '../../../assets/VaccinationPassV2.png';
 import { useKeycloak } from '@react-keycloak/web';
 import { KeycloakProfile } from 'keycloak-js';
@@ -36,18 +36,13 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Wiki', icon: FaBookMedical, link: 'wiki' },
 ];
 
-export const DashboardHeader: FC<DashboardProps> = ({
-  onClose,
-  onOpen,
-  isOpen,
-}) => {
+export const DashboardHeader: FC<DashboardProps> = ({}) => {
   const { keycloak } = useKeycloak();
   const [profile, setProfile] = useState<KeycloakProfile | undefined>();
   useEffect(() => {
     keycloak.loadUserProfile().then((p) => setProfile(p));
   }, [keycloak, keycloak.authenticated]);
   const menuRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const [hideMenu, setHideMenu] = useBoolean();
 
   return (

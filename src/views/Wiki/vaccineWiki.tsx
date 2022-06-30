@@ -1,11 +1,4 @@
-import {
-  Box,
-  Divider,
-  Heading,
-  HStack,
-  IconButton,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Divider, Heading, HStack, Text } from '@chakra-ui/react';
 import {
   getSomeVaccinations,
   Vaccination,
