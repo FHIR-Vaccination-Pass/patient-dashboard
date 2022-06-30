@@ -23,7 +23,7 @@ export default function Dashboard() {
             onOpen={onOpen}
           ></DashboardHeader>
         </GridItem>
-        <GridItem rowSpan={11} colSpan={{ base: 12, md: 11 }}>
+        <GridItem rowSpan={11} colSpan={12}>
           <Box h={'100%'} p='4'>
             <Outlet />
           </Box>
