@@ -4,10 +4,7 @@ import { FaFolderOpen } from 'react-icons/fa';
 import { ImmunizationStatusCard } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 import { RecommendationCard } from '../../components/dashboard/immunizationStatus/recommendationCard';
 import {
-  CompleteStatus,
   DefaultStatus,
-  DueStatus,
-  OverdueStatus,
 } from '../../components/dashboard/immunizationStatus/immunizationCardConfigurations';
 import {
   MockRecommendationProps,
