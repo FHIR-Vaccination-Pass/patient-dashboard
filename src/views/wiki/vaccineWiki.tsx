@@ -1,7 +1,7 @@
 import {
   Box,
   Divider,
-  HStack,
+  Flex,
   Text,
   useBoolean,
   useColorModeValue,
@@ -17,22 +17,13 @@ export function VaccineWiki() {
   const vaccinations: Vaccination[] = getSomeVaccinations();
   const [showInfo, setShowInfo] = useBoolean();
   return (
-    <Box>
-      <HStack position={'relative'}>
-        <Text fontSize={'2xl'} mb={'20px'} textAlign={'center'} ml={'3px'}>
+    <Box pb={5}>
+      <Flex justifyContent={'space-between'} alignItems={'center'} mb={'20px'}>
+        <Text fontSize={'2xl'} textAlign={'center'} ml={'3px'}>
           Immunization Wiki
         </Text>
-        <InfoIcon
-          boxSize={6}
-          style={{
-            position: 'absolute',
-            right: '15px',
-            top: '7px',
-            marginBottom: '20px',
-          }}
-          onClick={setShowInfo.toggle}
-        ></InfoIcon>
-      </HStack>
+        <InfoIcon mr={2} boxSize={6} onClick={setShowInfo.toggle}></InfoIcon>
+      </Flex>
       {showInfo && (
         <Text mb={'15px'} ml={'5px'} color={'gray.500'}>
           All information provided in this wiki are according to the STIKO. The
@@ -45,20 +36,21 @@ export function VaccineWiki() {
         boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
         borderRadius={'10px'}
         w={'100%'}
-        padding={'0px 15px 0px 15px'}
         mb={'10px'}
+        pl={5}
+        pr={5}
       >
         {vaccinations.map((vaccination) => (
           <div>
-            <Divider orientation='horizontal' mb={'10px'} />
             <Link to={`/dashboard/wiki/${vaccination.code}`}>
-              <HStack style={{ position: 'relative' }}>
-                <Text fontSize={'2xl'}>{vaccination.name}</Text>
-                <ChevronRightIcon
-                  boxSize={8}
-                  style={{ position: 'absolute', right: '0' }}
-                ></ChevronRightIcon>
-              </HStack>
+              <Flex
+                justifyContent={'space-between'}
+                alignItems={'center'}
+                pt={4}
+              >
+                <Text fontSize={'xl'}>{vaccination.name}</Text>
+                <ChevronRightIcon boxSize={8}></ChevronRightIcon>
+              </Flex>
             </Link>
             <Divider orientation='horizontal' mt={'10px'} />
           </div>
