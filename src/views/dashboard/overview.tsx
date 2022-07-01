@@ -1,52 +1,44 @@
-import { Grid, GridItem } from '@chakra-ui/react';
-import { VaccineHistoryWidget } from '../../components/dashboard/vaccineHistoryWidget/vaccineHistoryWidget';
+import { Box, Icon, Stack, Text } from '@chakra-ui/react';
+import React from 'react';
+import { FaFolderOpen } from 'react-icons/fa';
+import { ImmunizationStatusCard } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
+import { RecommendationCard } from '../../components/dashboard/immunizationStatus/recommendationCard';
+import { MockRecommendations } from '../../core/mockData/mockRecommendation';
+import { ImmunizationRecommendationRecommendation } from 'fhir/r4';
 
 export function Overview() {
   return (
-    <Grid
-      minH='100%'
-      maxH={'80vh'}
-      templateRows={'repeat(12, 1fr)'}
-      templateColumns='repeat(12, 1fr)'
-      gap={5}
-    >
-      {/* Desktop */}
-      <GridItem
-        display={{ base: 'none', md: 'grid' }}
-        colSpan={8}
-        rowSpan={6}
-        bg={'gray.300'}
-      ></GridItem>
-
-      <GridItem display={{ base: 'none', md: 'grid' }} rowSpan={12} colSpan={4}>
-        <VaccineHistoryWidget />
-      </GridItem>
-
-      <GridItem
-        display={{ base: 'none', md: 'grid' }}
-        colSpan={8}
-        rowSpan={6}
-        bg={'gray.300'}
-      ></GridItem>
-
-      {/* Mobile */}
-      <GridItem display={{ base: 'grid', md: 'none' }} colSpan={12} rowSpan={4}>
-        <VaccineHistoryWidget />
-      </GridItem>
-
-      <GridItem
-        display={{ base: 'grid', md: 'none' }}
-        colSpan={12}
-        rowSpan={4}
-        bg={'gray.300'}
-      ></GridItem>
-
-      <GridItem
-        display={{ base: 'grid', md: 'none' }}
-        colSpan={12}
-        rowSpan={4}
-        bg={'gray.300'}
-      ></GridItem>
-    </Grid>
+    <Stack minH='100%' gap={'10px'}>
+      <ImmunizationStatusCard
+        recommendations={MockRecommendations[0].recommendation}
+      ></ImmunizationStatusCard>
+      <Text color={'gray.500'} mb={5}>
+        Upcoming vaccinations
+      </Text>
+      <Stack gap={'3px'} pb={10}>
+        {/* List recommendations  */}
+        {MockRecommendations[0].recommendation.length > 0 &&
+          MockRecommendations[0].recommendation.map(
+            (recommendation: ImmunizationRecommendationRecommendation) => (
+              <RecommendationCard
+                configuration={recommendation}
+              ></RecommendationCard>
+            )
+          )}
+        {/* If no recommendations are listed */}
+        {MockRecommendations.length <= 0 && (
+          <Stack
+            justifyContent={'space-between'}
+            alignItems={'center'}
+            mt={'45%'}
+          >
+            <Icon as={FaFolderOpen} color={'gray.200'} w={20} h={20} />
+            <Box p='3'>
+              <Text color={'gray.400'}>No upcoming vaccinations</Text>
+            </Box>
+          </Stack>
+        )}
+      </Stack>
+    </Stack>
   );
 }

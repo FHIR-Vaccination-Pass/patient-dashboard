@@ -36,7 +36,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Wiki', icon: FaBookMedical, link: 'wiki' },
 ];
 
-export const DashboardHeader: FC<DashboardProps> = ({}) => {
+export const DashboardHeader: FC<DashboardProps> = () => {
   const { keycloak } = useKeycloak();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profile, setProfile] = useState<KeycloakProfile | undefined>();
@@ -55,13 +55,13 @@ export const DashboardHeader: FC<DashboardProps> = ({}) => {
         h={'55px'}
         w={'95vw'}
         ref={menuRef}
+        zIndex={1000}
       >
         <Flex
           borderRadius={'12px'}
           boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.25)'
           justifyContent={'space-between'}
           alignItems={'center'}
-          zIndex={1000}
           p={'5px'}
         >
           <HamburgerIcon w={6} h={6} m={'4px'} onClick={setHideMenu.toggle} />

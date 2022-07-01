@@ -1,21 +1,21 @@
 import {
-  HStack,
-  VStack,
-  Heading,
-  useColorModeValue,
-  Flex,
-  IconButton,
-  TableContainer,
-  Td,
-  Table,
-  Thead,
-  Th,
-  Tbody,
-  Tr,
-  Image,
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Badge,
   Box,
+  Flex,
+  Heading,
+  HStack,
+  Image,
+  ListItem,
+  Text,
+  UnorderedList,
+  useColorModeValue,
+  VStack,
 } from '@chakra-ui/react';
-import { InfoIcon } from '@chakra-ui/icons';
 import React from 'react';
 import WorldMap from '../../assets/worldMaps/WorldMap.svg';
 
@@ -32,15 +32,10 @@ export function VaccineDetailPage() {
       '                        for use based on all the available data on safety and efficacy and on its suitability in low-\n' +
       '                        and middle-income countries.\n' +
       '                        Vaccines are assessed to ensure they meet acceptable standards of quality, safety and efficacy\n' +
-      '                        using clinical trial data,\n' +
-      '                        manufacturing and quality control processes.\n' +
-      '                        The assessment weighs the threat posed by the emergency as well as the benefit that would accrue\n' +
-      '                        from the use of the product against any potential risks.\n' +
-      '                        In line with their national regulations and legislation, countries have the autonomy to issue\n' +
-      '                        emergency use authorizations for any health product.\n' +
-      '                        Domestic emergency use authorizations are issued at the discretion of countries and not subject\n' +
-      '                        to WHO approval.',
+      '                        using clinical trial data.',
     risks: ['Headache', 'fever', 'pain around the puncture site', 'Dizziness'],
+    ageStart: 0,
+    ageEnd: 99,
     vaccines: [
       {
         name: 'Corminaty',
@@ -74,7 +69,7 @@ export function VaccineDetailPage() {
     relevantLocations: ['Global'],
   };
   return (
-    <Box>
+    <Box pb={5}>
       <div>
         <Image
           src={WorldMap}
@@ -86,11 +81,10 @@ export function VaccineDetailPage() {
       <Flex
         bg={useColorModeValue('white', 'gray.900')}
         boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
-        borderRadius={'30px'}
+        borderRadius={'15px'}
         w={'100%'}
-        style={{ marginBottom: '20px' }}
         position={'relative'}
-        zIndex={'-1'}
+        zIndex={'0'}
       >
         <VStack
           style={{
@@ -98,86 +92,117 @@ export function VaccineDetailPage() {
             width: '100%',
           }}
         >
-          <IconButton
-            colorScheme='aviGreen'
-            aria-label='information'
-            size='lg'
-            icon={<InfoIcon />}
+          <Box
+            backgroundColor={'gray.200'}
+            h={'60px'}
+            alignItems={'center'}
             style={{ cursor: 'default', width: '100%' }}
-            borderRadius={'20px 20px 0 0'}
-          />
-          <Box marginLeft={'10px !important'}>
-            <Heading style={{ alignSelf: 'flex-start' }} fontSize={'lg'}>
-              {vaccination.name}
-            </Heading>
-            <HStack>
-              <div className={'vaccination-description'}>
-                <span>
-                  <span className={'accordion-content-header'}>Disease:</span>{' '}
-                  {vaccination.name}
-                  <br />
-                </span>
-                <span>
-                  <span className={'accordion-content-header'}>
-                    Immunization against:
-                  </span>{' '}
-                  {vaccination.immunizationAgainst}
-                  <br />
-                </span>
-                <span>
-                  <span className={'accordion-content-header'}>
-                    Relevant Locations:
-                  </span>{' '}
-                  {vaccination.relevantLocations}
-                  <br />
-                </span>
-                <span>
-                  <span className={'accordion-content-header'}>
-                    Description:
-                  </span>{' '}
-                  {vaccination.description}
-                  <br />
-                </span>
-                <span className={'accordion-content-header'}>
-                  Possible vaccines:
-                </span>
-                <br />
-              </div>
-            </HStack>
-          </Box>
-          <div
-            style={{
-              position: 'relative',
-              width: '90%',
-              alignSelf: 'self-start',
-            }}
+            borderRadius={'15px 15px 0 0'}
+            display={'flex'}
           >
-            <TableContainer>
-              <Table variant='simple'>
-                <Thead>
-                  <Tr>
-                    <Th>Vaccine</Th>
-                    <Th>Manufacturer</Th>
-                    <Th isNumeric>Number of doses</Th>
-                    <Th isNumeric>Recommended age</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {vaccination.vaccines.map((vaccine) => (
-                    <Tr>
-                      <Td>{vaccine.name}</Td>
-                      <Td>{vaccine.manufacturer}</Td>
-                      <Td isNumeric>{vaccine.numberOfDoses}</Td>
-                      <Td isNumeric>
-                        {vaccine.recommendedAgeStart} -{' '}
-                        {vaccine.recommendedAgeEnd}
-                      </Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
-          </div>
+            <Text ml={'20px'} fontSize={'xl'}>
+              {vaccination.name}
+            </Text>
+          </Box>
+          <VStack
+            marginLeft={'20px !important'}
+            marginRight={'20px !important'}
+            display={'block'}
+          >
+            <Box mb={'20px'}>
+              <Heading
+                as='h4'
+                size='md'
+                fontWeight={'normal'}
+                mt={'10px'}
+                mb={'10px'}
+              >
+                Disease Description
+              </Heading>
+              <Text color={'gray.500'}>{vaccination.description}</Text>
+            </Box>
+            <Box mb={'20px'}>
+              <Heading
+                as='h4'
+                size='md'
+                fontWeight={'normal'}
+                mt={'10px'}
+                mb={'10px'}
+              >
+                Recommendations
+              </Heading>
+              <Text color={'gray.500'}>
+                The STIKO recommends start immunization for {vaccination.name}{' '}
+                earlies from age {vaccination.ageStart} and latest until age{' '}
+                {vaccination.ageEnd}.
+              </Text>
+            </Box>
+            <Box mb={'20px'}>
+              <Heading
+                as='h4'
+                size='md'
+                fontWeight={'normal'}
+                mt={'10px'}
+                mb={'10px'}
+              >
+                Affected Locations
+              </Heading>
+              <UnorderedList color={'gray.500'}>
+                {vaccination.relevantLocations.map((location) => (
+                  <ListItem ml={'10px'}>{location}</ListItem>
+                ))}
+              </UnorderedList>
+            </Box>
+            <Box mb={'20px'}>
+              <Heading
+                as='h4'
+                size='md'
+                fontWeight={'normal'}
+                mt={'10px'}
+                mb={'15px'}
+              >
+                Vaccines
+              </Heading>
+              <Accordion defaultIndex={[]} allowMultiple mb={'20px'}>
+                {vaccination.vaccines.map((vaccine) => (
+                  <AccordionItem>
+                    <AccordionButton>
+                      <Box flex='1' textAlign='left'>
+                        {vaccine.name}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4} mr={'-15px'}>
+                      <HStack position={'relative'}>
+                        <Text>Manufacturer:</Text>
+                        <Badge
+                          colorScheme={'blue'}
+                          textAlign={'center'}
+                          position={'absolute'}
+                          right={'0px'}
+                          minW={'100px'}
+                        >
+                          {vaccine.manufacturer}
+                        </Badge>
+                      </HStack>
+                      <HStack position={'relative'}>
+                        <Text>Number of Dosis:</Text>
+                        <Box
+                          width={'100px'}
+                          backgroundColor={'gray.100'}
+                          textAlign={'center'}
+                          position={'absolute'}
+                          right={'0px'}
+                        >
+                          <Text fontSize={'xs'}>{vaccine.numberOfDoses}</Text>
+                        </Box>
+                      </HStack>
+                    </AccordionPanel>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </Box>
+          </VStack>
         </VStack>
       </Flex>
     </Box>
