@@ -38,7 +38,7 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
         <Flex justifyContent={'space-between'} w={'90%'}>
           <Box p='3'>
             <Text fontWeight='bold'>{configuration.targetDisease?.text}</Text>
-            <Text>
+            <Text textColor={'gray'}>
               Due:
               <Badge
                 fontSize={'sm'}
