@@ -1,5 +1,6 @@
 export interface Vaccination {
   name: string;
+  code: 'Z98';
   immunizationAgainst: string;
   description: string;
   vaccine: Vaccine;
@@ -16,6 +17,7 @@ export function getSomeVaccinations(): Vaccination[] {
   return [
     {
       name: 'Coronavirus',
+      code: 'Z98',
       immunizationAgainst: 'string;',
       description:
         'There are several COVID-19 vaccines validated for use by WHO (given Emergency Use Listing).\n' +
@@ -38,6 +40,7 @@ export function getSomeVaccinations(): Vaccination[] {
     } as unknown as Vaccination,
     {
       name: 'Tetanus',
+      code: 'Z99',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
@@ -45,6 +48,7 @@ export function getSomeVaccinations(): Vaccination[] {
     } as unknown as Vaccination,
     {
       name: 'Malaria',
+      code: 'Z18',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
@@ -52,6 +56,7 @@ export function getSomeVaccinations(): Vaccination[] {
     } as unknown as Vaccination,
     {
       name: 'Streptokokken',
+      code: 'Z28',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
@@ -59,6 +64,103 @@ export function getSomeVaccinations(): Vaccination[] {
     } as unknown as Vaccination,
     {
       name: 'Mumps',
+      code: 'Z38',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Tetanus',
+      code: 'Z99',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Malaria',
+      code: 'Z18',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Streptokokken',
+      code: 'Z28',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Mumps',
+      code: 'Z38',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Tetanus',
+      code: 'Z99',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Malaria',
+      code: 'Z18',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Streptokokken',
+      code: 'Z28',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Mumps',
+      code: 'Z38',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Tetanus',
+      code: 'Z99',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Malaria',
+      code: 'Z18',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Streptokokken',
+      code: 'Z28',
+      immunizationAgainst: 'string;',
+      description: 'string;',
+      vaccine: null,
+      relevantLocations: ['Asien'],
+    } as unknown as Vaccination,
+    {
+      name: 'Mumps',
+      code: 'Z38',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,

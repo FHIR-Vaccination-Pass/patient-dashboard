@@ -17,12 +17,13 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import React from 'react';
-import WorldMap from '../../assets/WorldMaps/WorldMap.svg';
+import WorldMap from '../../assets/worldMaps/WorldMap.svg';
 
 export function VaccineDetailPage() {
   const vaccination = {
     name: 'Coronavirus',
     immunizationAgainst: 'Covid-19',
+    code: 'Z98',
     description:
       'There are several COVID-19 vaccines validated for use by WHO (given Emergency Use Listing).\n' +
       '                        The first mass vaccination programme started in early December 2020 and the number of\n' +
