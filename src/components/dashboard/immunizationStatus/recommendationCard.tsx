@@ -33,8 +33,6 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
         justifyContent={'space-between'}
         alignItems={'center'}
         borderRadius={'15px'}
-        border={'1px solid'}
-        borderColor={color}
         boxShadow={`0 0 2px 0.5px ${color}`}
       >
         <Flex justifyContent={'space-between'} w={'90%'}>
