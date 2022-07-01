@@ -7,7 +7,6 @@ import {
   Portal,
   useBoolean,
   useColorModeValue,
-  useToken,
 } from '@chakra-ui/react';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -37,7 +36,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Wiki', icon: FaBookMedical, link: 'wiki' },
 ];
 
-export const DashboardHeader: FC<DashboardProps> = ({}) => {
+export const DashboardHeader: FC<DashboardProps> = () => {
   const { keycloak } = useKeycloak();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profile, setProfile] = useState<KeycloakProfile | undefined>();

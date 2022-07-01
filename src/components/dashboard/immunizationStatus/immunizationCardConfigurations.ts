@@ -3,8 +3,6 @@ import {
   FaExclamationCircle,
   FaInfoCircle,
   FaRegCheckCircle,
-  FaRegClock,
-  FaSyringe,
 } from 'react-icons/fa';
 
 export const MissingHistoryStatus: AggregatedImmunizationStatus = {
