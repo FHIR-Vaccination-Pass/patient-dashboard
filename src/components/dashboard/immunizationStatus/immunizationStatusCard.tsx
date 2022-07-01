@@ -47,7 +47,7 @@ export const ImmunizationStatusCard: FC<ImmunizationStatusCardProps> = ({
 function calcAggregateImmunizationStatus(
   recommendations: ImmunizationRecommendationRecommendation[]
 ): AggregatedImmunizationStatus {
-  // If no recommendations or no recomendation status fields set, then immunization complete
+  // If no recommendations or no recommendation status fields set, then immunization complete
   let aggregatedImmunizationStatus = CompleteStatus;
   // Do later: Check history and recommendations to set missing history status
   let currentStatus: string | undefined = '';
@@ -55,7 +55,6 @@ function calcAggregateImmunizationStatus(
     (recommendation: ImmunizationRecommendationRecommendation) => {
       currentStatus = recommendation.forecastStatus.text;
       // When current status is undefined then don't change anything.
-      console.log('currentStatus: ' + currentStatus);
       if (currentStatus !== undefined) {
         // Due > Complete & MissingHistory
         if (
@@ -77,6 +76,5 @@ function calcAggregateImmunizationStatus(
       }
     }
   );
-  console.log(aggregatedImmunizationStatus);
   return aggregatedImmunizationStatus;
 }
