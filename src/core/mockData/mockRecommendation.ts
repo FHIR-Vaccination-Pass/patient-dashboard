@@ -1,56 +1,60 @@
-import { ImmunizationRecommendation } from '../models/immunizationRecommendation';
+import { PersonalImmunizationRecommendation } from '../models/personalImmunizationRecommendation';
+import { SingleImmunizationRecommendation } from '../models/singleImmunizationRecommendation';
 
-export const MockRecommendations: Array<ImmunizationRecommendation> = [
-  new ImmunizationRecommendation(
-    'A',
+export const MockRecommendations: Array<PersonalImmunizationRecommendation> = [
+  new PersonalImmunizationRecommendation(
+    '01.01.1900',
+    {},
     [
-      {
-        code: { coding: [{ code: '30981-5' }] },
-        value: '22-03-2022',
-      },
+      new SingleImmunizationRecommendation(
+        'A',
+        [
+          {
+            code: { coding: [{ code: '30981-5' }] },
+            value: '22-03-2022',
+          },
+        ],
+        { text: '' },
+        undefined,
+        { text: 'Disease A' }
+      ),
+      new SingleImmunizationRecommendation(
+        'B',
+        [
+          {
+            code: { coding: [{ code: '30981-5' }] },
+            value: '22-03-2022',
+          },
+        ],
+        { text: 'due' },
+        undefined,
+        { text: 'Disease B' }
+      ),
+      new SingleImmunizationRecommendation(
+        'A',
+        [
+          {
+            code: { coding: [{ code: '30981-5' }] },
+            value: '22-03-2022',
+          },
+        ],
+        { text: 'overdue' },
+        undefined,
+        { text: 'Disease C' }
+      ),
+      new SingleImmunizationRecommendation(
+        'A',
+        [
+          {
+            code: { coding: [{ code: '30981-5' }] },
+            value: '22-03-2022',
+          },
+        ],
+        { text: 'due' },
+        undefined,
+        { text: 'Disease D' }
+      ),
     ],
-    { text: 'complete' },
-    undefined,
-    { text: 'Disease A' },
-    false
-  ),
-  new ImmunizationRecommendation(
-    'B',
-    [
-      {
-        code: { coding: [{ code: '30981-5' }] },
-        value: '22-03-2022',
-      },
-    ],
-    { text: 'due' },
-    undefined,
-    { text: 'Disease B' },
-    false
-  ),
-  new ImmunizationRecommendation(
-    'A',
-    [
-      {
-        code: { coding: [{ code: '30981-5' }] },
-        value: '22-03-2022',
-      },
-    ],
-    { text: 'overdue' },
-    undefined,
-    { text: 'Disease C' },
-    false
-  ),
-  new ImmunizationRecommendation(
-    'A',
-    [
-      {
-        code: { coding: [{ code: '30981-5' }] },
-        value: '22-03-2022',
-      },
-    ],
-    { text: 'due' },
-    undefined,
-    { text: 'Disease D' },
-    false
+    'ImmunizationRecommendation'
   ),
 ];

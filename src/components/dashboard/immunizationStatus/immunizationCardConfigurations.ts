@@ -1,5 +1,6 @@
 import { AggregatedImmunizationStatus } from '../../../core/models/aggregatedImmunizationStatus';
 import {
+  FaExclamationCircle,
   FaInfoCircle,
   FaRegCheckCircle,
   FaRegClock,
@@ -28,7 +29,7 @@ export const CompleteStatus: AggregatedImmunizationStatus = {
 export const DueStatus: AggregatedImmunizationStatus = {
   status: 'due',
   iconColor: 'orange.500',
-  icon: FaSyringe,
+  icon: FaInfoCircle,
   backgroundColor: 'orange.100',
   headline: 'Immunization due',
   subline:
@@ -38,7 +39,7 @@ export const DueStatus: AggregatedImmunizationStatus = {
 export const OverdueStatus: AggregatedImmunizationStatus = {
   status: 'overdue',
   iconColor: 'red.500',
-  icon: FaRegClock,
+  icon: FaExclamationCircle,
   backgroundColor: 'red.100',
   headline: 'Immunization overdue',
   subline:

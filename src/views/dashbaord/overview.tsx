@@ -3,23 +3,28 @@ import React from 'react';
 import { FaFolderOpen } from 'react-icons/fa';
 import { ImmunizationStatusCard } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 import { RecommendationCard } from '../../components/dashboard/immunizationStatus/recommendationCard';
-import { DefaultStatus } from '../../components/dashboard/immunizationStatus/immunizationCardConfigurations';
 import { MockRecommendations } from '../../core/mockData/mockRecommendation';
-import { ImmunizationRecommendation } from '../../core/models/immunizationRecommendation';
+import { ImmunizationRecommendationRecommendation } from 'fhir/r4';
 
 export function Overview() {
   return (
     <Stack minH='100%' gap={'10px'}>
-      <ImmunizationStatusCard status={DefaultStatus}></ImmunizationStatusCard>
+      <ImmunizationStatusCard
+        recommendations={MockRecommendations[0].recommendation}
+      ></ImmunizationStatusCard>
       <Text color={'gray.500'} mb={5}>
         Upcoming vaccinations
       </Text>
       <Stack gap={'3px'} pb={10}>
         {/* List recommendations  */}
-        {MockRecommendations.length > 0 &&
-          MockRecommendations.map((status: ImmunizationRecommendation) => (
-            <RecommendationCard status={status}></RecommendationCard>
-          ))}
+        {MockRecommendations[0].recommendation.length > 0 &&
+          MockRecommendations[0].recommendation.map(
+            (recommendation: ImmunizationRecommendationRecommendation) => (
+              <RecommendationCard
+                configuration={recommendation}
+              ></RecommendationCard>
+            )
+          )}
         {/* If no recommendations are listed */}
         {MockRecommendations.length <= 0 && (
           <Stack

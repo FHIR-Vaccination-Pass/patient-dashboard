@@ -4,7 +4,7 @@ import {
   ImmunizationRecommendationRecommendationDateCriterion,
 } from 'fhir/r4';
 
-export class ImmunizationRecommendation
+export class SingleImmunizationRecommendation
   implements ImmunizationRecommendationRecommendation
 {
   id: string | undefined;
@@ -14,7 +14,6 @@ export class ImmunizationRecommendation
   forecastStatus: CodeableConcept;
   forecastReason: CodeableConcept[] | undefined;
   targetDisease: CodeableConcept | undefined;
-  isDeactivated: boolean;
 
   constructor(
     id: string | undefined,
@@ -23,14 +22,12 @@ export class ImmunizationRecommendation
       | undefined,
     forecastStatus: CodeableConcept,
     forecastReason: CodeableConcept[] | undefined,
-    targetDisease: CodeableConcept | undefined,
-    isDeactivated: boolean
+    targetDisease: CodeableConcept | undefined
   ) {
     this.id = id;
     this.dateCriterion = dateCriterion;
     this.forecastStatus = forecastStatus;
     this.forecastReason = forecastReason;
     this.targetDisease = targetDisease;
-    this.isDeactivated = isDeactivated;
   }
 }
