@@ -10,7 +10,6 @@ import {
   getSomeVaccinations,
   Vaccination,
 } from '../../core/mockData/vaccination';
-import './vaccineWiki.css';
 import { ChevronRightIcon, InfoIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
 
