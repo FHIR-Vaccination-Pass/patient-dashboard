@@ -4,14 +4,14 @@ import { Route, Navigate, Routes } from 'react-router-dom';
 import { useKeycloak } from '@react-keycloak/web';
 import { FC, useEffect } from 'react';
 import { LandingPage } from './views/landingpage';
-import Dashboard from './views/dashbaord/dashboard';
-import { Overview } from './views/dashbaord/overview';
-import { VaccineHistory } from './views/dashbaord/vaccineHistory';
-import { VaccineRecommendations } from './views/dashbaord/vaccineRecommendations';
+import Dashboard from './views/dashboard/dashboard';
+import { Overview } from './views/dashboard/overview';
+import { VaccineHistory } from './views/dashboard/vaccineHistory';
+import { VaccineRecommendations } from './views/dashboard/vaccineRecommendations';
 import { VaccineWiki } from './views/wiki/vaccineWiki';
 import { VaccineDetailPage } from './views/wiki/vaccineDetailPage';
-import { Profile } from './views/dashbaord/profile';
-import { Settings } from './views/dashbaord/settings';
+import { Profile } from './views/dashboard/profile';
+import { Settings } from './views/dashboard/settings';
 import NotFound from './views/NotFound';
 
 const RequireAuth: FC = ({ children }) => {

@@ -1,6 +1,6 @@
 export interface Vaccination {
   name: string;
-  code: 'Z98',
+  code: 'Z98';
   immunizationAgainst: string;
   description: string;
   vaccine: Vaccine;
