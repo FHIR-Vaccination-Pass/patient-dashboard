@@ -1,19 +1,20 @@
 import {
-  HStack,
-  VStack,
-  Heading,
-  useColorModeValue,
-  Flex,
-  Image,
-  Box,
-  Text,
-  UnorderedList,
-  ListItem,
   Accordion,
-  AccordionItem,
   AccordionButton,
   AccordionIcon,
+  AccordionItem,
   AccordionPanel,
+  Badge,
+  Box,
+  Flex,
+  Heading,
+  HStack,
+  Image,
+  ListItem,
+  Text,
+  UnorderedList,
+  useColorModeValue,
+  VStack,
 } from '@chakra-ui/react';
 import React from 'react';
 import WorldMap from '../../assets/WorldMaps/WorldMap.svg';
@@ -168,20 +169,15 @@ export function VaccineDetailPage() {
                           <Box>
                             <HStack position={'relative'}>
                               <Text>Manufacturer:</Text>
-                              <Box
-                                width={'100px'}
-                                backgroundColor={'blue.100'}
+                              <Badge
+                                colorScheme={'blue'}
                                 textAlign={'center'}
                                 position={'absolute'}
                                 right={'0px'}
+                                minW={'100px'}
                               >
-                                <Text
-                                  fontSize={'xs'}
-                                  overflowWrap={'break-word'}
-                                >
-                                  {vaccine.manufacturer}
-                                </Text>
-                              </Box>
+                                {vaccine.manufacturer}
+                              </Badge>
                             </HStack>
                             <HStack position={'relative'}>
                               <Text>Number of Dosis:</Text>
