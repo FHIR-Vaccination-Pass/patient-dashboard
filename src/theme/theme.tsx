@@ -29,3 +29,20 @@ const colors = {
 };
 
 export const theme = extendTheme({ colors });
+
+export function getColorByStatus(status: string | undefined): string {
+  switch (status) {
+    case 'complete':
+      return 'green';
+    case 'immune':
+      return 'green';
+    case 'due':
+      return 'orange';
+    case 'overdue':
+      return 'red';
+    case 'contraindicated':
+      return 'gray';
+    default:
+      return 'gray';
+  }
+}
