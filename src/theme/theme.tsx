@@ -1,4 +1,6 @@
 import { extendTheme } from '@chakra-ui/react';
+import { IconType } from 'react-icons';
+import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 
 // Example Colors need to be adjusted to fit the chosen theme e.g. the AviMedical CI theme
 const colors = {
@@ -44,5 +46,24 @@ export function getColorByStatus(status: string | undefined): string {
       return 'gray';
     default:
       return 'gray';
+  }
+}
+
+export function getIconByStatus(
+  status: string | undefined
+): IconType | undefined {
+  switch (status) {
+    case 'complete':
+      return FaCheckCircle;
+    case 'immune':
+      return FaCheckCircle;
+    case 'due':
+      return FaExclamationTriangle;
+    case 'overdue':
+      return FaExclamationTriangle;
+    case 'contraindicated':
+      return undefined;
+    default:
+      return undefined;
   }
 }
