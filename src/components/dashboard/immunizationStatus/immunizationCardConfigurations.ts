@@ -1,24 +1,22 @@
-import { ImmunizationStatus } from '../../../core/models/immunizationStatus';
+import { AggregatedImmunizationStatus } from '../../../core/models/aggregatedImmunizationStatus';
 import {
+  FaExclamationCircle,
   FaInfoCircle,
   FaRegCheckCircle,
-  FaRegClock,
-  FaSyringe,
 } from 'react-icons/fa';
 
-export const DefaultStatus: ImmunizationStatus = {
+export const MissingHistoryStatus: AggregatedImmunizationStatus = {
   status: 'default',
-  date: new Date(Date.UTC(1998, 3, 22)),
   iconColor: 'gray.500',
   icon: FaInfoCircle,
   backgroundColor: 'gray.100',
   headline: 'No immunization record',
-  subline: 'Your account is not associated with immunization data.',
+  subline:
+    'Your account is not associated with immunization data. Please contact your medical doctor.',
 };
 
-export const CompleteStatus: ImmunizationStatus = {
-  status: 'default',
-  date: new Date(Date.UTC(1998, 3, 22)),
+export const CompleteStatus: AggregatedImmunizationStatus = {
+  status: 'complete',
   iconColor: 'green.500',
   icon: FaRegCheckCircle,
   backgroundColor: 'green.100',
@@ -26,22 +24,20 @@ export const CompleteStatus: ImmunizationStatus = {
   subline: 'You have all recommended vaccinations completed!',
 };
 
-export const DueStatus: ImmunizationStatus = {
-  status: 'default',
-  date: new Date(Date.UTC(1998, 3, 22)),
+export const DueStatus: AggregatedImmunizationStatus = {
+  status: 'due',
   iconColor: 'orange.500',
-  icon: FaSyringe,
+  icon: FaInfoCircle,
   backgroundColor: 'orange.100',
   headline: 'Immunization due',
   subline:
     'You have vaccinations that should be completed in less then a month!',
 };
 
-export const OverdueStatus: ImmunizationStatus = {
-  status: 'default',
-  date: new Date(Date.UTC(1998, 3, 22)),
+export const OverdueStatus: AggregatedImmunizationStatus = {
+  status: 'overdue',
   iconColor: 'red.500',
-  icon: FaRegClock,
+  icon: FaExclamationCircle,
   backgroundColor: 'red.100',
   headline: 'Immunization overdue',
   subline:
