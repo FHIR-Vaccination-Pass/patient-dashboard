@@ -6,19 +6,18 @@ import {
   FaSyringe,
 } from 'react-icons/fa';
 
-export const DefaultStatus: AggregatedImmunizationStatus = {
+export const MissingHistoryStatus: AggregatedImmunizationStatus = {
   status: 'default',
-  date: new Date(Date.UTC(1998, 3, 22)),
   iconColor: 'gray.500',
   icon: FaInfoCircle,
   backgroundColor: 'gray.100',
   headline: 'No immunization record',
-  subline: 'Your account is not associated with immunization data.',
+  subline:
+    'Your account is not associated with immunization data. Please contact your medical doctor.',
 };
 
 export const CompleteStatus: AggregatedImmunizationStatus = {
-  status: 'default',
-  date: new Date(Date.UTC(1998, 3, 22)),
+  status: 'complete',
   iconColor: 'green.500',
   icon: FaRegCheckCircle,
   backgroundColor: 'green.100',
@@ -27,8 +26,7 @@ export const CompleteStatus: AggregatedImmunizationStatus = {
 };
 
 export const DueStatus: AggregatedImmunizationStatus = {
-  status: 'default',
-  date: new Date(Date.UTC(1998, 3, 22)),
+  status: 'due',
   iconColor: 'orange.500',
   icon: FaSyringe,
   backgroundColor: 'orange.100',
@@ -38,8 +36,7 @@ export const DueStatus: AggregatedImmunizationStatus = {
 };
 
 export const OverdueStatus: AggregatedImmunizationStatus = {
-  status: 'default',
-  date: new Date(Date.UTC(1998, 3, 22)),
+  status: 'overdue',
   iconColor: 'red.500',
   icon: FaRegClock,
   backgroundColor: 'red.100',
