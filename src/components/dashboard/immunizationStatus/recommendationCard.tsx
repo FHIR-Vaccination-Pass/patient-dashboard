@@ -37,7 +37,7 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
           />
           <Box p='3'>
             <Text fontWeight='bold'>{recommendation.diseaseName}</Text>
-            <Text>
+            <Text textColor={'gray'}>
               Due:
               <Badge fontSize={'sm'} colorScheme='gray' ml={5}>
                 {recommendation.due}
