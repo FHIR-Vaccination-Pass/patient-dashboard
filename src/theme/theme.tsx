@@ -32,7 +32,10 @@ const colors = {
 
 export const theme = extendTheme({ colors });
 
-export function getColorByStatus(status: string | undefined): string {
+export function getColorByStatus(
+  status: string | undefined,
+  defaultColor: string
+): string {
   switch (status) {
     case 'complete':
       return 'green';
@@ -45,7 +48,7 @@ export function getColorByStatus(status: string | undefined): string {
     case 'contraindicated':
       return 'gray';
     default:
-      return 'gray';
+      return defaultColor;
   }
 }
 

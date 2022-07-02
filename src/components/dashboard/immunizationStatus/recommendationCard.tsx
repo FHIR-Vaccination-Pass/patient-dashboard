@@ -24,7 +24,7 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
     // the key within the theme, in this case `theme.colors`
     'colors',
     // the subkey(s), resolving to `theme.colors.red.100`
-    [getColorByStatus(configuration.forecastStatus.text) + '.300']
+    [getColorByStatus(configuration.forecastStatus.text, 'gray') + '.300']
     // a single fallback or fallback array matching the length of the previous arg
   );
   return (
@@ -43,7 +43,8 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
               <Badge
                 fontSize={'sm'}
                 colorScheme={getColorByStatus(
-                  configuration.forecastStatus.text
+                  configuration.forecastStatus.text,
+                  'gray'
                 )}
                 ml={5}
               >
@@ -59,7 +60,8 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
               ml='3'
               as={getIconByStatus(configuration.forecastStatus.text)}
               color={
-                getColorByStatus(configuration.forecastStatus.text) + '.400'
+                getColorByStatus(configuration.forecastStatus.text, 'gray') +
+                '.400'
               }
               w={6}
               h={6}

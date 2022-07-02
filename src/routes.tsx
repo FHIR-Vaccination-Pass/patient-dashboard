@@ -8,7 +8,7 @@ import Dashboard from './views/dashboard/dashboard';
 import { Overview } from './views/dashboard/overview';
 import { VaccineHistory } from './views/dashboard/vaccineHistory';
 import { VaccineRecommendations } from './views/dashboard/vaccineRecommendations';
-import { VaccineWiki } from './views/wiki/vaccineWiki';
+import { ImmunizationWiki } from './views/wiki/immunizationWiki';
 import { VaccineDetailPage } from './views/wiki/vaccineDetailPage';
 import { Profile } from './views/dashboard/profile';
 import { Settings } from './views/dashboard/settings';
@@ -40,7 +40,7 @@ const AppRoutes: FC = () => (
       <Route path='' element={<Overview />} />
       <Route path='history' element={<VaccineHistory />} />
       <Route path='recommendations' element={<VaccineRecommendations />} />
-      <Route path='wiki' element={<VaccineWiki />} />
+      <Route path='wiki' element={<ImmunizationWiki />} />
       <Route path='wiki/*' element={<VaccineDetailPage />} />
       <Route path='profile' element={<Profile />} />
       <Route path='settings' element={<Settings />} />
