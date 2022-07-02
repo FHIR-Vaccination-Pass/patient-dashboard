@@ -16,12 +16,7 @@ import { useKeycloak } from '@react-keycloak/web';
 import { KeycloakProfile } from 'keycloak-js';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { IconType } from 'react-icons';
-import {
-  FaBookMedical,
-  FaHome,
-  FaSignOutAlt,
-  FaSyringe,
-} from 'react-icons/fa';
+import { FaBookMedical, FaHome, FaSignOutAlt, FaSyringe } from 'react-icons/fa';
 import { NavItem } from './navitem';
 
 interface DashboardProps extends BoxProps {
