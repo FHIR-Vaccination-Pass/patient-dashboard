@@ -1,9 +1,8 @@
 import { ImmunizationRecommendationRecommendation } from 'fhir/r4';
 
-export interface Vaccination {
+export interface Disease {
   name: string;
   code: string;
-  immunizationAgainst: string;
   description: string;
   vaccine: Vaccine;
   relevantLocations: string[];
@@ -16,7 +15,7 @@ interface Vaccine {
 }
 
 // A test method to generate some vaccinations data TODO: Replace with proper data fetching
-export function getSomeVaccinations(): Vaccination[] {
+export function getSomeDiseases(): Disease[] {
   return [
     {
       name: 'Disease A',
@@ -40,7 +39,7 @@ export function getSomeVaccinations(): Vaccination[] {
         '                        to WHO approval.',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease B',
       code: 'Z99',
@@ -48,7 +47,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease C',
       code: 'Z18',
@@ -56,7 +55,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease D',
       code: 'Z28',
@@ -64,7 +63,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease E',
       code: 'Z38',
@@ -72,7 +71,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease F',
       code: 'Z99',
@@ -80,7 +79,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease G',
       code: 'Z18',
@@ -88,7 +87,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease H',
       code: 'Z28',
@@ -96,7 +95,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease I',
       code: 'Z38',
@@ -104,7 +103,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease J',
       code: 'Z99',
@@ -112,7 +111,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease K',
       code: 'Z18',
@@ -120,7 +119,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease L',
       code: 'Z28',
@@ -128,7 +127,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease M',
       code: 'Z38',
@@ -136,7 +135,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease N',
       code: 'Z99',
@@ -144,7 +143,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease O',
       code: 'Z18',
@@ -152,7 +151,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease P',
       code: 'Z28',
@@ -160,7 +159,7 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
       name: 'Disease Q',
       code: 'Z38',
@@ -168,6 +167,6 @@ export function getSomeVaccinations(): Vaccination[] {
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
   ];
 }

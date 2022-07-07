@@ -117,6 +117,8 @@ export const DashboardHeader: FC<DashboardProps> = () => {
             loadingText={'Logging out'}
             spinnerPlacement={'start'}
             fontWeight={'normal'}
+            width={'100%'}
+            justifyContent={'flex-start'}
           >
             Logout
           </Button>

@@ -7,10 +7,7 @@ import {
   useBoolean,
   useColorModeValue,
 } from '@chakra-ui/react';
-import {
-  getSomeVaccinations,
-  Vaccination,
-} from '../../core/mockData/vaccination';
+import { getSomeDiseases, Disease } from '../../core/mockData/disease';
 import { ChevronRightIcon, InfoIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
 import { MockRecommendations } from '../../core/mockData/mockRecommendation';
@@ -18,11 +15,11 @@ import { getColorByStatus, getIconByStatus } from '../../theme/theme';
 import React from 'react';
 
 export function ImmunizationWiki() {
-  const vaccinations: Vaccination[] = getSomeVaccinations();
+  const diseases: Disease[] = getSomeDiseases();
   const [showInfo, setShowInfo] = useBoolean();
   // Into each entry of a disease, add whether the user has a recommendation getting an immunization against that disease
   // TODO: Include completed immunizations
-  vaccinations.map((disease) => {
+  diseases.map((disease) => {
     disease.personalRecommendation = MockRecommendations[0].recommendation.find(
       (recommendation) => recommendation.targetDisease?.text === disease.name
     );
@@ -51,9 +48,9 @@ export function ImmunizationWiki() {
         pl={5}
         pr={5}
       >
-        {vaccinations.map((vaccination) => (
+        {diseases.map((disease) => (
           <div>
-            <Link to={`/dashboard/wiki/${vaccination.code}`}>
+            <Link to={`/dashboard/wiki/${disease.code}`}>
               <Flex
                 justifyContent={'space-between'}
                 alignItems={'center'}
@@ -62,28 +59,27 @@ export function ImmunizationWiki() {
                 <Text
                   fontSize={'xl'}
                   color={getColorByStatus(
-                    vaccination.personalRecommendation?.forecastStatus.text,
+                    disease.personalRecommendation?.forecastStatus.text,
                     'black'
                   )}
                 >
-                  {vaccination.name}
+                  {disease.name}
                 </Text>
                 <Flex justifyContent={'space-between'} alignItems={'center'}>
-                  {vaccination.personalRecommendation !== undefined &&
-                    vaccination.personalRecommendation.forecastStatus.text &&
-                    vaccination.personalRecommendation.forecastStatus.text
-                      .length > 0 && (
+                  {disease.personalRecommendation !== undefined &&
+                    disease.personalRecommendation.forecastStatus.text &&
+                    disease.personalRecommendation.forecastStatus.text.length >
+                      0 && (
                       <Icon
                         mt={'auto'}
                         mb={'auto'}
                         ml='3'
                         as={getIconByStatus(
-                          vaccination.personalRecommendation.forecastStatus.text
+                          disease.personalRecommendation.forecastStatus.text
                         )}
                         color={
                           getColorByStatus(
-                            vaccination.personalRecommendation.forecastStatus
-                              .text,
+                            disease.personalRecommendation.forecastStatus.text,
                             'black'
                           ) + '.400'
                         }
