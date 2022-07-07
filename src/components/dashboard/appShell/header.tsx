@@ -46,7 +46,7 @@ export const DashboardHeader: FC<DashboardProps> = () => {
   }, [keycloak, keycloak.authenticated]);
   const menuRef = useRef<HTMLDivElement>(null);
   const [hideMenu, setHideMenu] = useBoolean();
-  const [LogoutLoading, setLogoutLoading] = useBoolean(false);
+  const [logoutLoading, setLogoutLoading] = useBoolean(false);
   const logout = useCallback(() => {
     setLogoutLoading.on();
     keycloak.logout();
