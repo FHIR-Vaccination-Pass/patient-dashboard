@@ -106,7 +106,7 @@ export const DashboardHeader: FC<DashboardProps> = () => {
             </NavItem>
           ))}
           <Button
-            isLoading={LogoutLoading}
+            isLoading={logoutLoading}
             leftIcon={<FaSignOutAlt />}
             colorScheme='red'
             variant='ghost'
