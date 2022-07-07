@@ -11,7 +11,11 @@ import { getSomeDiseases, Disease } from '../../core/mockData/disease';
 import { ChevronRightIcon, InfoIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
 import { MockRecommendations } from '../../core/mockData/mockRecommendation';
-import { getColorByStatus, getIconByStatus } from '../../theme/theme';
+import {
+  getColorByStatus,
+  getIconByStatus,
+  VaccinationStatus,
+} from '../../theme/theme';
 import React from 'react';
 
 export function ImmunizationWiki() {
@@ -23,6 +27,7 @@ export function ImmunizationWiki() {
     disease.personalRecommendation = MockRecommendations[0].recommendation.find(
       (recommendation) => recommendation.targetDisease?.text === disease.name
     );
+    return disease;
   });
   return (
     <Box pb={5}>
@@ -59,7 +64,8 @@ export function ImmunizationWiki() {
                 <Text
                   fontSize={'xl'}
                   color={getColorByStatus(
-                    disease.personalRecommendation?.forecastStatus.text,
+                    disease.personalRecommendation?.forecastStatus
+                      .text as VaccinationStatus,
                     'black'
                   )}
                 >
@@ -75,11 +81,13 @@ export function ImmunizationWiki() {
                         mb={'auto'}
                         ml='3'
                         as={getIconByStatus(
-                          disease.personalRecommendation.forecastStatus.text
+                          disease.personalRecommendation.forecastStatus
+                            .text as VaccinationStatus
                         )}
                         color={
                           getColorByStatus(
-                            disease.personalRecommendation.forecastStatus.text,
+                            disease.personalRecommendation.forecastStatus
+                              .text as VaccinationStatus,
                             'black'
                           ) + '.400'
                         }

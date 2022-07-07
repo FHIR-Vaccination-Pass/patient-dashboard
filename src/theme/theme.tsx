@@ -32,8 +32,15 @@ const colors = {
 
 export const theme = extendTheme({ colors });
 
+export type VaccinationStatus =
+  | 'complete'
+  | 'immune'
+  | 'due'
+  | 'overdue'
+  | 'contraindicated';
+
 export function getColorByStatus(
-  status: string | undefined,
+  status: VaccinationStatus | undefined,
   defaultColor: string
 ): string {
   switch (status) {
@@ -53,7 +60,7 @@ export function getColorByStatus(
 }
 
 export function getIconByStatus(
-  status: string | undefined
+  status: VaccinationStatus | undefined
 ): IconType | undefined {
   switch (status) {
     case 'complete':
