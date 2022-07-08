@@ -1,0 +1,42 @@
+export const mockVaccinations = [
+  {
+    diseaseName: 'Disease A',
+    date: '27.03.2022',
+    vaccineName: 'Vaccine A1',
+    medicalDoctor: 'Dr. Appleseed',
+    lotNumber: 'AFC3BQ',
+    Dose: '1/3',
+  },
+  {
+    diseaseName: 'Disease A',
+    date: '27.03.2022',
+    vaccineName: 'Vaccine A1',
+    medicalDoctor: 'Dr. Appleseed',
+    lotNumber: 'AFC3BQ',
+    Dose: '1/3',
+  },
+  {
+    diseaseName: 'Disease B',
+    date: '21.02.2022',
+    vaccineName: 'Vaccine B1',
+    medicalDoctor: 'Dr. Appleseed',
+    lotNumber: 'AFC3BQ',
+    Dose: '1/3',
+  },
+  {
+    diseaseName: 'Disease C',
+    date: '27.09.2021',
+    vaccineName: 'Vaccine C1',
+    medicalDoctor: 'Dr. Appleseed',
+    lotNumber: 'AFC3BQ',
+    Dose: '1/3',
+  },
+  {
+    diseaseName: 'Disease D',
+    date: '10.01.2020',
+    vaccineName: 'Vaccine D1',
+    medicalDoctor: 'Dr. Appleseed',
+    lotNumber: 'AFC3BQ',
+    Dose: '1/3',
+  },
+];

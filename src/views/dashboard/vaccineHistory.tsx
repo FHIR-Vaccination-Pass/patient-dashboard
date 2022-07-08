@@ -1,26 +1,27 @@
-import { Chrono, TimelineItem } from 'react-chrono';
+import { Chrono } from 'react-chrono';
+import { mockVaccinations } from '../../core/mockData/mockVaccinations';
+import { Box, Stack, Text } from '@chakra-ui/react';
 
 export function VaccineHistory() {
-  const items: TimelineItem[] = [
-    {
-      title: 'May 1940',
-      cardTitle: 'Dunkirk',
-      url: 'http://www.history.com',
-      cardSubtitle:
-        'Men of the British Expeditionary Force (BEF) wade out to..',
-      cardDetailedText:
-        'Men of the British Expeditionary Force (BEF) wade out to..',
-      media: {
-        type: 'IMAGE',
-        source: {
-          url: 'http://someurl/image.jpg',
-        },
-      },
-    },
-  ];
   return (
-    <div style={{ width: '500px', height: '400px' }}>
-      <Chrono items={items} />
-    </div>
+    <Box overflow={'hidden'}>
+      <Chrono
+        mode={'VERTICAL'}
+        scrollable
+        theme={{
+          primary: 'gray',
+          secondary: 'white',
+          cardBgColor: 'white',
+        }}
+        hideControls
+        allowDynamicUpdate
+      >
+        {mockVaccinations.map((vaccination) => (
+          <Stack>
+            <Text>{vaccination.diseaseName}</Text>
+          </Stack>
+        ))}
+      </Chrono>
+    </Box>
   );
 }
