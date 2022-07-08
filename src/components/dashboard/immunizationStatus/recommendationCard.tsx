@@ -10,7 +10,11 @@ import {
 import React, { FC } from 'react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
-import { getColorByStatus, getIconByStatus } from '../../../theme/theme';
+import {
+  getColorByStatus,
+  getIconByStatus,
+  VaccinationStatus,
+} from '../../../theme/theme';
 import { ImmunizationRecommendationRecommendation } from 'fhir/r4';
 
 interface RecommendationCardProps extends BoxProps {
@@ -24,7 +28,12 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
     // the key within the theme, in this case `theme.colors`
     'colors',
     // the subkey(s), resolving to `theme.colors.red.100`
-    [getColorByStatus(configuration.forecastStatus.text) + '.300']
+    [
+      getColorByStatus(
+        configuration.forecastStatus.text as VaccinationStatus,
+        'gray'
+      ) + '.300',
+    ]
     // a single fallback or fallback array matching the length of the previous arg
   );
   return (
@@ -43,7 +52,8 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
               <Badge
                 fontSize={'sm'}
                 colorScheme={getColorByStatus(
-                  configuration.forecastStatus.text
+                  configuration.forecastStatus.text as VaccinationStatus,
+                  'gray'
                 )}
                 ml={5}
               >
@@ -52,14 +62,21 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
               </Badge>
             </Text>
           </Box>
-          {getIconByStatus(configuration.forecastStatus.text) !== undefined && (
+          {getIconByStatus(
+            configuration.forecastStatus.text as VaccinationStatus
+          ) !== undefined && (
             <Icon
               mt={'auto'}
               mb={'auto'}
               ml='3'
-              as={getIconByStatus(configuration.forecastStatus.text)}
+              as={getIconByStatus(
+                configuration.forecastStatus.text as VaccinationStatus
+              )}
               color={
-                getColorByStatus(configuration.forecastStatus.text) + '.400'
+                getColorByStatus(
+                  configuration.forecastStatus.text as VaccinationStatus,
+                  'gray'
+                ) + '.400'
               }
               w={6}
               h={6}

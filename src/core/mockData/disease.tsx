@@ -1,10 +1,12 @@
-export interface Vaccination {
+import { ImmunizationRecommendationRecommendation } from 'fhir/r4';
+
+export interface Disease {
   name: string;
-  code: 'Z98';
-  immunizationAgainst: string;
+  code: string;
   description: string;
   vaccine: Vaccine;
   relevantLocations: string[];
+  personalRecommendation: ImmunizationRecommendationRecommendation | undefined;
 }
 
 interface Vaccine {
@@ -13,10 +15,10 @@ interface Vaccine {
 }
 
 // A test method to generate some vaccinations data TODO: Replace with proper data fetching
-export function getSomeVaccinations(): Vaccination[] {
+export function getSomeDiseases(): Disease[] {
   return [
     {
-      name: 'Coronavirus',
+      name: 'Disease A',
       code: 'Z98',
       immunizationAgainst: 'string;',
       description:
@@ -37,134 +39,134 @@ export function getSomeVaccinations(): Vaccination[] {
         '                        to WHO approval.',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Tetanus',
+      name: 'Disease B',
       code: 'Z99',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Malaria',
+      name: 'Disease C',
       code: 'Z18',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Streptokokken',
+      name: 'Disease D',
       code: 'Z28',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Mumps',
+      name: 'Disease E',
       code: 'Z38',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Tetanus',
+      name: 'Disease F',
       code: 'Z99',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Malaria',
+      name: 'Disease G',
       code: 'Z18',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Streptokokken',
+      name: 'Disease H',
       code: 'Z28',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Mumps',
+      name: 'Disease I',
       code: 'Z38',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Tetanus',
+      name: 'Disease J',
       code: 'Z99',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Malaria',
+      name: 'Disease K',
       code: 'Z18',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Streptokokken',
+      name: 'Disease L',
       code: 'Z28',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Mumps',
+      name: 'Disease M',
       code: 'Z38',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Tetanus',
+      name: 'Disease N',
       code: 'Z99',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Malaria',
+      name: 'Disease O',
       code: 'Z18',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Streptokokken',
+      name: 'Disease P',
       code: 'Z28',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
     {
-      name: 'Mumps',
+      name: 'Disease Q',
       code: 'Z38',
       immunizationAgainst: 'string;',
       description: 'string;',
       vaccine: null,
       relevantLocations: ['Asien'],
-    } as unknown as Vaccination,
+    } as unknown as Disease,
   ];
 }

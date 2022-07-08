@@ -2,20 +2,21 @@ import {
   Avatar,
   Box,
   BoxProps,
+  Button,
   Flex,
   Image,
   Portal,
   useBoolean,
   useColorModeValue,
 } from '@chakra-ui/react';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import VaccinationPass from '../../../assets/VaccinationPassV2.png';
 import { useKeycloak } from '@react-keycloak/web';
 import { KeycloakProfile } from 'keycloak-js';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { IconType } from 'react-icons';
-import { FaBookMedical, FaRegCalendarAlt, FaSyringe } from 'react-icons/fa';
+import { FaBookMedical, FaHome, FaSignOutAlt, FaSyringe } from 'react-icons/fa';
 import { NavItem } from './navitem';
 
 interface DashboardProps extends BoxProps {
@@ -31,9 +32,9 @@ interface LinkItemProps {
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'History', icon: FaSyringe, link: 'history' },
-  { name: 'Recommendations', icon: FaRegCalendarAlt, link: 'recommendations' },
-  { name: 'Wiki', icon: FaBookMedical, link: 'wiki' },
+  { name: 'Home', icon: FaHome, link: '' },
+  { name: 'Vaccination History', icon: FaSyringe, link: 'history' },
+  { name: 'Vaccination Wiki', icon: FaBookMedical, link: 'wiki' },
 ];
 
 export const DashboardHeader: FC<DashboardProps> = () => {
@@ -45,6 +46,11 @@ export const DashboardHeader: FC<DashboardProps> = () => {
   }, [keycloak, keycloak.authenticated]);
   const menuRef = useRef<HTMLDivElement>(null);
   const [hideMenu, setHideMenu] = useBoolean();
+  const [logoutLoading, setLogoutLoading] = useBoolean(false);
+  const logout = useCallback(() => {
+    setLogoutLoading.on();
+    keycloak.logout();
+  }, [keycloak]);
 
   return (
     <>
@@ -99,6 +105,23 @@ export const DashboardHeader: FC<DashboardProps> = () => {
               {navLink.name}
             </NavItem>
           ))}
+          <Button
+            isLoading={logoutLoading}
+            leftIcon={<FaSignOutAlt />}
+            colorScheme='red'
+            variant='ghost'
+            size={'lg'}
+            onClick={logout}
+            pl={'15px'}
+            isActive={false}
+            loadingText={'Logging out'}
+            spinnerPlacement={'start'}
+            fontWeight={'normal'}
+            width={'100%'}
+            justifyContent={'flex-start'}
+          >
+            Logout
+          </Button>
         </Box>
       </Portal>
     </>
