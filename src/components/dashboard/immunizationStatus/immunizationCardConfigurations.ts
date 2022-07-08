@@ -1,4 +1,4 @@
-import { AggregatedImmunizationStatus } from '../../../core/models/aggregatedImmunizationStatus';
+import { AggregatedImmunizationStatus } from '../../../core/models/implementedFHIRClasses/aggregatedImmunizationStatus';
 import {
   FaExclamationCircle,
   FaInfoCircle,

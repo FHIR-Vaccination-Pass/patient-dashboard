@@ -1,6 +1,6 @@
 import { Flex, Icon, Stack, Text } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import { AggregatedImmunizationStatus } from '../../../core/models/aggregatedImmunizationStatus';
+import { AggregatedImmunizationStatus } from '../../../core/models/implementedFHIRClasses/aggregatedImmunizationStatus';
 import {
   CompleteStatus,
   DueStatus,
