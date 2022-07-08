@@ -75,7 +75,11 @@ export function ImmunizationWiki() {
                   {disease.personalRecommendation !== undefined &&
                     disease.personalRecommendation.forecastStatus.text &&
                     disease.personalRecommendation.forecastStatus.text.length >
-                      0 && (
+                      0 &&
+                    getIconByStatus(
+                      disease.personalRecommendation.forecastStatus
+                        .text as VaccinationStatus
+                    ) !== undefined && (
                       <Icon
                         mt={'auto'}
                         mb={'auto'}
