@@ -1,7 +1,7 @@
 import { CodeableConcept } from './CodeableConcept';
 
 export interface Medication {
-  identifier: string;
+  id: string;
   code: CodeableConcept;
   form: CodeableConcept;
   ingredientId: string; // id refers to a Substance id

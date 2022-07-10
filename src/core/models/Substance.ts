@@ -1,9 +1,8 @@
 import { CodeableConcept } from './CodeableConcept';
 
 export interface Substance {
-    identifier: string;
-    category: CodeableConcept
-    code: CodeableConcept;
-    description: string;
-
+  id: string;
+  category: CodeableConcept;
+  code: CodeableConcept;
+  description: string;
 }

@@ -10,7 +10,7 @@ import {
 import { getSomeDiseases, Disease } from '../../core/mockData/disease';
 import { ChevronRightIcon, InfoIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
-import { MockRecommendations } from '../../core/mockData/mockRecommendation';
+import { MockRecommendations } from '../../core/mockData/mockImmunizationRecommendation';
 import {
   getColorByStatus,
   getIconByStatus,

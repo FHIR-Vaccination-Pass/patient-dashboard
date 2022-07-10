@@ -13,7 +13,7 @@ import {
 } from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
 import React from 'react';
-import { mockVaccinations } from '../../core/mockData/mockVaccinations';
+import { mockImmunizations } from '../../core/mockData/mockImmunizations';
 import { Link } from 'react-router-dom';
 
 export function VaccineHistory() {
@@ -52,13 +52,13 @@ export function VaccineHistory() {
   return (
     <Box overflow={'hidden'}>
       <VerticalTimeline lineColor={`${color}`}>
-        {mockVaccinations.map((vaccination) => (
+        {mockImmunizations.map((vaccination) => (
           <VerticalTimelineElement
             iconStyle={timelineElementIconStyles}
             contentStyle={timelineElementStyles}
             contentArrowStyle={{ display: 'none' }}
           >
-            <Link to={'/dashboard/wiki/' + vaccination.diseaseName}>
+            <Link to={'/dashboard/wiki/' + vaccination.}>
               <Stack>
                 <Flex
                   justifyContent={'space-between'}

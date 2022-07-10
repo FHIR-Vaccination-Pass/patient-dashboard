@@ -4,6 +4,7 @@ import { HumanName } from './HumanName';
 import { Gender } from './Gender';
 
 export interface Practitioner {
+  id: string;
   identifier: string;
   active: boolean;
   name: HumanName;

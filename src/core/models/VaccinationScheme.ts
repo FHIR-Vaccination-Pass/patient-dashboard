@@ -1,4 +1,5 @@
 export interface VaccinationScheme {
+  id: string;
   name: string;
   type: string;
   isPreferred: boolean;

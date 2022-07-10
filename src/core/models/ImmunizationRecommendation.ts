@@ -1,7 +1,7 @@
 import { CodeableConcept } from './CodeableConcept';
 
 export interface ImmunizationRecommendation {
-  identifier: string;
+  id: string;
   date: Date;
   forecastStatus: CodeableConcept;
   forecastReason: CodeableConcept;
