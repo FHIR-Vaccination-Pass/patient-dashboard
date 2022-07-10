@@ -8,4 +8,8 @@ export interface ImmunizationRecommendation {
   vaccineCode: CodeableConcept;
   recommendedStartDate: Date;
   isDeactivated: boolean;
+  supportingImmunizationIds: string[];
+  fulfillingImmunizationIds: string[];
+  patientId: string;
+  populationRecommendationId: string;
 }

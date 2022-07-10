@@ -4,4 +4,5 @@ export interface VaccinationScheme {
   isPreferred: boolean;
   ageStart: number;
   ageEnd: number;
+  medicationId: string;
 }

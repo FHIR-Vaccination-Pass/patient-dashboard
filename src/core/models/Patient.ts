@@ -1,37 +1,17 @@
 import { VacationPlan } from './VacationPlan';
-
-export type Gender = 'male' | 'female' | 'other' | 'unknown';
+import { Address } from './Address';
+import { HumanName } from './HumanName';
+import { Gender } from './Gender';
 
 export interface Patient {
   identifier: string;
   active: boolean;
   name: HumanName;
-  telecom: ContactPoint;
+  email: string;
+  phoneNumber: string;
   gender: Gender;
   birthdate: Date;
   address: Address;
   isPregnant: boolean;
   vacationPlans: Array<VacationPlan>;
-}
-
-export interface HumanName {
-  family: string;
-  given: string[];
-  prefix: string[];
-  suffix: string[];
-}
-
-export interface ContactPoint {
-  system: 'phone'|'fax'|'email'|'pager'|'url'|'sms'|'other';
-  use: 'home'|'work'|'temp'|'old'|'mobile';
-  value: string;
-}
-
-export interface Address {
-  city: string;
-  country: string;
-  district: string;
-  line: string;
-  postalCode: string;
-  state: string;
 }

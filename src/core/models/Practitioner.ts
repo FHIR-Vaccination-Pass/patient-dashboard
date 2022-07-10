@@ -1,12 +1,14 @@
 import { CodeableConcept } from './CodeableConcept';
-import {Address, ContactPoint, Gender, HumanName} from './Patient';
+import { Address } from './Address';
+import { HumanName } from './HumanName';
+import { Gender } from './Gender';
 
 export interface Practitioner {
   identifier: string;
   active: boolean;
   name: HumanName;
-  phoneNumber: ContactPoint;
-  email: ContactPoint;
+  phoneNumber: string;
+  email: string;
   gender: Gender;
   address: Address;
   qualification: PractitionerQualification;

@@ -10,4 +10,7 @@ export interface Immunization {
   occurrence: string;
   primarySource: boolean;
   lotNumber: string;
+  patientId: string;
+  performerId: string;
+  vaccinationDoseId: string;
 }

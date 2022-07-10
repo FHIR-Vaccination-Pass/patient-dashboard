@@ -1,11 +1,11 @@
 import { CodeableConcept } from './CodeableConcept';
-import { MedicationIngredient } from './MedicationIngredient';
 
 export interface Medication {
   identifier: string;
   code: CodeableConcept;
   form: CodeableConcept;
-  ingredient: MedicationIngredient;
+  ingredientId: string; // id refers to a Substance id
   manufacturer: string; // id refers to an Organization id
   tradeName: string;
+  targetDiseaseIds: string[];
 }

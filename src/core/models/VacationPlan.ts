@@ -1,4 +1,4 @@
 export interface VacationPlan {
-  depatureDate: Date;
+  departureDate: Date;
   location: Location;
 }
