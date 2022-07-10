@@ -16,3 +16,19 @@ code {
 .chakra-divider {
   opacity: 1 !important;
 }
+
+.vertical-timeline {
+  margin: 0 !important;
+  height: 100%;
+  padding-top: 5px !important;
+}
+
+.vertical-timeline::before {
+  top: 110px !important;
+  width: 8px !important;
+  left: 16px !important;
+}
+
+.vertical-timeline-element-content .vertical-timeline-element-date, .vertical-timeline-element-content p {
+  font-size: unset;
+}
