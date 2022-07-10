@@ -1,5 +1,5 @@
-import { PersonalImmunizationRecommendation } from '../models/personalImmunizationRecommendation';
-import { SingleImmunizationRecommendation } from '../models/singleImmunizationRecommendation';
+import { PersonalImmunizationRecommendation } from '../models/implementedFHIRClasses/personalImmunizationRecommendation';
+import { SingleImmunizationRecommendation } from '../models/implementedFHIRClasses/singleImmunizationRecommendation';
 
 export const MockRecommendations: Array<PersonalImmunizationRecommendation> = [
   new PersonalImmunizationRecommendation(
