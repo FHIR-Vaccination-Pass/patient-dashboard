@@ -17,19 +17,18 @@ code {
   opacity: 1 !important;
 }
 
-.timeline-verticalstyles__TimelineVerticalWrapper-sc-1427v1d-0 {
-  padding: 0 !important;
-  overflow: hidden;
+.vertical-timeline {
+  margin: 0 !important;
+  height: 100%;
+  padding-top: 5px !important;
 }
 
-.timeline-card-content {
-  border-radius: 12px !important;
+.vertical-timeline::before {
+  top: 110px !important;
+  width: 8px !important;
+  left: 16px !important;
 }
 
-.timelinestyle__Wrapper-sc-cif21b-0 {
-  padding-right: 6vw;
-}
-
-.timeline-main-wrapper::-webkit-scrollbar {
-  display: none;
+.vertical-timeline-element-content .vertical-timeline-element-date, .vertical-timeline-element-content p {
+  font-size: unset;
 }
