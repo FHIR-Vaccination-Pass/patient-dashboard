@@ -1,4 +1,4 @@
-import { CodeableConcept } from 'fhir/r4';
+import { CodeableConcept } from './CodeableConcept';
 
 export interface Disease {
   code: CodeableConcept;

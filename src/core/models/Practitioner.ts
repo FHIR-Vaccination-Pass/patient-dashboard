@@ -1,14 +1,8 @@
-import {
-  Address,
-  ContactPoint,
-  HumanName,
-  Identifier,
-  PractitionerQualification,
-} from 'fhir/r4';
-import { Gender } from './Patient';
+import { CodeableConcept } from './CodeableConcept';
+import {Address, ContactPoint, Gender, HumanName} from './Patient';
 
 export interface Practitioner {
-  identifier: Identifier;
+  identifier: string;
   active: boolean;
   name: HumanName;
   phoneNumber: ContactPoint;
@@ -16,4 +10,10 @@ export interface Practitioner {
   gender: Gender;
   address: Address;
   qualification: PractitionerQualification;
+}
+
+interface PractitionerQualification {
+  identifier: string;
+  code: CodeableConcept;
+  issuer: string; // id refering to the id of an organization
 }

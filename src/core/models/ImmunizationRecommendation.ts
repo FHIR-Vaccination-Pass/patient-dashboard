@@ -1,11 +1,11 @@
-import { CodeableConcept, Identifier } from 'fhir/r4';
+import { CodeableConcept } from './CodeableConcept';
 
 export interface ImmunizationRecommendation {
-  identifier: Identifier;
+  identifier: string;
   date: Date;
   forecastStatus: CodeableConcept;
   forecastReason: CodeableConcept;
-  vacineCode: CodeableConcept;
+  vaccineCode: CodeableConcept;
   recommendedStartDate: Date;
   isDeactivated: boolean;
 }

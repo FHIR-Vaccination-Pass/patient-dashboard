@@ -1,15 +1,11 @@
-import {
-  CodeableConcept,
-  Identifier,
-  MedicationIngredient,
-  Reference,
-} from 'fhir/r4';
+import { CodeableConcept } from './CodeableConcept';
+import { MedicationIngredient } from './MedicationIngredient';
 
 export interface Medication {
-  identifier: Identifier;
+  identifier: string;
   code: CodeableConcept;
   form: CodeableConcept;
   ingredient: MedicationIngredient;
-  manufacturer: Reference;
+  manufacturer: string; // id refers to an Organization id
   tradeName: string;
 }

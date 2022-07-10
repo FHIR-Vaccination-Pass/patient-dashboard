@@ -1,13 +1,13 @@
-import { CodeableConcept, Identifier } from 'fhir/r4';
+import { CodeableConcept } from './CodeableConcept';
 
 export type ImmunizationStatus = 'completed' | 'entered-in-error' | 'not-done';
 
 export interface Immunization {
-  identifier: Identifier;
+  identifier: string;
   status: ImmunizationStatus;
   vaccineCode: CodeableConcept;
-  occurenceTime: Date;
-  occurence: string;
+  occurrenceTime: Date;
+  occurrence: string;
   primarySource: boolean;
   lotNumber: string;
 }
