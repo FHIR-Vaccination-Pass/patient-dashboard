@@ -1,6 +1,9 @@
-import { VaccinationDose } from '../models/VaccinationDose';
+import { VaccinationDoseRepeating } from '../models/VaccinationDose';
 
-export const MockVaccinationDoses = new Map<string, VaccinationDose>([
+export const MockVaccinationDosesRepeating = new Map<
+  string,
+  VaccinationDoseRepeating
+>([
   [
     'vaccinationdose1',
     {
@@ -9,6 +12,7 @@ export const MockVaccinationDoses = new Map<string, VaccinationDose>([
       isProtected: true,
       notes: '0',
       vaccinationSchemeId: 'vaccinationscheme1',
+      interval: [],
     },
   ],
 ]);

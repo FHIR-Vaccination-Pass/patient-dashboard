@@ -14,6 +14,18 @@ import {
   VaccinationDoseSingle,
 } from '../../models/VaccinationDose';
 import { ResourceMapper } from './ResourceMapper';
+import { MockRecommendations } from '../../mockData/mockImmunizationRecommendation';
+import { MockImmunizations } from '../../mockData/mockImmunizations';
+import { MockPatients } from '../../mockData/mockPatients';
+import { MockPractitioners } from '../../mockData/mockPractitioners';
+import { MockMedications } from '../../mockData/mockMedications';
+import { MockDisease } from '../../mockData/mockDisease';
+import { MockPopulationRecommendations } from '../../mockData/mockPopulationRecommendations';
+import { MockVaccinationSchemes } from '../../mockData/mockVaccinationSchemes';
+import { MockSubstances } from '../../mockData/mockSubstances';
+import { MockOrganizations } from '../../mockData/mockOrganizations';
+import { MockVaccinationDosesSingle } from '../../mockData/mockVaccinationDosesSingle';
+import { MockVaccinationDosesRepeating } from '../../mockData/mockVaccinationDosesRepeating';
 
 export class MockReferenceResolver implements ResourceMapper {
   private _recommendationDict: Map<string, ImmunizationRecommendation>;
@@ -30,24 +42,18 @@ export class MockReferenceResolver implements ResourceMapper {
   private _vaccinationDoseRepeatingDict: Map<string, VaccinationDoseRepeating>;
 
   constructor() {
-    this._recommendationDict = new Map<string, ImmunizationRecommendation>();
-    this._immunizationDict = new Map<string, Immunization>();
-    this._patientDict = new Map<string, Patient>();
-    this._practitionerDict = new Map<string, Practitioner>();
-    this._medicationDict = new Map<string, Medication>();
-    this._diseaseDict = new Map<string, Disease>();
-    this._populationRecommendationDict = new Map<
-      string,
-      PopulationRecommendation
-    >();
-    this._vaccinationSchemeDict = new Map<string, VaccinationScheme>();
-    this._substanceDict = new Map<string, Substance>();
-    this._organizationDict = new Map<string, Organization>();
-    this._vaccinationDoseSingleDict = new Map<string, VaccinationDoseSingle>();
-    this._vaccinationDoseRepeatingDict = new Map<
-      string,
-      VaccinationDoseRepeating
-    >();
+    this._recommendationDict = MockRecommendations;
+    this._immunizationDict = MockImmunizations;
+    this._patientDict = MockPatients;
+    this._practitionerDict = MockPractitioners;
+    this._medicationDict = MockMedications;
+    this._diseaseDict = MockDisease;
+    this._populationRecommendationDict = MockPopulationRecommendations;
+    this._vaccinationSchemeDict = MockVaccinationSchemes;
+    this._substanceDict = MockSubstances;
+    this._organizationDict = MockOrganizations;
+    this._vaccinationDoseSingleDict = MockVaccinationDosesSingle;
+    this._vaccinationDoseRepeatingDict = MockVaccinationDosesRepeating;
   }
 
   public getRecommendationById(

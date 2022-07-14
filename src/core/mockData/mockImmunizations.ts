@@ -1,6 +1,6 @@
 import { Immunization } from '../models/Immunization';
 
-export const mockImmunizations = new Map<string, Immunization>([
+export const MockImmunizations = new Map<string, Immunization>([
   [
     'immunization1',
     {
