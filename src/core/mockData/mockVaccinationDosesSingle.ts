@@ -5,9 +5,9 @@ export const MockVaccinationDosesSingle = new Map<
   VaccinationDoseSingle
 >([
   [
-    'vaccinationdose1',
+    'vaccinationDoseSingle1',
     {
-      id: 'vaccinationdose1',
+      id: 'vaccinationDoseSingle1',
       doseQuantity: 1,
       isProtected: true,
       notes: '0',

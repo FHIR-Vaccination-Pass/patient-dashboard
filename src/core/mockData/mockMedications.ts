@@ -6,8 +6,8 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'medication1',
       code: {
-        id: 'medicationCoding1',
-        coding: 'medicationCoding',
+        id: 'vaccineCoding1',
+        coding: 'vaccineCoding',
         text: 'ABC',
       },
       form: {

@@ -16,7 +16,7 @@ export const MockImmunizations = new Map<string, Immunization>([
       primarySource: true,
       lotNumber: 'ABCDEF',
       patientId: 'patient1',
-      performerId: 'performer1',
+      performerId: 'practitioner1',
       vaccinationDoseId: 'vaccinationDoseSingle1',
     },
   ],
