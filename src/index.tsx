@@ -10,6 +10,7 @@ import { store } from './core';
 import { theme } from './theme/theme';
 import AppRoutes from './routes';
 import keycloak from './core/keycloak';
+import { MapperProvider } from './core/services/server/ResourceMapperContext';
 
 const eventLogger = (event: unknown, error: unknown) => {
   console.log('onKeycloakEvent', event, error);
@@ -29,9 +30,11 @@ ReactDOM.render(
     >
       <ReduxProvider store={store}>
         <ChakraProvider theme={theme}>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
+          <MapperProvider>
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </MapperProvider>
         </ChakraProvider>
       </ReduxProvider>
     </ReactKeycloakProvider>
