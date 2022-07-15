@@ -1,19 +1,21 @@
 export const mockVaccinations = [
   {
     diseaseName: 'Disease A',
-    date: '27.03.2022',
+    date: '17.01.2022',
     vaccineName: 'Vaccine A1',
     medicalDoctor: 'Dr. Appleseed',
     lotNumber: 'AFC3BQ',
     dose: '1/3',
+    manufacturer: 'BionVacc',
   },
   {
     diseaseName: 'Disease A',
-    date: '27.03.2022',
+    date: '27.02.2022',
     vaccineName: 'Vaccine A1',
     medicalDoctor: 'Dr. Appleseed',
     lotNumber: 'AFC3BQ',
     dose: '1/3',
+    manufacturer: 'BionVacc',
   },
   {
     diseaseName: 'Disease B',
@@ -22,6 +24,7 @@ export const mockVaccinations = [
     medicalDoctor: 'Dr. Appleseed',
     lotNumber: 'AFC3BQ',
     dose: '1/3',
+    manufacturer: 'BionVacc',
   },
   {
     diseaseName: 'Disease C',
@@ -30,6 +33,7 @@ export const mockVaccinations = [
     medicalDoctor: 'Dr. Appleseed',
     lotNumber: 'AFC3BQ',
     dose: '1/3',
+    manufacturer: 'BionVacc',
   },
   {
     diseaseName: 'Disease D',
@@ -38,6 +42,16 @@ export const mockVaccinations = [
     medicalDoctor: 'Dr. Appleseed',
     lotNumber: 'AFC3BQ',
     dose: '1/3',
+    manufacturer: 'BionVacc',
+  },
+  {
+    diseaseName: 'Disease A',
+    date: '29.03.2022',
+    vaccineName: 'Vaccine A1',
+    medicalDoctor: 'Dr. Appleseed',
+    lotNumber: 'AFC3BQ',
+    dose: '1/3',
+    manufacturer: 'BionVacc',
   },
   {
     diseaseName: 'Disease A',
@@ -46,14 +60,7 @@ export const mockVaccinations = [
     medicalDoctor: 'Dr. Appleseed',
     lotNumber: 'AFC3BQ',
     dose: '1/3',
-  },
-  {
-    diseaseName: 'Disease A',
-    date: '27.03.2022',
-    vaccineName: 'Vaccine A1',
-    medicalDoctor: 'Dr. Appleseed',
-    lotNumber: 'AFC3BQ',
-    dose: '1/3',
+    manufacturer: 'BionVacc',
   },
   {
     diseaseName: 'Disease B',
@@ -62,6 +69,7 @@ export const mockVaccinations = [
     medicalDoctor: 'Dr. Appleseed',
     lotNumber: 'AFC3BQ',
     dose: '1/3',
+    manufacturer: 'BionVacc',
   },
   {
     diseaseName: 'Disease C',
@@ -70,6 +78,7 @@ export const mockVaccinations = [
     medicalDoctor: 'Dr. Appleseed',
     lotNumber: 'AFC3BQ',
     dose: '1/3',
+    manufacturer: 'BionVacc',
   },
   {
     diseaseName: 'Disease D',
@@ -78,5 +87,6 @@ export const mockVaccinations = [
     medicalDoctor: 'Dr. Appleseed',
     lotNumber: 'AFC3BQ',
     dose: '1/3',
+    manufacturer: 'BionVacc',
   },
 ];
