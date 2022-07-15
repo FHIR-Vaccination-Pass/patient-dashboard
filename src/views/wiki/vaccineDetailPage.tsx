@@ -7,17 +7,30 @@ import {
   Badge,
   Box,
   Flex,
+  Grid,
+  GridItem,
   Heading,
   HStack,
+  Icon,
   Image,
   ListItem,
+  Stack,
   Text,
   UnorderedList,
+  useBoolean,
   useColorModeValue,
   VStack,
 } from '@chakra-ui/react';
 import React from 'react';
 import WorldMap from '../../assets/worldMaps/WorldMap.svg';
+import {
+  getColorByStatus,
+  getIconByStatus,
+  VaccinationStatus,
+} from '../../theme/theme';
+import { mockVaccinations } from '../../core/mockData/mockVaccinations';
+import { MockRecommendations } from '../../core/mockData/mockRecommendation';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 export function VaccineDetailPage() {
   const vaccination = {
@@ -68,6 +81,18 @@ export function VaccineDetailPage() {
     ],
     relevantLocations: ['Global'],
   };
+  const vaccinationHistory = mockVaccinations.filter((vacc) => {
+    return vacc.diseaseName === 'Disease A';
+  });
+  const recommendation = MockRecommendations[0].recommendation.find((r) => {
+    return r.targetDisease?.text === 'Disease A';
+  });
+  const color = getColorByStatus(
+    recommendation?.forecastStatus.text as VaccinationStatus,
+    'gray'
+  );
+  const dueText = `Immunization due in less than a month`;
+  const [showHistory, setShowHistory] = useBoolean(true);
   return (
     <Box pb={5}>
       <div>
@@ -92,18 +117,138 @@ export function VaccineDetailPage() {
             width: '100%',
           }}
         >
-          <Box
-            backgroundColor={'gray.200'}
+          <Flex
+            backgroundColor={`${color}.100`}
             h={'60px'}
             alignItems={'center'}
-            style={{ cursor: 'default', width: '100%' }}
+            style={{ width: '100%' }}
             borderRadius={'15px 15px 0 0'}
-            display={'flex'}
+            onClick={setShowHistory.toggle}
           >
-            <Text ml={'20px'} fontSize={'xl'}>
-              {vaccination.name}
-            </Text>
-          </Box>
+            <Flex
+              justifyContent={'space-between'}
+              flexDirection={'column'}
+              w={'100%'}
+            >
+              <Text ml={'20px'} fontSize={'xl'}>
+                {vaccination.name}
+              </Text>
+              {recommendation !== undefined && (
+                <Text ml={'20px'} color={'gray.600'} fontSize={'12px'}>
+                  {dueText}
+                </Text>
+              )}
+            </Flex>
+            <Flex alignItems={'center'} mr={'20px'}>
+              {recommendation !== undefined && (
+                <Icon
+                  mt={'auto'}
+                  mb={'auto'}
+                  mr='3'
+                  as={getIconByStatus(
+                    recommendation.forecastStatus.text as VaccinationStatus
+                  )}
+                  color={
+                    getColorByStatus(
+                      recommendation.forecastStatus.text as VaccinationStatus,
+                      'gray'
+                    ) + '.400'
+                  }
+                  w={6}
+                  h={6}
+                />
+              )}
+              {!showHistory && <FaChevronDown size={18} />}
+              {showHistory && <FaChevronUp size={18} />}
+            </Flex>
+          </Flex>
+          {showHistory && (
+            <Flex
+              bg={`${color}.100`}
+              w={'100%'}
+              mt={'0px !important'}
+              pt={'5px'}
+              flexDirection={'column'}
+            >
+              <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
+                Previous vaccinations
+              </Text>
+              {vaccinationHistory.map((v) => (
+                <Stack
+                  m={'0px 20px 5px 20px'}
+                  bg={'gray.100'}
+                  boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
+                  borderRadius={'5px'}
+                  overflow={'hidden'}
+                >
+                  <Grid
+                    templateColumns='1fr 1fr 1fr'
+                    rowGap={'5px'}
+                    columnGap={'10px'}
+                    p={'5px'}
+                    justifyContent={'space-between'}
+                    alignItems={'center'}
+                    templateRows={'1fr 1fr'}
+                  >
+                    <GridItem>
+                      <Text w={'1fr'}>{v.vaccineName}</Text>
+                    </GridItem>
+                    <GridItem w={'1fr'}>
+                      <Badge
+                        colorScheme={'green'}
+                        variant='subtle'
+                        w={'100%'}
+                        textAlign={'center'}
+                      >
+                        {v.date}
+                      </Badge>
+                    </GridItem>
+                    <GridItem w={'1fr'}>
+                      <Badge
+                        colorScheme={'gray'}
+                        variant='solid'
+                        w={'100%'}
+                        textAlign={'center'}
+                      >
+                        {v.dose}
+                      </Badge>
+                    </GridItem>
+
+                    <GridItem>
+                      <Badge
+                        colorScheme={'blue'}
+                        variant='subtle'
+                        w={'100%'}
+                        textAlign={'center'}
+                      >
+                        {v.manufacturer}
+                      </Badge>
+                    </GridItem>
+                    <GridItem w={'1fr'}>
+                      <Badge
+                        colorScheme={'purple'}
+                        variant='subtle'
+                        w={'100%'}
+                        textAlign={'center'}
+                      >
+                        {v.medicalDoctor}
+                      </Badge>
+                    </GridItem>
+                    <GridItem w={'1fr'}>
+                      <Badge
+                        colorScheme={'purple'}
+                        variant='subtle'
+                        w={'100%'}
+                        textAlign={'center'}
+                      >
+                        {v.lotNumber}
+                      </Badge>
+                    </GridItem>
+                  </Grid>
+                </Stack>
+              ))}
+            </Flex>
+          )}
           <VStack
             marginLeft={'20px !important'}
             marginRight={'20px !important'}
