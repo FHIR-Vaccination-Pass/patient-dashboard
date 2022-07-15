@@ -15,14 +15,19 @@ import {
   getIconByStatus,
   VaccinationStatus,
 } from '../../../theme/theme';
-import { ImmunizationRecommendationRecommendation } from 'fhir/r4';
+import { ImmunizationRecommendation } from '../../../core/models/ImmunizationRecommendation';
+import { Disease } from '../../../core/models/Disease';
+import { useMapper } from '../../../core/services/server/ResourceMapperContext';
+import { ResourceMapper } from '../../../core/services/server/ResourceMapper';
 
 interface RecommendationCardProps extends BoxProps {
-  configuration: ImmunizationRecommendationRecommendation;
+  recommendation: ImmunizationRecommendation;
+  diseaseId: string;
 }
 
 export const RecommendationCard: FC<RecommendationCardProps> = ({
-  configuration,
+  recommendation,
+  diseaseId,
 }) => {
   const [color] = useToken(
     // the key within the theme, in this case `theme.colors`
@@ -30,14 +35,16 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
     // the subkey(s), resolving to `theme.colors.red.100`
     [
       getColorByStatus(
-        configuration.forecastStatus.text as VaccinationStatus,
+        recommendation.forecastStatus.text as VaccinationStatus,
         'gray'
       ) + '.300',
     ]
     // a single fallback or fallback array matching the length of the previous arg
   );
+  const mapper: ResourceMapper = useMapper();
+  const disease: Disease | undefined = mapper.getDiseaseById(diseaseId);
   return (
-    <Link to={`/dashboard/wiki/${configuration.targetDisease?.text}`}>
+    <Link to={`/dashboard/wiki/${disease?.code.text}`}>
       <Flex
         justifyContent={'space-between'}
         alignItems={'center'}
@@ -46,35 +53,34 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
       >
         <Flex justifyContent={'space-between'} w={'90%'}>
           <Box p='3'>
-            <Text fontWeight='bold'>{configuration.targetDisease?.text}</Text>
+            <Text fontWeight='bold'>{disease?.name}</Text>
             <Text textColor={'gray'}>
               Due:
               <Badge
                 fontSize={'sm'}
                 colorScheme={getColorByStatus(
-                  configuration.forecastStatus.text as VaccinationStatus,
+                  recommendation.forecastStatus.text as VaccinationStatus,
                   'gray'
                 )}
                 ml={5}
               >
-                {configuration.dateCriterion !== undefined &&
-                  configuration.dateCriterion[0].value}
+                {recommendation.date.toDateString()}
               </Badge>
             </Text>
           </Box>
           {getIconByStatus(
-            configuration.forecastStatus.text as VaccinationStatus
+            recommendation.forecastStatus.text as VaccinationStatus
           ) !== undefined && (
             <Icon
               mt={'auto'}
               mb={'auto'}
               ml='3'
               as={getIconByStatus(
-                configuration.forecastStatus.text as VaccinationStatus
+                recommendation.forecastStatus.text as VaccinationStatus
               )}
               color={
                 getColorByStatus(
-                  configuration.forecastStatus.text as VaccinationStatus,
+                  recommendation.forecastStatus.text as VaccinationStatus,
                   'gray'
                 ) + '.400'
               }

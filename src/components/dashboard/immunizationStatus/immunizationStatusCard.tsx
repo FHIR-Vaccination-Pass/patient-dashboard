@@ -7,10 +7,10 @@ import {
   MissingHistoryStatus,
   OverdueStatus,
 } from './immunizationCardConfigurations';
-import { ImmunizationRecommendationRecommendation } from 'fhir/r4';
+import { ImmunizationRecommendation } from '../../../core/models/ImmunizationRecommendation';
 
 interface ImmunizationStatusCardProps {
-  recommendations: ImmunizationRecommendationRecommendation[];
+  recommendations: ImmunizationRecommendation[];
 }
 
 export const ImmunizationStatusCard: FC<ImmunizationStatusCardProps> = ({
@@ -45,36 +45,34 @@ export const ImmunizationStatusCard: FC<ImmunizationStatusCardProps> = ({
 };
 
 function calcAggregateImmunizationStatus(
-  recommendations: ImmunizationRecommendationRecommendation[]
+  recommendations: ImmunizationRecommendation[]
 ): AggregatedImmunizationStatus {
   // If no recommendations or no recommendation status fields set, then immunization complete
   let aggregatedImmunizationStatus = CompleteStatus;
   // Do later: Check history and recommendations to set missing history status
   let currentStatus: string | undefined = '';
-  recommendations.forEach(
-    (recommendation: ImmunizationRecommendationRecommendation) => {
-      currentStatus = recommendation.forecastStatus.text;
-      // When current status is undefined then don't change anything.
-      if (currentStatus !== undefined) {
-        // Due > Complete & MissingHistory
-        if (
-          currentStatus === 'due' &&
-          (aggregatedImmunizationStatus === CompleteStatus ||
-            aggregatedImmunizationStatus === MissingHistoryStatus)
-        ) {
-          aggregatedImmunizationStatus = DueStatus;
-          // Overdue > all else
-        } else if (currentStatus === 'overdue') {
-          aggregatedImmunizationStatus = OverdueStatus;
-          // Complete = complete or immune or contraindicated
-        } else if (
-          aggregatedImmunizationStatus !== OverdueStatus &&
-          aggregatedImmunizationStatus !== DueStatus
-        ) {
-          aggregatedImmunizationStatus = CompleteStatus;
-        }
+  recommendations.forEach((recommendation: ImmunizationRecommendation) => {
+    currentStatus = recommendation.forecastStatus.text;
+    // When current status is undefined then don't change anything.
+    if (currentStatus !== undefined) {
+      // Due > Complete & MissingHistory
+      if (
+        currentStatus === 'due' &&
+        (aggregatedImmunizationStatus === CompleteStatus ||
+          aggregatedImmunizationStatus === MissingHistoryStatus)
+      ) {
+        aggregatedImmunizationStatus = DueStatus;
+        // Overdue > all else
+      } else if (currentStatus === 'overdue') {
+        aggregatedImmunizationStatus = OverdueStatus;
+        // Complete = complete or immune or contraindicated
+      } else if (
+        aggregatedImmunizationStatus !== OverdueStatus &&
+        aggregatedImmunizationStatus !== DueStatus
+      ) {
+        aggregatedImmunizationStatus = CompleteStatus;
       }
     }
-  );
+  });
   return aggregatedImmunizationStatus;
 }
