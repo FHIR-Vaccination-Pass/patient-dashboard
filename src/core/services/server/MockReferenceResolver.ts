@@ -62,6 +62,7 @@ export class MockReferenceResolver implements ResourceMapper {
       this._medicationByCodeDict.set(medication.code.text, medication)
     );
   }
+
   getVaccineByVaccineCode(code: CodeableConcept): Medication | undefined {
     return this._medicationByCodeDict.get(code.text);
   }
@@ -226,5 +227,11 @@ export class MockReferenceResolver implements ResourceMapper {
 
   getDiseases(): Disease[] {
     return Array.from(this._diseaseDict.values());
+  }
+
+  getDiseaseByCode(code: string): Disease | undefined {
+    return Array.from(this._diseaseDict.values()).find(
+      (disease: Disease) => disease.code.text === code
+    );
   }
 }

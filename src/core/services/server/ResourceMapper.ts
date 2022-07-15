@@ -30,6 +30,8 @@ export interface ResourceMapper {
 
   getDiseaseById(id: string): Disease | undefined;
 
+  getDiseaseByCode(code: string): Disease | undefined;
+
   getPopulationRecommendationById(
     id: string
   ): PopulationRecommendation | undefined;

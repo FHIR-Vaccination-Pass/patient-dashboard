@@ -12,7 +12,7 @@ export const MockDisease = new Map<string, Disease>([
       },
       name: 'Disease 1',
       description: 'This disease is not good for you :(',
-      populationRecommendationId: 'populationRecommendation1',
+      populationRecommendationId: 'populationrecommendation1',
       vaccineIds: ['vaccine1'],
     },
   ],

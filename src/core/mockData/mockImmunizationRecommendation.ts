@@ -9,7 +9,7 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       forecastStatus: {
         id: 'forecastStatusCoding1',
         coding: 'forecastStatusCoding',
-        text: 'due',
+        text: 'overdue',
       },
       forecastReason: {
         id: 'forecastReasonCoding1',

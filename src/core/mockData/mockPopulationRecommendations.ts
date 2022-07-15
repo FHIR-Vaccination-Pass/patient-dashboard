@@ -10,12 +10,12 @@ export const MockPopulationRecommendations = new Map<
       id: 'populationrecommendation1',
       ageStart: 0,
       ageEnd: 0,
-      location: {
+      locations: new Array({
         id: 'location1',
         country: 'Germany',
         state: 'Bavaria',
         administrativeDistrict: 'Munich',
-      },
+      }),
       diseaseId: 'disease1',
     },
   ],
