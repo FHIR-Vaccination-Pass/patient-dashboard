@@ -9,8 +9,15 @@ import { VaccinationScheme } from '../../models/VaccinationScheme';
 import { Substance } from '../../models/Substance';
 import { Organization } from '../../models/Organization';
 import { VaccinationDose } from '../../models/VaccinationDose';
+import { CodeableConcept } from '../../models/CodeableConcept';
 
 export interface ResourceMapper {
+  getImmunizations(): Immunization[];
+
+  getRecommendations(): ImmunizationRecommendation[];
+
+  getDiseases(): Disease[];
+
   getRecommendationById(id: string): ImmunizationRecommendation | undefined;
 
   getImmunizationById(id: string): Immunization | undefined;
@@ -19,7 +26,7 @@ export interface ResourceMapper {
 
   getPractitionerById(id: string): Practitioner | undefined;
 
-  getmedicationById(id: string): Medication | undefined;
+  getMedicationById(id: string): Medication | undefined;
 
   getDiseaseById(id: string): Disease | undefined;
 
@@ -34,4 +41,6 @@ export interface ResourceMapper {
   getOrganizationById(id: string): Organization | undefined;
 
   getVaccinationDoseById(id: string): VaccinationDose | undefined;
+
+  getVaccineByVaccineCode(vaccineCode: CodeableConcept): Medication | undefined;
 }

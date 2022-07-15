@@ -26,6 +26,7 @@ import { MockSubstances } from '../../mockData/mockSubstances';
 import { MockOrganizations } from '../../mockData/mockOrganizations';
 import { MockVaccinationDosesSingle } from '../../mockData/mockVaccinationDosesSingle';
 import { MockVaccinationDosesRepeating } from '../../mockData/mockVaccinationDosesRepeating';
+import { CodeableConcept } from '../../models/CodeableConcept';
 
 export class MockReferenceResolver implements ResourceMapper {
   private _recommendationDict: Map<string, ImmunizationRecommendation>;
@@ -33,6 +34,7 @@ export class MockReferenceResolver implements ResourceMapper {
   private _patientDict: Map<string, Patient>;
   private _practitionerDict: Map<string, Practitioner>;
   private _medicationDict: Map<string, Medication>;
+  private _medicationByCodeDict: Map<string, Medication>;
   private _diseaseDict: Map<string, Disease>;
   private _populationRecommendationDict: Map<string, PopulationRecommendation>;
   private _vaccinationSchemeDict: Map<string, VaccinationScheme>;
@@ -54,6 +56,14 @@ export class MockReferenceResolver implements ResourceMapper {
     this._organizationDict = MockOrganizations;
     this._vaccinationDoseSingleDict = MockVaccinationDosesSingle;
     this._vaccinationDoseRepeatingDict = MockVaccinationDosesRepeating;
+    this._medicationByCodeDict = new Map<string, Medication>();
+
+    Array.from(this._medicationDict.values()).map((medication) =>
+      this._medicationByCodeDict.set(medication.code.text, medication)
+    );
+  }
+  getVaccineByVaccineCode(code: CodeableConcept): Medication | undefined {
+    return this._medicationByCodeDict.get(code.text);
   }
 
   public getRecommendationById(
@@ -74,7 +84,7 @@ export class MockReferenceResolver implements ResourceMapper {
     return this._practitionerDict.get(id);
   }
 
-  public getmedicationById(id: string): Medication | undefined {
+  public getMedicationById(id: string): Medication | undefined {
     return this._medicationDict.get(id);
   }
 
@@ -204,5 +214,17 @@ export class MockReferenceResolver implements ResourceMapper {
     value: Map<string, VaccinationDoseRepeating>
   ) {
     this._vaccinationDoseRepeatingDict = value;
+  }
+
+  getImmunizations(): Immunization[] {
+    return Array.from(this._immunizationDict.values());
+  }
+
+  getRecommendations(): ImmunizationRecommendation[] {
+    return Array.from(this._recommendationDict.values());
+  }
+
+  getDiseases(): Disease[] {
+    return Array.from(this._diseaseDict.values());
   }
 }
