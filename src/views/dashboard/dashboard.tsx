@@ -24,7 +24,7 @@ export default function Dashboard() {
           ></DashboardHeader>
         </GridItem>
         <GridItem rowSpan={11} colSpan={12}>
-          <Box h={'100%'} p='4'>
+          <Box h={'100%'} p='4' pb={'0'}>
             <Outlet />
           </Box>
         </GridItem>
