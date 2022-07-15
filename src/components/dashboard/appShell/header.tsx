@@ -50,7 +50,7 @@ export const DashboardHeader: FC<DashboardProps> = () => {
   const logout = useCallback(() => {
     setLogoutLoading.on();
     keycloak.logout();
-  }, [keycloak]);
+  }, [keycloak, setLogoutLoading]);
 
   return (
     <>
