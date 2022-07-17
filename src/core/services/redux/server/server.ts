@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import keycloak from '../../keycloak';
+import keycloak from '../../../keycloak';
 
 interface User {
   userName: string;

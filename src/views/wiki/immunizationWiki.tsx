@@ -16,7 +16,7 @@ import {
 } from '../../theme/theme';
 import React from 'react';
 import { Disease } from '../../core/models/Disease';
-import { useMapper } from '../../core/services/server/ResourceMapperContext';
+import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
 
 class WikiInformationCard {

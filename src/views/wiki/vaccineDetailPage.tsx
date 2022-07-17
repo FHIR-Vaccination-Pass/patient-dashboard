@@ -12,7 +12,7 @@ import { Immunization } from '../../core/models/Immunization';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
 import { Medication } from '../../core/models/Medication';
 import { useLocation } from 'react-router-dom';
-import { useMapper } from '../../core/services/server/ResourceMapperContext';
+import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 
 import {
   Accordion,
@@ -38,6 +38,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { VaccinationDoseSingle } from '../../core/models/VaccinationDose';
+import { resolvePractitionerName } from '../../core/services/util/resolveHumanName';
 
 class DiseaseWikiInfo {
   get populationRecommendation(): PopulationRecommendation | undefined {
@@ -109,8 +110,6 @@ export function VaccineDetailPage() {
   const mapper = useMapper();
   const diseaseCode: string = pathComponents[pathComponents.length - 1];
   const disease: Disease | undefined = mapper.getDiseaseByCode(diseaseCode);
-  const vaccinationSchemes = mapper.getAllVaccinationSchemes();
-  const vaccinationDoses = mapper.getAllSingleVaccinationDoses();
   const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(disease);
 
   mapper.getImmunizations().forEach((immunization: Immunization) => {
@@ -327,10 +326,10 @@ export function VaccineDetailPage() {
                           w={'100%'}
                           textAlign={'center'}
                         >
-                          {
+                          {resolvePractitionerName(
                             mapper.getPractitionerById(immunization.performerId)
-                              ?.name.family
-                          }
+                              ?.name
+                          )}
                         </Badge>
                       </GridItem>
                       <GridItem w={'1fr'}>

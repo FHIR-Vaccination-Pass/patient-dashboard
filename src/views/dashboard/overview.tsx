@@ -2,9 +2,9 @@ import { Box, Icon, Stack, Text } from '@chakra-ui/react';
 import React from 'react';
 import { FaFolderOpen } from 'react-icons/fa';
 import { ImmunizationStatusCard } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
-import { RecommendationCard } from '../../components/dashboard/immunizationStatus/recommendationCard';
+import { RecommendationCard } from '../../components/dashboard/recommendationCard/recommendationCard';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
-import { useMapper } from '../../core/services/server/ResourceMapperContext';
+import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 
 export function Overview() {
   const mapper = useMapper();

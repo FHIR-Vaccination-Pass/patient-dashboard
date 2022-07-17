@@ -13,9 +13,10 @@ import {
 } from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
 import React from 'react';
-import { useMapper } from '../../core/services/server/ResourceMapperContext';
+import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import { Link } from 'react-router-dom';
 import { VaccinationDoseSingle } from '../../core/models/VaccinationDose';
+import { resolvePractitionerName } from '../../core/services/util/resolveHumanName';
 
 export function VaccineHistory() {
   const [color] = useToken(
@@ -51,8 +52,6 @@ export function VaccineHistory() {
   };
 
   const mapper = useMapper();
-  const vaccinationSchemes = mapper.getAllVaccinationSchemes();
-  const vaccinationDoses = mapper.getAllSingleVaccinationDoses();
   return (
     <Box h={'full'}>
       <VerticalTimeline lineColor={`${color}`}>
@@ -136,10 +135,10 @@ export function VaccineHistory() {
                         colorScheme='purple'
                         variant='subtle'
                       >
-                        {
+                        {resolvePractitionerName(
                           mapper.getPractitionerById(immunization.performerId)
-                            ?.name.family
-                        }
+                            ?.name
+                        )}
                       </Badge>
                     </Flex>
                     <Flex

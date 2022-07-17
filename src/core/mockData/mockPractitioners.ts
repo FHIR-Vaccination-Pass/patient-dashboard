@@ -9,9 +9,9 @@ export const MockPractitioners = new Map<string, Practitioner>([
       active: true,
       name: {
         id: 'name1',
-        family: 'Basic',
-        given: ['Kevin', 'Harald'],
-        prefix: ['League of Legends Profi'],
+        family: 'Haraldson',
+        given: ['Kevin'],
+        prefix: ['Dr.'],
         suffix: [],
       },
       phoneNumber: '1111111111111',

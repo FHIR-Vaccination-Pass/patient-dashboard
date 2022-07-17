@@ -17,8 +17,8 @@ import {
 } from '../../../theme/theme';
 import { ImmunizationRecommendation } from '../../../core/models/ImmunizationRecommendation';
 import { Disease } from '../../../core/models/Disease';
-import { useMapper } from '../../../core/services/server/ResourceMapperContext';
-import { ResourceMapper } from '../../../core/services/server/ResourceMapper';
+import { useMapper } from '../../../core/services/resourceMapper/ResourceMapperContext';
+import { ResourceMapper } from '../../../core/services/resourceMapper/ResourceMapper';
 
 interface RecommendationCardProps extends BoxProps {
   recommendation: ImmunizationRecommendation;
