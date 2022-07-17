@@ -38,6 +38,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { VaccinationDoseSingle } from '../../core/models/VaccinationDose';
+import { resolvePractitionerName } from '../../core/services/util/resolveHumanName';
 
 class DiseaseWikiInfo {
   get populationRecommendation(): PopulationRecommendation | undefined {
@@ -327,10 +328,10 @@ export function VaccineDetailPage() {
                           w={'100%'}
                           textAlign={'center'}
                         >
-                          {
+                          {resolvePractitionerName(
                             mapper.getPractitionerById(immunization.performerId)
-                              ?.name.family
-                          }
+                              ?.name
+                          )}
                         </Badge>
                       </GridItem>
                       <GridItem w={'1fr'}>
