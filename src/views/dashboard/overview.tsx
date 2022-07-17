@@ -3,30 +3,37 @@ import React from 'react';
 import { FaFolderOpen } from 'react-icons/fa';
 import { ImmunizationStatusCard } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 import { RecommendationCard } from '../../components/dashboard/immunizationStatus/recommendationCard';
-import { MockRecommendations } from '../../core/mockData/mockRecommendation';
-import { ImmunizationRecommendationRecommendation } from 'fhir/r4';
+import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
+import { useMapper } from '../../core/services/server/ResourceMapperContext';
 
 export function Overview() {
+  const mapper = useMapper();
+  const recommendations: ImmunizationRecommendation[] =
+    mapper.getRecommendations();
   return (
     <Stack minH='100%' gap={'10px'}>
       <ImmunizationStatusCard
-        recommendations={MockRecommendations[0].recommendation}
+        recommendations={recommendations}
       ></ImmunizationStatusCard>
       <Text color={'gray.500'} mb={5}>
         Upcoming vaccinations
       </Text>
       <Stack gap={'3px'} pb={10}>
         {/* List recommendations  */}
-        {MockRecommendations[0].recommendation.length > 0 &&
-          MockRecommendations[0].recommendation.map(
-            (recommendation: ImmunizationRecommendationRecommendation) => (
-              <RecommendationCard
-                configuration={recommendation}
-              ></RecommendationCard>
-            )
-          )}
+        {recommendations.length > 0 &&
+          recommendations.map((recommendation: ImmunizationRecommendation) => {
+            return mapper
+              .getMedicationByVaccineCode(recommendation.vaccineCode)
+              ?.targetDiseaseIds.map((diseaseId: string) => (
+                <RecommendationCard
+                  recommendation={recommendation}
+                  diseaseId={diseaseId}
+                />
+              ));
+          })}
+
         {/* If no recommendations are listed */}
-        {MockRecommendations.length <= 0 && (
+        {recommendations.length <= 0 && (
           <Stack
             justifyContent={'space-between'}
             alignItems={'center'}

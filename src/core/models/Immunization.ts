@@ -3,7 +3,7 @@ import { CodeableConcept } from './CodeableConcept';
 export type ImmunizationStatus = 'completed' | 'entered-in-error' | 'not-done';
 
 export interface Immunization {
-  identifier: string;
+  id: string;
   status: ImmunizationStatus;
   vaccineCode: CodeableConcept;
   occurrenceTime: Date;

@@ -1,4 +1,5 @@
 export interface VaccinationDose {
+  id: string;
   doseQuantity: number;
   isProtected: boolean;
   notes: string;

@@ -1,3 +1,19 @@
+import { PopulationRecommendation } from '../../core/models/PopulationRecommendation';
+import React from 'react';
+import WorldMap from '../../assets/worldMaps/WorldMap.svg';
+import {
+  getColorByStatus,
+  getIconByStatus,
+  VaccinationStatus,
+} from '../../theme/theme';
+import { FaChevronDown, FaChevronUp, FaFolderOpen } from 'react-icons/fa';
+import { Disease } from '../../core/models/Disease';
+import { Immunization } from '../../core/models/Immunization';
+import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
+import { Medication } from '../../core/models/Medication';
+import { useLocation } from 'react-router-dom';
+import { useMapper } from '../../core/services/server/ResourceMapperContext';
+
 import {
   Accordion,
   AccordionButton,
@@ -21,78 +37,128 @@ import {
   useColorModeValue,
   VStack,
 } from '@chakra-ui/react';
-import React from 'react';
-import WorldMap from '../../assets/worldMaps/WorldMap.svg';
-import {
-  getColorByStatus,
-  getIconByStatus,
-  VaccinationStatus,
-} from '../../theme/theme';
-import { mockVaccinations } from '../../core/mockData/mockVaccinations';
-import { MockRecommendations } from '../../core/mockData/mockRecommendation';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { VaccinationDoseSingle } from '../../core/models/VaccinationDose';
+
+class DiseaseWikiInfo {
+  get populationRecommendation(): PopulationRecommendation | undefined {
+    return this._populationRecommendation;
+  }
+
+  set populationRecommendation(value: PopulationRecommendation | undefined) {
+    this._populationRecommendation = value;
+  }
+
+  private _disease: Disease | undefined;
+  private _immunizations: Immunization[];
+  private _recommendation: ImmunizationRecommendation | undefined;
+  private _medications: Medication[];
+  private _populationRecommendation: PopulationRecommendation | undefined;
+
+  constructor(disease: Disease | undefined) {
+    this._disease = disease;
+    this._immunizations = [];
+    this._recommendation = undefined;
+    this._medications = [];
+    this._populationRecommendation = undefined;
+  }
+
+  get disease(): Disease | undefined {
+    return this._disease;
+  }
+
+  set disease(value: Disease | undefined) {
+    this._disease = value;
+  }
+
+  get immunizations(): Immunization[] {
+    return this._immunizations;
+  }
+
+  set immunizations(value: Immunization[]) {
+    this._immunizations = value;
+  }
+
+  get recommendation(): ImmunizationRecommendation | undefined {
+    return this._recommendation;
+  }
+
+  set recommendation(value: ImmunizationRecommendation | undefined) {
+    this._recommendation = value;
+  }
+
+  get medications(): Medication[] {
+    return this._medications;
+  }
+
+  set medications(value: Medication[]) {
+    this._medications = value;
+  }
+
+  public addMedication(medication: Medication) {
+    this._medications.push(medication);
+  }
+
+  public addImmunizatuion(immunization: Immunization) {
+    this._immunizations.push(immunization);
+  }
+}
 
 export function VaccineDetailPage() {
-  const vaccination = {
-    name: 'Coronavirus',
-    immunizationAgainst: 'Covid-19',
-    code: 'Z98',
-    description:
-      'There are several COVID-19 vaccines validated for use by WHO (given Emergency Use Listing).\n' +
-      '                        The first mass vaccination programme started in early December 2020 and the number of\n' +
-      '                        vaccination doses administered is updated on a daily basis on the COVID-19 dashboard.\n' +
-      '                        The WHO Emergency Use Listing process determines whether a product can be recommended\n' +
-      '                        for use based on all the available data on safety and efficacy and on its suitability in low-\n' +
-      '                        and middle-income countries.\n' +
-      '                        Vaccines are assessed to ensure they meet acceptable standards of quality, safety and efficacy\n' +
-      '                        using clinical trial data.',
-    risks: ['Headache', 'fever', 'pain around the puncture site', 'Dizziness'],
-    ageStart: 0,
-    ageEnd: 99,
-    vaccines: [
-      {
-        name: 'Corminaty',
-        manufacturer: 'BionTech',
-        numberOfDoses: 3,
-        recommendedAgeStart: 0,
-        recommendedAgeEnd: 99,
-      },
-      {
-        name: 'AstraZeneca',
-        manufacturer: 'AstraZeneca',
-        numberOfDoses: 3,
-        recommendedAgeStart: 40,
-        recommendedAgeEnd: 99,
-      },
-      {
-        name: 'Jhonnson & Jhonsson',
-        manufacturer: 'Jhonnson & Jhonsson',
-        numberOfDoses: 1,
-        recommendedAgeStart: 0,
-        recommendedAgeEnd: 99,
-      },
-      {
-        name: 'Moderna',
-        manufacturer: 'Moderna',
-        numberOfDoses: 3,
-        recommendedAgeStart: 0,
-        recommendedAgeEnd: 99,
-      },
-    ],
-    relevantLocations: ['Global'],
-  };
-  const vaccinationHistory = mockVaccinations.filter((vacc) => {
-    return vacc.diseaseName === 'Disease A';
+  const location = useLocation();
+  const pathComponents: string[] = location.pathname.split('/');
+  const mapper = useMapper();
+  const diseaseCode: string = pathComponents[pathComponents.length - 1];
+  const disease: Disease | undefined = mapper.getDiseaseByCode(diseaseCode);
+  const vaccinationSchemes = mapper.getAllVaccinationSchemes();
+  const vaccinationDoses = mapper.getAllSingleVaccinationDoses();
+  const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(disease);
+
+  mapper.getImmunizations().forEach((immunization: Immunization) => {
+    const vaccine: Medication | undefined = mapper.getMedicationByVaccineCode(
+      immunization.vaccineCode
+    );
+    if (vaccine !== undefined) {
+      let included: boolean = false;
+      vaccine.targetDiseaseIds.forEach((id) => {
+        if (id === disease?.id) included = true;
+      });
+      if (included) diseaseWikiInfo.addImmunizatuion(immunization);
+    }
   });
-  const recommendation = MockRecommendations[0].recommendation.find((r) => {
-    return r.targetDisease?.text === 'Disease A';
+
+  mapper
+    .getRecommendations()
+    .forEach((recommendation: ImmunizationRecommendation) => {
+      const vaccine: Medication | undefined = mapper.getMedicationByVaccineCode(
+        recommendation.vaccineCode
+      );
+      if (vaccine !== undefined) {
+        let included: boolean = false;
+        vaccine.targetDiseaseIds.forEach((id) => {
+          if (id === disease?.id) included = true;
+        });
+        if (included) diseaseWikiInfo.recommendation = recommendation;
+      }
+    });
+
+  disease?.vaccineIds.forEach((vaccineId: string) => {
+    const vaccine: Medication | undefined = mapper.getMedicationById(vaccineId);
+    if (vaccine !== undefined) {
+      diseaseWikiInfo.addMedication(vaccine);
+    }
   });
+
+  diseaseWikiInfo.populationRecommendation =
+    mapper.getPopulationRecommendationById(
+      disease?.populationRecommendationId ?? ''
+    );
+
   const color = getColorByStatus(
-    recommendation?.forecastStatus.text as VaccinationStatus,
+    diseaseWikiInfo.recommendation?.forecastStatus.text as VaccinationStatus,
     'gray'
   );
   const dueText = `Immunization due in less than a month`;
-  const [showHistory, setShowHistory] = useBoolean(true);
+  const [showHistory, setShowHistory] = useBoolean(false);
   return (
     <Box pb={5}>
       <div>
@@ -131,26 +197,28 @@ export function VaccineDetailPage() {
               w={'100%'}
             >
               <Text ml={'20px'} fontSize={'xl'}>
-                {vaccination.name}
+                {diseaseWikiInfo.disease?.name}
               </Text>
-              {recommendation !== undefined && (
+              {diseaseWikiInfo.recommendation !== undefined && (
                 <Text ml={'20px'} color={'gray.600'} fontSize={'12px'}>
                   {dueText}
                 </Text>
               )}
             </Flex>
             <Flex alignItems={'center'} mr={'20px'}>
-              {recommendation !== undefined && (
+              {diseaseWikiInfo.recommendation !== undefined && (
                 <Icon
                   mt={'auto'}
                   mb={'auto'}
                   mr='3'
                   as={getIconByStatus(
-                    recommendation.forecastStatus.text as VaccinationStatus
+                    diseaseWikiInfo.recommendation?.forecastStatus
+                      .text as VaccinationStatus
                   )}
                   color={
                     getColorByStatus(
-                      recommendation.forecastStatus.text as VaccinationStatus,
+                      diseaseWikiInfo.recommendation?.forecastStatus
+                        .text as VaccinationStatus,
                       'gray'
                     ) + '.400'
                   }
@@ -170,83 +238,123 @@ export function VaccineDetailPage() {
               pt={'5px'}
               flexDirection={'column'}
             >
-              <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
-                Previous vaccinations
-              </Text>
-              {vaccinationHistory.map((v) => (
-                <Stack
-                  m={'0px 20px 5px 20px'}
-                  bg={'gray.100'}
-                  boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
-                  borderRadius={'5px'}
-                  overflow={'hidden'}
-                >
-                  <Grid
-                    templateColumns='1fr 1fr 1fr'
-                    rowGap={'5px'}
-                    columnGap={'10px'}
-                    p={'5px'}
-                    justifyContent={'space-between'}
-                    alignItems={'center'}
-                    templateRows={'1fr 1fr'}
+              {diseaseWikiInfo.immunizations.length > 0 && (
+                <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
+                  Previous vaccinations
+                </Text>
+              )}
+              {diseaseWikiInfo.immunizations.map(
+                (immunization: Immunization) => (
+                  <Stack
+                    m={'0px 20px 5px 20px'}
+                    bg={'gray.100'}
+                    boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
+                    borderRadius={'5px'}
+                    overflow={'hidden'}
                   >
-                    <GridItem>
-                      <Text w={'1fr'}>{v.vaccineName}</Text>
-                    </GridItem>
-                    <GridItem w={'1fr'}>
-                      <Badge
-                        colorScheme={'green'}
-                        variant='subtle'
-                        w={'100%'}
-                        textAlign={'center'}
-                      >
-                        {v.date}
-                      </Badge>
-                    </GridItem>
-                    <GridItem w={'1fr'}>
-                      <Badge
-                        colorScheme={'gray'}
-                        variant='solid'
-                        w={'100%'}
-                        textAlign={'center'}
-                      >
-                        {v.dose}
-                      </Badge>
-                    </GridItem>
+                    <Grid
+                      templateColumns='1fr 1fr 1fr'
+                      rowGap={'5px'}
+                      columnGap={'10px'}
+                      p={'5px'}
+                      justifyContent={'space-between'}
+                      alignItems={'center'}
+                      templateRows={'1fr 1fr'}
+                    >
+                      <GridItem>
+                        <Text w={'1fr'}>
+                          {
+                            mapper.getMedicationByVaccineCode(
+                              immunization.vaccineCode
+                            )?.tradeName
+                          }
+                        </Text>
+                      </GridItem>
+                      <GridItem w={'1fr'}>
+                        <Badge
+                          colorScheme={'green'}
+                          variant='subtle'
+                          w={'100%'}
+                          textAlign={'center'}
+                        >
+                          {immunization.occurrenceTime.toDateString()}
+                        </Badge>
+                      </GridItem>
+                      <GridItem w={'1fr'}>
+                        <Badge
+                          colorScheme={'gray'}
+                          variant='solid'
+                          w={'100%'}
+                          textAlign={'center'}
+                        >
+                          {
+                            // TODO: Can this be done more efficient?
+                            (
+                              mapper.getVaccinationDoseById(
+                                immunization.vaccinationDoseId
+                              ) as VaccinationDoseSingle
+                            ).numberInScheme
+                          }{' '}
+                          /{' '}
+                          {mapper.getNumberOfDosesByMedicationId(
+                            mapper.getMedicationByVaccineCode(
+                              immunization.vaccineCode
+                            )?.id
+                          )}
+                        </Badge>
+                      </GridItem>
 
-                    <GridItem>
-                      <Badge
-                        colorScheme={'blue'}
-                        variant='subtle'
-                        w={'100%'}
-                        textAlign={'center'}
-                      >
-                        {v.manufacturer}
-                      </Badge>
-                    </GridItem>
-                    <GridItem w={'1fr'}>
-                      <Badge
-                        colorScheme={'purple'}
-                        variant='subtle'
-                        w={'100%'}
-                        textAlign={'center'}
-                      >
-                        {v.medicalDoctor}
-                      </Badge>
-                    </GridItem>
-                    <GridItem w={'1fr'}>
-                      <Badge
-                        colorScheme={'purple'}
-                        variant='subtle'
-                        w={'100%'}
-                        textAlign={'center'}
-                      >
-                        {v.lotNumber}
-                      </Badge>
-                    </GridItem>
-                  </Grid>
+                      <GridItem>
+                        <Badge
+                          colorScheme={'blue'}
+                          variant='subtle'
+                          w={'100%'}
+                          textAlign={'center'}
+                        >
+                          {
+                            mapper.getOrganizationById(
+                              mapper.getMedicationByVaccineCode(
+                                immunization.vaccineCode
+                              )?.manufacturerId || ''
+                            )?.name
+                          }
+                        </Badge>
+                      </GridItem>
+                      <GridItem w={'1fr'}>
+                        <Badge
+                          colorScheme={'purple'}
+                          variant='subtle'
+                          w={'100%'}
+                          textAlign={'center'}
+                        >
+                          {
+                            mapper.getPractitionerById(immunization.performerId)
+                              ?.name.family
+                          }
+                        </Badge>
+                      </GridItem>
+                      <GridItem w={'1fr'}>
+                        <Badge
+                          colorScheme={'purple'}
+                          variant='subtle'
+                          w={'100%'}
+                          textAlign={'center'}
+                        >
+                          {immunization.lotNumber}
+                        </Badge>
+                      </GridItem>
+                    </Grid>
+                  </Stack>
+                )
+              )}
+              {diseaseWikiInfo.immunizations.length === 0 && (
+                <Stack justifyContent={'space-between'} alignItems={'center'}>
+                  <Icon as={FaFolderOpen} color={'gray.400'} w={20} h={20} />
+                  <Box pb={'15px'}>
+                    <Text color={'gray.400'}>No vaccinations yet</Text>
+                  </Box>
                 </Stack>
-              ))}
+              )}
             </Flex>
           )}
           <VStack
@@ -264,7 +372,9 @@ export function VaccineDetailPage() {
               >
                 Disease Description
               </Heading>
-              <Text color={'gray.500'}>{vaccination.description}</Text>
+              <Text color={'gray.500'}>
+                {diseaseWikiInfo.disease?.description}
+              </Text>
             </Box>
             <Box mb={'20px'}>
               <Heading
@@ -277,9 +387,10 @@ export function VaccineDetailPage() {
                 Recommendations
               </Heading>
               <Text color={'gray.500'}>
-                The STIKO recommends start immunization for {vaccination.name}{' '}
-                earlies from age {vaccination.ageStart} and latest until age{' '}
-                {vaccination.ageEnd}.
+                The STIKO recommends start immunization for{' '}
+                {diseaseWikiInfo.disease?.name} earlies from age{' '}
+                {diseaseWikiInfo.populationRecommendation?.ageStart} and latest
+                until age {diseaseWikiInfo.populationRecommendation?.ageEnd}.
               </Text>
             </Box>
             <Box mb={'20px'}>
@@ -293,9 +404,11 @@ export function VaccineDetailPage() {
                 Affected Locations
               </Heading>
               <UnorderedList color={'gray.500'}>
-                {vaccination.relevantLocations.map((location) => (
-                  <ListItem ml={'10px'}>{location}</ListItem>
-                ))}
+                {diseaseWikiInfo.populationRecommendation?.locations.map(
+                  (location) => (
+                    <ListItem ml={'10px'}>{location.country}</ListItem>
+                  )
+                )}
               </UnorderedList>
             </Box>
             <Box mb={'20px'}>
@@ -309,11 +422,11 @@ export function VaccineDetailPage() {
                 Vaccines
               </Heading>
               <Accordion defaultIndex={[]} allowMultiple mb={'20px'}>
-                {vaccination.vaccines.map((vaccine) => (
+                {diseaseWikiInfo.medications.map((vaccine: Medication) => (
                   <AccordionItem>
                     <AccordionButton>
                       <Box flex='1' textAlign='left'>
-                        {vaccine.name}
+                        {vaccine.tradeName}
                       </Box>
                       <AccordionIcon />
                     </AccordionButton>
@@ -327,11 +440,14 @@ export function VaccineDetailPage() {
                           right={'0px'}
                           minW={'100px'}
                         >
-                          {vaccine.manufacturer}
+                          {
+                            mapper.getOrganizationById(vaccine.manufacturerId)
+                              ?.name
+                          }
                         </Badge>
                       </HStack>
                       <HStack position={'relative'}>
-                        <Text>Number of Dosis:</Text>
+                        <Text>Number of Doses:</Text>
                         <Box
                           width={'100px'}
                           backgroundColor={'gray.100'}
@@ -339,7 +455,9 @@ export function VaccineDetailPage() {
                           position={'absolute'}
                           right={'0px'}
                         >
-                          <Text fontSize={'xs'}>{vaccine.numberOfDoses}</Text>
+                          <Text fontSize={'xs'}>
+                            {mapper.getNumberOfDosesByMedicationId(vaccine.id)}
+                          </Text>
                         </Box>
                       </HStack>
                     </AccordionPanel>

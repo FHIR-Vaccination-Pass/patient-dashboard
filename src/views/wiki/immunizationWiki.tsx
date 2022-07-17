@@ -7,28 +7,77 @@ import {
   useBoolean,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { getSomeDiseases, Disease } from '../../core/mockData/disease';
 import { ChevronRightIcon, InfoIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
-import { MockRecommendations } from '../../core/mockData/mockRecommendation';
 import {
   getColorByStatus,
   getIconByStatus,
   VaccinationStatus,
 } from '../../theme/theme';
 import React from 'react';
+import { Disease } from '../../core/models/Disease';
+import { useMapper } from '../../core/services/server/ResourceMapperContext';
+import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
+
+class WikiInformationCard {
+  private _disease: Disease;
+  private _recommendation: ImmunizationRecommendation | undefined;
+
+  constructor(disease: Disease) {
+    this._disease = disease;
+    this._recommendation = undefined;
+  }
+
+  get disease(): Disease {
+    return this._disease;
+  }
+
+  set disease(value: Disease) {
+    this._disease = value;
+  }
+
+  get recommendation(): ImmunizationRecommendation | undefined {
+    return this._recommendation;
+  }
+
+  set recommendation(value: ImmunizationRecommendation | undefined) {
+    this._recommendation = value;
+  }
+}
 
 export function ImmunizationWiki() {
-  const diseases: Disease[] = getSomeDiseases();
+  const mapper = useMapper();
+  const diseases: Disease[] = mapper.getDiseases();
+  const recommendations: ImmunizationRecommendation[] =
+    mapper.getRecommendations();
   const [showInfo, setShowInfo] = useBoolean();
-  // Into each entry of a disease, add whether the user has a recommendation getting an immunization against that disease
-  // TODO: Include completed immunizations
-  diseases.map((disease) => {
-    disease.personalRecommendation = MockRecommendations[0].recommendation.find(
-      (recommendation) => recommendation.targetDisease?.text === disease.name
-    );
-    return disease;
+
+  const wikiInformationCards: Map<string, WikiInformationCard> = new Map<
+    string,
+    WikiInformationCard
+  >();
+
+  diseases.forEach((disease: Disease) => {
+    wikiInformationCards.set(disease.id, new WikiInformationCard(disease));
   });
+
+  recommendations.forEach((recommendation: ImmunizationRecommendation) => {
+    const diseaseIds: string[] | undefined = mapper.getMedicationByVaccineCode(
+      recommendation.vaccineCode
+    )?.targetDiseaseIds;
+
+    if (diseaseIds !== undefined) {
+      diseaseIds.forEach((diseaseId: string) => {
+        let card: WikiInformationCard | undefined =
+          wikiInformationCards.get(diseaseId);
+        if (card !== undefined) {
+          card.recommendation = recommendation;
+          wikiInformationCards.set(diseaseId, card);
+        }
+      });
+    }
+  });
+
   return (
     <Box pb={5}>
       <Flex justifyContent={'space-between'} alignItems={'center'} mb={'20px'}>
@@ -53,9 +102,9 @@ export function ImmunizationWiki() {
         pl={5}
         pr={5}
       >
-        {diseases.map((disease) => (
+        {Array.from(wikiInformationCards.values()).map((card) => (
           <div>
-            <Link to={`/dashboard/wiki/${disease.code}`}>
+            <Link to={`/dashboard/wiki/${card.disease.code.text}`}>
               <Flex
                 justifyContent={'space-between'}
                 alignItems={'center'}
@@ -64,20 +113,19 @@ export function ImmunizationWiki() {
                 <Text
                   fontSize={'xl'}
                   color={getColorByStatus(
-                    disease.personalRecommendation?.forecastStatus
+                    card.recommendation?.forecastStatus
                       .text as VaccinationStatus,
                     'black'
                   )}
                 >
-                  {disease.name}
+                  {card.disease.name}
                 </Text>
                 <Flex justifyContent={'space-between'} alignItems={'center'}>
-                  {disease.personalRecommendation !== undefined &&
-                    disease.personalRecommendation.forecastStatus.text &&
-                    disease.personalRecommendation.forecastStatus.text.length >
-                      0 &&
+                  {card.recommendation !== undefined &&
+                    card.recommendation.forecastStatus.text &&
+                    card.recommendation.forecastStatus.text.length > 0 &&
                     getIconByStatus(
-                      disease.personalRecommendation.forecastStatus
+                      card.recommendation.forecastStatus
                         .text as VaccinationStatus
                     ) !== undefined && (
                       <Icon
@@ -85,12 +133,12 @@ export function ImmunizationWiki() {
                         mb={'auto'}
                         ml='3'
                         as={getIconByStatus(
-                          disease.personalRecommendation.forecastStatus
+                          card.recommendation.forecastStatus
                             .text as VaccinationStatus
                         )}
                         color={
                           getColorByStatus(
-                            disease.personalRecommendation.forecastStatus
+                            card.recommendation.forecastStatus
                               .text as VaccinationStatus,
                             'black'
                           ) + '.400'
