@@ -62,7 +62,7 @@ export function ImmunizationWiki() {
   });
 
   recommendations.forEach((recommendation: ImmunizationRecommendation) => {
-    const diseaseIds: string[] | undefined = mapper.getVaccineByVaccineCode(
+    const diseaseIds: string[] | undefined = mapper.getMedicationByVaccineCode(
       recommendation.vaccineCode
     )?.targetDiseaseIds;
 

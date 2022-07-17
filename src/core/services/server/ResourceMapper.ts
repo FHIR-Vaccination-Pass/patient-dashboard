@@ -8,7 +8,7 @@ import { PopulationRecommendation } from '../../models/PopulationRecommendation'
 import { VaccinationScheme } from '../../models/VaccinationScheme';
 import { Substance } from '../../models/Substance';
 import { Organization } from '../../models/Organization';
-import { VaccinationDose } from '../../models/VaccinationDose';
+import { VaccinationDose, VaccinationDoseSingle } from '../../models/VaccinationDose';
 import { CodeableConcept } from '../../models/CodeableConcept';
 
 export interface ResourceMapper {
@@ -17,6 +17,10 @@ export interface ResourceMapper {
   getRecommendations(): ImmunizationRecommendation[];
 
   getDiseases(): Disease[];
+
+  getAllVaccinationSchemes(): VaccinationScheme[];
+
+  getAllSingleVaccinationDoses(): VaccinationDoseSingle[];
 
   getRecommendationById(id: string): ImmunizationRecommendation | undefined;
 
@@ -44,5 +48,5 @@ export interface ResourceMapper {
 
   getVaccinationDoseById(id: string): VaccinationDose | undefined;
 
-  getVaccineByVaccineCode(vaccineCode: CodeableConcept): Medication | undefined;
+  getMedicationByVaccineCode(vaccineCode: CodeableConcept): Medication | undefined;
 }

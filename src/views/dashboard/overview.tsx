@@ -23,7 +23,7 @@ export function Overview() {
         {recommendations.length > 0 &&
           recommendations.map((recommendation: ImmunizationRecommendation) => {
             return mapper
-              .getVaccineByVaccineCode(recommendation.vaccineCode)
+              .getMedicationByVaccineCode(recommendation.vaccineCode)
               ?.targetDiseaseIds.map((diseaseId: string) => (
                 <RecommendationCard
                   recommendation={recommendation}

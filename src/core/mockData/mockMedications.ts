@@ -2,9 +2,9 @@ import { Medication } from '../models/Medication';
 
 export const MockMedications = new Map<string, Medication>([
   [
-    'vaccine1',
+    'medication1',
     {
-      id: 'vaccine1',
+      id: 'medication1',
       code: {
         id: 'vaccineCoding1',
         coding: 'vaccineCoding',
@@ -16,7 +16,7 @@ export const MockMedications = new Map<string, Medication>([
         text: 'form',
       },
       ingredientId: 'substance1',
-      manufacturer: 'organization1',
+      manufacturerId: 'organization1',
       tradeName: 'Vaccine1',
       targetDiseaseIds: ['disease1'],
     },
@@ -36,7 +36,7 @@ export const MockMedications = new Map<string, Medication>([
         text: 'form',
       },
       ingredientId: 'vibrio_cholerae_O1',
-      manufacturer: 'valneva',
+      manufacturerId: 'valneva',
       tradeName: 'Dukoral',
       targetDiseaseIds: ['cholera'],
     },
