@@ -44,7 +44,7 @@ export const ImmunizationStatusCard: FC<ImmunizationStatusCardProps> = ({
   );
 };
 
-function calcAggregateImmunizationStatus(
+export function calcAggregateImmunizationStatus(
   recommendations: ImmunizationRecommendation[]
 ): AggregatedImmunizationStatus {
   // If no recommendations or no recommendation status fields set, then immunization complete

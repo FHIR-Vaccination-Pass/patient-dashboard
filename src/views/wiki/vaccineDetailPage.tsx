@@ -1,11 +1,6 @@
 import { PopulationRecommendation } from '../../core/models/PopulationRecommendation';
 import React from 'react';
 import WorldMap from '../../assets/worldMaps/WorldMap.svg';
-import {
-  getColorByStatus,
-  getIconByStatus,
-  VaccinationStatus,
-} from '../../theme/theme';
 import { FaChevronDown, FaChevronUp, FaFolderOpen } from 'react-icons/fa';
 import { Disease } from '../../core/models/Disease';
 import { Immunization } from '../../core/models/Immunization';
@@ -38,6 +33,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { VaccinationDoseSingle } from '../../core/models/VaccinationDose';
+import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 
 class DiseaseWikiInfo {
   get populationRecommendation(): PopulationRecommendation | undefined {
@@ -50,14 +46,14 @@ class DiseaseWikiInfo {
 
   private _disease: Disease | undefined;
   private _immunizations: Immunization[];
-  private _recommendation: ImmunizationRecommendation | undefined;
+  private _recommendations: ImmunizationRecommendation[];
   private _medications: Medication[];
   private _populationRecommendation: PopulationRecommendation | undefined;
 
   constructor(disease: Disease | undefined) {
     this._disease = disease;
     this._immunizations = [];
-    this._recommendation = undefined;
+    this._recommendations = [];
     this._medications = [];
     this._populationRecommendation = undefined;
   }
@@ -78,12 +74,12 @@ class DiseaseWikiInfo {
     this._immunizations = value;
   }
 
-  get recommendation(): ImmunizationRecommendation | undefined {
-    return this._recommendation;
+  get recommendations(): ImmunizationRecommendation[] {
+    return this._recommendations;
   }
 
-  set recommendation(value: ImmunizationRecommendation | undefined) {
-    this._recommendation = value;
+  set recommendations(value: ImmunizationRecommendation[]) {
+    this._recommendations = value;
   }
 
   get medications(): Medication[] {
@@ -109,8 +105,6 @@ export function VaccineDetailPage() {
   const mapper = useMapper();
   const diseaseCode: string = pathComponents[pathComponents.length - 1];
   const disease: Disease | undefined = mapper.getDiseaseByCode(diseaseCode);
-  const vaccinationSchemes = mapper.getAllVaccinationSchemes();
-  const vaccinationDoses = mapper.getAllSingleVaccinationDoses();
   const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(disease);
 
   mapper.getImmunizations().forEach((immunization: Immunization) => {
@@ -129,15 +123,18 @@ export function VaccineDetailPage() {
   mapper
     .getRecommendations()
     .forEach((recommendation: ImmunizationRecommendation) => {
-      const vaccine: Medication | undefined = mapper.getMedicationByVaccineCode(
-        recommendation.vaccineCode
-      );
-      if (vaccine !== undefined) {
-        let included: boolean = false;
-        vaccine.targetDiseaseIds.forEach((id) => {
-          if (id === disease?.id) included = true;
+      const medication: Medication | undefined =
+        mapper.getMedicationByVaccineCode(recommendation.vaccineCode);
+      if (medication !== undefined) {
+        medication.targetDiseaseIds.forEach((id) => {
+          if (id === disease?.id) {
+            if (diseaseWikiInfo.recommendations !== undefined) {
+              diseaseWikiInfo.recommendations.push(recommendation);
+            } else {
+              diseaseWikiInfo.recommendations = [recommendation];
+            }
+          }
         });
-        if (included) diseaseWikiInfo.recommendation = recommendation;
       }
     });
 
@@ -153,12 +150,12 @@ export function VaccineDetailPage() {
       disease?.populationRecommendationId ?? ''
     );
 
-  const color = getColorByStatus(
-    diseaseWikiInfo.recommendation?.forecastStatus.text as VaccinationStatus,
-    'gray'
+  const status = calcAggregateImmunizationStatus(
+    diseaseWikiInfo.recommendations
   );
   const dueText = `Immunization due in less than a month`;
-  const [showHistory, setShowHistory] = useBoolean(false);
+  const [showPersonalizedInfo, setShowPersonalizedInfo] = useBoolean(false);
+  console.log(diseaseWikiInfo.recommendations);
   return (
     <Box pb={5}>
       <div>
@@ -184,12 +181,12 @@ export function VaccineDetailPage() {
           }}
         >
           <Flex
-            backgroundColor={`${color}.100`}
+            backgroundColor={status.backgroundColor}
             h={'60px'}
             alignItems={'center'}
             style={{ width: '100%' }}
             borderRadius={'15px 15px 0 0'}
-            onClick={setShowHistory.toggle}
+            onClick={setShowPersonalizedInfo.toggle}
           >
             <Flex
               justifyContent={'space-between'}
@@ -199,45 +196,112 @@ export function VaccineDetailPage() {
               <Text ml={'20px'} fontSize={'xl'}>
                 {diseaseWikiInfo.disease?.name}
               </Text>
-              {diseaseWikiInfo.recommendation !== undefined && (
+              {diseaseWikiInfo.recommendations.length > 0 && (
                 <Text ml={'20px'} color={'gray.600'} fontSize={'12px'}>
                   {dueText}
                 </Text>
               )}
             </Flex>
             <Flex alignItems={'center'} mr={'20px'}>
-              {diseaseWikiInfo.recommendation !== undefined && (
+              {diseaseWikiInfo.recommendations.length > 0 && (
                 <Icon
                   mt={'auto'}
                   mb={'auto'}
                   mr='3'
-                  as={getIconByStatus(
-                    diseaseWikiInfo.recommendation?.forecastStatus
-                      .text as VaccinationStatus
-                  )}
-                  color={
-                    getColorByStatus(
-                      diseaseWikiInfo.recommendation?.forecastStatus
-                        .text as VaccinationStatus,
-                      'gray'
-                    ) + '.400'
-                  }
+                  as={status.icon}
+                  color={status.iconColor}
                   w={6}
                   h={6}
                 />
               )}
-              {!showHistory && <FaChevronDown size={18} />}
-              {showHistory && <FaChevronUp size={18} />}
+              {!showPersonalizedInfo && <FaChevronDown size={18} />}
+              {showPersonalizedInfo && <FaChevronUp size={18} />}
             </Flex>
           </Flex>
-          {showHistory && (
+          {showPersonalizedInfo && (
             <Flex
-              bg={`${color}.100`}
+              bg={status.backgroundColor}
               w={'100%'}
               mt={'0px !important'}
               pt={'5px'}
               flexDirection={'column'}
             >
+              {diseaseWikiInfo.recommendations.length > 0 && (
+                <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
+                  Due vaccinations
+                </Text>
+              )}
+
+              {diseaseWikiInfo.recommendations.map(
+                (recommendation: ImmunizationRecommendation) => (
+                  <Stack
+                    m={'0px 20px 5px 20px'}
+                    bg={'gray.100'}
+                    boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
+                    borderRadius={'5px'}
+                    overflow={'hidden'}
+                  >
+                    <Grid
+                      templateColumns='1fr 1fr 1fr'
+                      columnGap={'10px'}
+                      p={'5px'}
+                      justifyContent={'space-between'}
+                      alignItems={'center'}
+                      mb={'3px'}
+                    >
+                      <GridItem>
+                        <Text w={'1fr'}>
+                          {
+                            mapper.getMedicationByVaccineCode(
+                              recommendation.vaccineCode
+                            )?.tradeName
+                          }
+                        </Text>
+                      </GridItem>
+                      <GridItem w={'1fr'}>
+                        <Badge
+                          colorScheme={'blue'}
+                          variant='subtle'
+                          w={'100%'}
+                          textAlign={'center'}
+                        >
+                          {
+                            mapper.getOrganizationById(
+                              mapper.getMedicationByVaccineCode(
+                                recommendation.vaccineCode
+                              )?.manufacturerId || ''
+                            )?.name
+                          }
+                        </Badge>
+                      </GridItem>
+                      <GridItem w={'1fr'}>
+                        <Badge
+                          colorScheme={'gray'}
+                          variant='solid'
+                          w={'100%'}
+                          textAlign={'center'}
+                        >
+                          {
+                            // TODO: Can this be done more efficient?
+                            (
+                              mapper.getVaccinationDoseById(
+                                recommendation.vaccinationDoseId
+                              ) as VaccinationDoseSingle
+                            )?.numberInScheme
+                          }{' '}
+                          /{' '}
+                          {mapper.getNumberOfDosesByMedicationId(
+                            mapper.getMedicationByVaccineCode(
+                              recommendation.vaccineCode
+                            )?.id
+                          )}
+                        </Badge>
+                      </GridItem>
+                    </Grid>
+                  </Stack>
+                )
+              )}
+
               {diseaseWikiInfo.immunizations.length > 0 && (
                 <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
                   Previous vaccinations
