@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { AggregatedImmunizationStatus } from '../../../core/models/AggregatedImmunizationStatus';
 import {
   CompleteStatus,
+  DefaultStatus,
   DueStatus,
   MissingHistoryStatus,
   OverdueStatus,
@@ -48,7 +49,7 @@ export function calcAggregateImmunizationStatus(
   recommendations: ImmunizationRecommendation[]
 ): AggregatedImmunizationStatus {
   // If no recommendations or no recommendation status fields set, then immunization complete
-  let aggregatedImmunizationStatus = CompleteStatus;
+  let aggregatedImmunizationStatus = DefaultStatus;
   // Do later: Check history and recommendations to set missing history status
   let currentStatus: string | undefined = '';
   recommendations.forEach((recommendation: ImmunizationRecommendation) => {
@@ -59,7 +60,8 @@ export function calcAggregateImmunizationStatus(
       if (
         currentStatus === 'due' &&
         (aggregatedImmunizationStatus === CompleteStatus ||
-          aggregatedImmunizationStatus === MissingHistoryStatus)
+          aggregatedImmunizationStatus === MissingHistoryStatus ||
+          aggregatedImmunizationStatus === DefaultStatus)
       ) {
         aggregatedImmunizationStatus = DueStatus;
         // Overdue > all else
