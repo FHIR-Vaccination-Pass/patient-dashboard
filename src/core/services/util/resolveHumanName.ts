@@ -1,11 +1,9 @@
 import { HumanName } from '../../models/HumanName';
 
 export function resolvePractitionerName(name: HumanName | undefined): string {
-  let output = '';
-  if (name !== undefined) {
-    name.prefix.forEach((prefix: string) => (output += prefix));
-    output += ' ' + name.family;
+  if (name === undefined) {
+    return '';
   }
-  console.log(output);
-  return output;
+  
+  return [...name.prefix, name.family].join(' ')
 }
