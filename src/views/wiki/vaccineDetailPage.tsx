@@ -357,7 +357,7 @@ export function VaccineDetailPage() {
               )}
               {diseaseWikiInfo.immunizations.length === 0 && (
                 <Stack justifyContent={'space-between'} alignItems={'center'}>
-                  <Icon as={FaFolderOpen} color={'gray.200'} w={20} h={20} />
+                  <Icon as={FaFolderOpen} color={'gray.400'} w={20} h={20} />
                   <Box pb={'15px'}>
                     <Text color={'gray.400'}>No vaccinations yet</Text>
                   </Box>
