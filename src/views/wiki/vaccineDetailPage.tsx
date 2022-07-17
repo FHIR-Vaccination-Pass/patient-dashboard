@@ -303,9 +303,11 @@ export function VaccineDetailPage() {
                           textAlign={'center'}
                         >
                           {
-                            mapper.getVaccineByVaccineCode(
-                              immunization.vaccineCode
-                            )?.manufacturer
+                            mapper.getOrganizationById(
+                              mapper.getVaccineByVaccineCode(
+                                immunization.vaccineCode
+                              )?.manufacturer || ''
+                            )?.name
                           }
                         </Badge>
                       </GridItem>
