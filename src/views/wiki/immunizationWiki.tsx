@@ -9,23 +9,19 @@ import {
 } from '@chakra-ui/react';
 import { ChevronRightIcon, InfoIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
-import {
-  getColorByStatus,
-  getIconByStatus,
-  VaccinationStatus,
-} from '../../theme/theme';
 import React from 'react';
 import { Disease } from '../../core/models/Disease';
 import { useMapper } from '../../core/services/server/ResourceMapperContext';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
+import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 
 class WikiInformationCard {
   private _disease: Disease;
-  private _recommendation: ImmunizationRecommendation | undefined;
+  private _recommendations: ImmunizationRecommendation[];
 
   constructor(disease: Disease) {
     this._disease = disease;
-    this._recommendation = undefined;
+    this._recommendations = [];
   }
 
   get disease(): Disease {
@@ -36,12 +32,12 @@ class WikiInformationCard {
     this._disease = value;
   }
 
-  get recommendation(): ImmunizationRecommendation | undefined {
-    return this._recommendation;
+  get recommendations(): ImmunizationRecommendation[] {
+    return this._recommendations;
   }
 
-  set recommendation(value: ImmunizationRecommendation | undefined) {
-    this._recommendation = value;
+  set recommendations(value: ImmunizationRecommendation[]) {
+    this._recommendations = value;
   }
 }
 
@@ -71,7 +67,7 @@ export function ImmunizationWiki() {
         let card: WikiInformationCard | undefined =
           wikiInformationCards.get(diseaseId);
         if (card !== undefined) {
-          card.recommendation = recommendation;
+          card.recommendations.push(recommendation);
           wikiInformationCards.set(diseaseId, card);
         }
       });
@@ -84,7 +80,12 @@ export function ImmunizationWiki() {
         <Text fontSize={'2xl'} textAlign={'center'} ml={'3px'}>
           Immunization Wiki
         </Text>
-        <InfoIcon mr={2} boxSize={6} onClick={setShowInfo.toggle}></InfoIcon>
+        <InfoIcon
+          mr={2}
+          boxSize={6}
+          onClick={setShowInfo.toggle}
+          color={'gray.600'}
+        ></InfoIcon>
       </Flex>
       {showInfo && (
         <Text mb={'15px'} ml={'5px'} color={'gray.500'}>
@@ -112,41 +113,31 @@ export function ImmunizationWiki() {
               >
                 <Text
                   fontSize={'xl'}
-                  color={getColorByStatus(
-                    card.recommendation?.forecastStatus
-                      .text as VaccinationStatus,
-                    'black'
-                  )}
+                  color={
+                    calcAggregateImmunizationStatus(card.recommendations)
+                      .iconColor
+                  }
                 >
                   {card.disease.name}
                 </Text>
                 <Flex justifyContent={'space-between'} alignItems={'center'}>
-                  {card.recommendation !== undefined &&
-                    card.recommendation.forecastStatus.text &&
-                    card.recommendation.forecastStatus.text.length > 0 &&
-                    getIconByStatus(
-                      card.recommendation.forecastStatus
-                        .text as VaccinationStatus
-                    ) !== undefined && (
-                      <Icon
-                        mt={'auto'}
-                        mb={'auto'}
-                        ml='3'
-                        as={getIconByStatus(
-                          card.recommendation.forecastStatus
-                            .text as VaccinationStatus
-                        )}
-                        color={
-                          getColorByStatus(
-                            card.recommendation.forecastStatus
-                              .text as VaccinationStatus,
-                            'black'
-                          ) + '.400'
-                        }
-                        w={6}
-                        h={6}
-                      />
-                    )}
+                  {card.recommendations.length > 0 && (
+                    <Icon
+                      mt={'auto'}
+                      mb={'auto'}
+                      ml='3'
+                      as={
+                        calcAggregateImmunizationStatus(card.recommendations)
+                          .icon
+                      }
+                      color={
+                        calcAggregateImmunizationStatus(card.recommendations)
+                          .iconColor
+                      }
+                      w={6}
+                      h={6}
+                    />
+                  )}
                   <ChevronRightIcon ml={5} boxSize={8}></ChevronRightIcon>
                 </Flex>
               </Flex>

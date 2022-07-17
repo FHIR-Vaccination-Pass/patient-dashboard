@@ -197,8 +197,8 @@ export function VaccineDetailPage() {
                 {diseaseWikiInfo.disease?.name}
               </Text>
               {diseaseWikiInfo.recommendations.length > 0 && (
-                <Text ml={'20px'} color={'gray.600'} fontSize={'12px'}>
-                  {dueText}
+                <Text ml={'20px'} color={'gray.600'} fontSize={'14px'}>
+                  {status.headline}
                 </Text>
               )}
             </Flex>
@@ -225,6 +225,7 @@ export function VaccineDetailPage() {
               mt={'0px !important'}
               pt={'5px'}
               flexDirection={'column'}
+              pb={'10px'}
             >
               {diseaseWikiInfo.recommendations.length > 0 && (
                 <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
@@ -242,7 +243,8 @@ export function VaccineDetailPage() {
                     overflow={'hidden'}
                   >
                     <Grid
-                      templateColumns='1fr 1fr 1fr'
+                      templateColumns='1fr 1fr'
+                      templateRows='1fr 1fr'
                       columnGap={'10px'}
                       p={'5px'}
                       justifyContent={'space-between'}
@@ -257,6 +259,16 @@ export function VaccineDetailPage() {
                             )?.tradeName
                           }
                         </Text>
+                      </GridItem>
+                      <GridItem w={'1fr'}>
+                        <Badge
+                          colorScheme={'orange'}
+                          variant='subtle'
+                          w={'100%'}
+                          textAlign={'center'}
+                        >
+                          {recommendation.recommendedStartDate.toDateString()}
+                        </Badge>
                       </GridItem>
                       <GridItem w={'1fr'}>
                         <Badge
@@ -281,6 +293,7 @@ export function VaccineDetailPage() {
                           w={'100%'}
                           textAlign={'center'}
                         >
+                          Dose:{' '}
                           {
                             // TODO: Can this be done more efficient?
                             (
@@ -302,11 +315,10 @@ export function VaccineDetailPage() {
                 )
               )}
 
-              {diseaseWikiInfo.immunizations.length > 0 && (
-                <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
-                  Previous vaccinations
-                </Text>
-              )}
+              <Text color={'gray.600'} ml={'20px'} mb={'5px'} mt={'10px'}>
+                Previous vaccinations
+              </Text>
+
               {diseaseWikiInfo.immunizations.map(
                 (immunization: Immunization) => (
                   <Stack
@@ -317,13 +329,13 @@ export function VaccineDetailPage() {
                     overflow={'hidden'}
                   >
                     <Grid
-                      templateColumns='1fr 1fr 1fr'
+                      templateColumns='1fr 1fr'
+                      templateRows='1fr 1fr 1fr'
                       rowGap={'5px'}
                       columnGap={'10px'}
                       p={'5px'}
                       justifyContent={'space-between'}
                       alignItems={'center'}
-                      templateRows={'1fr 1fr'}
                     >
                       <GridItem>
                         <Text w={'1fr'}>
@@ -346,11 +358,25 @@ export function VaccineDetailPage() {
                       </GridItem>
                       <GridItem w={'1fr'}>
                         <Badge
+                          colorScheme={'purple'}
+                          variant='subtle'
+                          w={'100%'}
+                          textAlign={'center'}
+                        >
+                          {
+                            mapper.getPractitionerById(immunization.performerId)
+                              ?.name.family
+                          }
+                        </Badge>
+                      </GridItem>
+                      <GridItem w={'1fr'}>
+                        <Badge
                           colorScheme={'gray'}
                           variant='solid'
                           w={'100%'}
                           textAlign={'center'}
                         >
+                          Dose:{' '}
                           {
                             // TODO: Can this be done more efficient?
                             (
@@ -386,20 +412,7 @@ export function VaccineDetailPage() {
                       </GridItem>
                       <GridItem w={'1fr'}>
                         <Badge
-                          colorScheme={'purple'}
-                          variant='subtle'
-                          w={'100%'}
-                          textAlign={'center'}
-                        >
-                          {
-                            mapper.getPractitionerById(immunization.performerId)
-                              ?.name.family
-                          }
-                        </Badge>
-                      </GridItem>
-                      <GridItem w={'1fr'}>
-                        <Badge
-                          colorScheme={'purple'}
+                          colorScheme={'blue'}
                           variant='subtle'
                           w={'100%'}
                           textAlign={'center'}
@@ -413,9 +426,9 @@ export function VaccineDetailPage() {
               )}
               {diseaseWikiInfo.immunizations.length === 0 && (
                 <Stack justifyContent={'space-between'} alignItems={'center'}>
-                  <Icon as={FaFolderOpen} color={'gray.400'} w={20} h={20} />
+                  <Icon as={FaFolderOpen} color={'gray.500'} w={20} h={20} />
                   <Box pb={'15px'}>
-                    <Text color={'gray.400'}>No vaccinations yet</Text>
+                    <Text color={'gray.500'}>No vaccinations yet</Text>
                   </Box>
                 </Stack>
               )}
