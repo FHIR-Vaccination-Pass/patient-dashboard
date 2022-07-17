@@ -13,4 +13,28 @@ export const MockVaccinationSchemes = new Map<string, VaccinationScheme>([
       medicationId: 'medication1',
     },
   ],
+  [
+    'tetanol-pur-scheme',
+    {
+      id: 'tetanol-pur-scheme',
+      name: 'Tetanol scheme',
+      type: 'standard',
+      isPreferred: true,
+      ageStart: 1,
+      ageEnd: 99,
+      medicationId: 'tetanol-pur',
+    },
+  ],
+  [
+    'dukoral-scheme',
+    {
+      id: 'dukoral-scheme',
+      name: 'Dukoral scheme',
+      type: 'standard',
+      isPreferred: true,
+      ageStart: 0,
+      ageEnd: 100,
+      medicationId: 'dukoral',
+    },
+  ],
 ]);

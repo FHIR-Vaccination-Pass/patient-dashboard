@@ -303,7 +303,7 @@ export function VaccineDetailPage() {
                           {
                             mapper.getVaccineByVaccineCode(
                               immunization.vaccineCode
-                            )?.manufacturer
+                            )?.manufacturerId
                           }
                         </Badge>
                       </GridItem>
@@ -419,7 +419,7 @@ export function VaccineDetailPage() {
                           right={'0px'}
                           minW={'100px'}
                         >
-                          {vaccine.manufacturer}
+                          {vaccine.manufacturerId}
                         </Badge>
                       </HStack>
                       <HStack position={'relative'}>
