@@ -15,10 +15,30 @@ export const MockMedications = new Map<string, Medication>([
         coding: 'formCoding',
         text: 'form',
       },
-      ingredientId: 'ingredient1',
+      ingredientId: 'substance1',
       manufacturer: 'organization1',
       tradeName: 'Vaccine1',
       targetDiseaseIds: ['disease1'],
+    },
+  ],
+  [
+    'dukoral',
+    {
+      id: 'dukoral',
+      code: {
+        id: 'vaccineCoding1',
+        coding: 'vaccineCoding',
+        text: 'dukoral',
+      },
+      form: {
+        id: 'formCoding1',
+        coding: 'formCoding',
+        text: 'form',
+      },
+      ingredientId: 'vibrio_cholerae_O1',
+      manufacturer: 'valneva',
+      tradeName: 'Dukoral',
+      targetDiseaseIds: ['cholera'],
     },
   ],
 ]);
