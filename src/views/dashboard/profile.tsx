@@ -2,7 +2,7 @@ import { Box, Button, Text } from '@chakra-ui/react';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { useKeycloak } from '@react-keycloak/web';
 import { useCallback } from 'react';
-import { useGetMeQuery } from '../../core/services/server/server';
+import { useGetMeQuery } from '../../core/services/redux/server/server';
 
 export function Profile() {
   const { keycloak } = useKeycloak();
