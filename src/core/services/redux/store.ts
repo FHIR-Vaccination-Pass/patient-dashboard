@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
-import { userSliceReducer } from './services/user/user';
-import { fhirApi } from './services/fhir/fhir';
-import { serverApi } from './services/server/server';
+import { userSliceReducer } from './user/user';
+import { fhirApi } from './fhir/fhir';
+import { serverApi } from './server/server';
 
 export const store = configureStore({
   reducer: {

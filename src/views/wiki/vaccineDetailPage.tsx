@@ -12,7 +12,7 @@ import { Immunization } from '../../core/models/Immunization';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
 import { Medication } from '../../core/models/Medication';
 import { useLocation } from 'react-router-dom';
-import { useMapper } from '../../core/services/server/ResourceMapperContext';
+import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 
 import {
   Accordion,

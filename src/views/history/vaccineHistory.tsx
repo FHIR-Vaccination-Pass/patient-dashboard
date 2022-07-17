@@ -13,7 +13,7 @@ import {
 } from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
 import React from 'react';
-import { useMapper } from '../../core/services/server/ResourceMapperContext';
+import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import { Link } from 'react-router-dom';
 import { VaccinationDoseSingle } from '../../core/models/VaccinationDose';
 
