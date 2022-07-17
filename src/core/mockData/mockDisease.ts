@@ -2,21 +2,6 @@ import { Disease } from '../models/Disease';
 
 export const MockDisease = new Map<string, Disease>([
   [
-    'disease1',
-    {
-      id: 'disease1',
-      code: {
-        id: 'icd10standard',
-        coding: 'ICD-10',
-        text: 'X00',
-      },
-      name: 'Disease 1',
-      description: 'This disease is not good for you :(',
-      populationRecommendationId: 'populationrecommendation1',
-      vaccineIds: ['vaccine1'],
-    },
-  ],
-  [
     'cholera',
     {
       id: 'cholera',
@@ -51,14 +36,47 @@ export const MockDisease = new Map<string, Disease>([
         'Most people who fall sick with COVID-19 will experience mild to moderate symptoms and recover without special treatment. However, some will become seriously ill and require medical attention. \n' +
         'The virus can spread from an infected person’s mouth or nose in small liquid particles when they cough, sneeze, speak, sing or breathe. These particles range from larger respiratory droplets to smaller aerosols.\n' +
         'You can be infected by breathing in the virus if you are near someone who has COVID-19, or by touching a contaminated surface and then your eyes, nose or mouth. The virus spreads more easily indoors and in crowded settings.',
-      populationRecommendationId: 'choleraRecommendation',
+      populationRecommendationId: 'covidRecommendation',
       vaccineIds: [
         'comirnaty',
         'jcovden',
         'nuvaxovid',
         'spikevax',
         'vaxzevria',
+        'covid-valneva',
       ],
+    },
+  ],
+  [
+    'diphtheria',
+    {
+      id: 'diphtheria',
+      code: {
+        id: 'icd-10',
+        coding: 'ICD-10',
+        text: 'A36',
+      },
+      name: 'Diphtheria',
+      description:
+        'Diphtheria is a serious infection caused by strains of bacteria called Corynebacterium diphtheriae that make toxin (poison). It can lead to difficulty breathing, heart failure, paralysis, and even death. CDC recommends vaccines for infants, children, teens, and adults to prevent diphtheria.',
+      populationRecommendationId: 'diphtheriaRecommendation',
+      vaccineIds: ['td-pur', 'td-rix'],
+    },
+  ],
+  [
+    'tetanus',
+    {
+      id: 'tetanus',
+      code: {
+        id: 'icd-10',
+        coding: 'ICD-10',
+        text: 'A34',
+      },
+      name: 'Tetanus',
+      description:
+        'Tetanus is an infection caused by bacteria called Clostridium tetani. When the bacteria invade the body, they produce a poison (toxin) that causes painful muscle contractions. Another name for tetanus is “lockjaw”. It often causes a person’s neck and jaw muscles to lock, making it hard to open the mouth or swallow. CDC recommends vaccines for infants, children, teens, and adults to prevent tetanus.',
+      populationRecommendationId: 'tetanusRecommendation',
+      vaccineIds: ['td-pur', 'td-rix', 'tetagam-p', 'tetanol-pur'],
     },
   ],
 ]);
