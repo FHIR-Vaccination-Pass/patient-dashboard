@@ -242,4 +242,16 @@ export class MockReferenceResolver implements ResourceMapper {
       (disease: Disease) => disease.code.text === code
     );
   }
+
+  getNumberOfDosesByMedicationId(medicationId: string | undefined): number {
+    if (medicationId !== undefined) {
+      return this.getAllSingleVaccinationDoses().filter(
+        (dose) =>
+          dose.vaccinationSchemeId ===
+          this.getAllVaccinationSchemes().find(
+            (scheme) => scheme.medicationId === medicationId
+          )?.id
+      )?.length;
+    } else return -1;
+  }
 }

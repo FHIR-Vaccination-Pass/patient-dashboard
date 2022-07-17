@@ -8,7 +8,10 @@ import { PopulationRecommendation } from '../../models/PopulationRecommendation'
 import { VaccinationScheme } from '../../models/VaccinationScheme';
 import { Substance } from '../../models/Substance';
 import { Organization } from '../../models/Organization';
-import { VaccinationDose, VaccinationDoseSingle } from '../../models/VaccinationDose';
+import {
+  VaccinationDose,
+  VaccinationDoseSingle,
+} from '../../models/VaccinationDose';
 import { CodeableConcept } from '../../models/CodeableConcept';
 
 export interface ResourceMapper {
@@ -48,5 +51,9 @@ export interface ResourceMapper {
 
   getVaccinationDoseById(id: string): VaccinationDose | undefined;
 
-  getMedicationByVaccineCode(vaccineCode: CodeableConcept): Medication | undefined;
+  getMedicationByVaccineCode(
+    vaccineCode: CodeableConcept
+  ): Medication | undefined;
+
+  getNumberOfDosesByMedicationId(medicationId: string | undefined): number;
 }

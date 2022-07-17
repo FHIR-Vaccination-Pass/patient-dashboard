@@ -191,19 +191,11 @@ export function VaccineHistory() {
                           ).numberInScheme
                         }{' '}
                         /{' '}
-                        {
-                          vaccinationDoses.filter(
-                            (dose) =>
-                              dose.vaccinationSchemeId ===
-                              vaccinationSchemes.find(
-                                (scheme) =>
-                                  scheme.medicationId ===
-                                  mapper.getMedicationByVaccineCode(
-                                    immunization.vaccineCode
-                                  )?.id
-                              )?.id
-                          )?.length
-                        }
+                        {mapper.getNumberOfDosesByMedicationId(
+                          mapper.getMedicationByVaccineCode(
+                            immunization.vaccineCode
+                          )?.id
+                        )}
                       </Badge>
                     </Flex>
                   </Stack>

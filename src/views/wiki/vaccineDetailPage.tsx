@@ -296,19 +296,11 @@ export function VaccineDetailPage() {
                             ).numberInScheme
                           }{' '}
                           /{' '}
-                          {
-                            vaccinationDoses.filter(
-                              (dose) =>
-                                dose.vaccinationSchemeId ===
-                                vaccinationSchemes.find(
-                                  (scheme) =>
-                                    scheme.medicationId ===
-                                    mapper.getMedicationByVaccineCode(
-                                      immunization.vaccineCode
-                                    )?.id
-                                )?.id
-                            )?.length
-                          }
+                          {mapper.getNumberOfDosesByMedicationId(
+                            mapper.getMedicationByVaccineCode(
+                              immunization.vaccineCode
+                            )?.id
+                          )}
                         </Badge>
                       </GridItem>
 
@@ -464,17 +456,7 @@ export function VaccineDetailPage() {
                           right={'0px'}
                         >
                           <Text fontSize={'xs'}>
-                            {
-                              vaccinationDoses.filter(
-                                // TODO: Can this be done more efficient?
-                                (dose) =>
-                                  dose.vaccinationSchemeId ===
-                                  vaccinationSchemes.find(
-                                    (scheme) =>
-                                      scheme.medicationId === vaccine.id
-                                  )?.id
-                              )?.length
-                            }
+                            {mapper.getNumberOfDosesByMedicationId(vaccine.id)}
                           </Text>
                         </Box>
                       </HStack>
