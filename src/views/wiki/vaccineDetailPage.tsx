@@ -6,7 +6,7 @@ import {
   getIconByStatus,
   VaccinationStatus,
 } from '../../theme/theme';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaFolderOpen } from 'react-icons/fa';
 import { Disease } from '../../core/models/Disease';
 import { Immunization } from '../../core/models/Immunization';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
@@ -236,9 +236,11 @@ export function VaccineDetailPage() {
               pt={'5px'}
               flexDirection={'column'}
             >
-              <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
-                Previous vaccinations
-              </Text>
+              {diseaseWikiInfo.immunizations.length > 0 && (
+                <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
+                  Previous vaccinations
+                </Text>
+              )}
               {diseaseWikiInfo.immunizations.map(
                 (immunization: Immunization) => (
                   <Stack
@@ -333,6 +335,14 @@ export function VaccineDetailPage() {
                     </Grid>
                   </Stack>
                 )
+              )}
+              {diseaseWikiInfo.immunizations.length === 0 && (
+                <Stack justifyContent={'space-between'} alignItems={'center'}>
+                  <Icon as={FaFolderOpen} color={'gray.200'} w={20} h={20} />
+                  <Box pb={'15px'}>
+                    <Text color={'gray.400'}>No vaccinations yet</Text>
+                  </Box>
+                </Stack>
               )}
             </Flex>
           )}
