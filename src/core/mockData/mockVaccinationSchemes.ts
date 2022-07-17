@@ -37,4 +37,16 @@ export const MockVaccinationSchemes = new Map<string, VaccinationScheme>([
       medicationId: 'dukoral',
     },
   ],
+  [
+    'comirnaty-scheme',
+    {
+      id: 'comirnaty-scheme',
+      name: 'Comirnaty scheme',
+      type: 'standard',
+      isPreferred: true,
+      ageStart: 0,
+      ageEnd: 100,
+      medicationId: 'comirnaty',
+    },
+  ],
 ]);
