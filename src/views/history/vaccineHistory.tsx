@@ -52,8 +52,6 @@ export function VaccineHistory() {
   };
 
   const mapper = useMapper();
-  const vaccinationSchemes = mapper.getAllVaccinationSchemes();
-  const vaccinationDoses = mapper.getAllSingleVaccinationDoses();
   return (
     <Box h={'full'}>
       <VerticalTimeline lineColor={`${color}`}>

@@ -110,8 +110,6 @@ export function VaccineDetailPage() {
   const mapper = useMapper();
   const diseaseCode: string = pathComponents[pathComponents.length - 1];
   const disease: Disease | undefined = mapper.getDiseaseByCode(diseaseCode);
-  const vaccinationSchemes = mapper.getAllVaccinationSchemes();
-  const vaccinationDoses = mapper.getAllSingleVaccinationDoses();
   const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(disease);
 
   mapper.getImmunizations().forEach((immunization: Immunization) => {
