@@ -51,8 +51,10 @@ export function VaccineHistory() {
   };
 
   const mapper = useMapper();
+  const vaccinationSchemes = mapper.getAllVaccinationSchemes();
+  const vaccinationDoses = mapper.getAllSingleVaccinationDoses();
   return (
-    <Box overflow={'hidden'} h={'full'}>
+    <Box h={'full'}>
       <VerticalTimeline lineColor={`${color}`}>
         {mapper.getImmunizations().map((immunization) => {
           return mapper
@@ -190,9 +192,17 @@ export function VaccineHistory() {
                         }{' '}
                         /{' '}
                         {
-                          mapper.getVaccinationDoseById(
-                            immunization.vaccinationDoseId
-                          )?.doseQuantity
+                          vaccinationDoses.filter(
+                            (dose) =>
+                              dose.vaccinationSchemeId ===
+                              vaccinationSchemes.find(
+                                (scheme) =>
+                                  scheme.medicationId ===
+                                  mapper.getMedicationByVaccineCode(
+                                    immunization.vaccineCode
+                                  )?.id
+                              )?.id
+                          )?.length
                         }
                       </Badge>
                     </Flex>
