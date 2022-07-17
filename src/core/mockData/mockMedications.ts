@@ -2,9 +2,9 @@ import { Medication } from '../models/Medication';
 
 export const MockMedications = new Map<string, Medication>([
   [
-    'vaccine1',
+    'medication1',
     {
-      id: 'vaccine1',
+      id: 'medication1',
       code: {
         id: 'vaccineCoding1',
         coding: 'vaccineCoding',

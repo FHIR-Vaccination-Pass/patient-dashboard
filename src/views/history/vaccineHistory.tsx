@@ -56,7 +56,7 @@ export function VaccineHistory() {
       <VerticalTimeline lineColor={`${color}`}>
         {mapper.getImmunizations().map((immunization) => {
           return mapper
-            .getVaccineByVaccineCode(immunization.vaccineCode)
+            .getMedicationByVaccineCode(immunization.vaccineCode)
             ?.targetDiseaseIds.map((diseaseId) => (
               <VerticalTimelineElement
                 iconStyle={timelineElementIconStyles}
@@ -109,7 +109,7 @@ export function VaccineHistory() {
                         variant='subtle'
                       >
                         {
-                          mapper.getVaccineByVaccineCode(
+                          mapper.getMedicationByVaccineCode(
                             immunization.vaccineCode
                           )?.tradeName
                         }

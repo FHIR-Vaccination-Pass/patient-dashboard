@@ -6,7 +6,7 @@ import {
   getIconByStatus,
   VaccinationStatus,
 } from '../../theme/theme';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaFolderOpen } from 'react-icons/fa';
 import { Disease } from '../../core/models/Disease';
 import { Immunization } from '../../core/models/Immunization';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
@@ -109,10 +109,12 @@ export function VaccineDetailPage() {
   const mapper = useMapper();
   const diseaseCode: string = pathComponents[pathComponents.length - 1];
   const disease: Disease | undefined = mapper.getDiseaseByCode(diseaseCode);
+  const vaccinationSchemes = mapper.getAllVaccinationSchemes();
+  const vaccinationDoses = mapper.getAllSingleVaccinationDoses();
   const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(disease);
 
   mapper.getImmunizations().forEach((immunization: Immunization) => {
-    const vaccine: Medication | undefined = mapper.getVaccineByVaccineCode(
+    const vaccine: Medication | undefined = mapper.getMedicationByVaccineCode(
       immunization.vaccineCode
     );
     if (vaccine !== undefined) {
@@ -127,7 +129,7 @@ export function VaccineDetailPage() {
   mapper
     .getRecommendations()
     .forEach((recommendation: ImmunizationRecommendation) => {
-      const vaccine: Medication | undefined = mapper.getVaccineByVaccineCode(
+      const vaccine: Medication | undefined = mapper.getMedicationByVaccineCode(
         recommendation.vaccineCode
       );
       if (vaccine !== undefined) {
@@ -236,9 +238,11 @@ export function VaccineDetailPage() {
               pt={'5px'}
               flexDirection={'column'}
             >
-              <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
-                Previous vaccinations
-              </Text>
+              {diseaseWikiInfo.immunizations.length > 0 && (
+                <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
+                  Previous vaccinations
+                </Text>
+              )}
               {diseaseWikiInfo.immunizations.map(
                 (immunization: Immunization) => (
                   <Stack
@@ -260,7 +264,7 @@ export function VaccineDetailPage() {
                       <GridItem>
                         <Text w={'1fr'}>
                           {
-                            mapper.getVaccineByVaccineCode(
+                            mapper.getMedicationByVaccineCode(
                               immunization.vaccineCode
                             )?.tradeName
                           }
@@ -284,11 +288,26 @@ export function VaccineDetailPage() {
                           textAlign={'center'}
                         >
                           {
+                            // TODO: Can this be done more efficient?
                             (
                               mapper.getVaccinationDoseById(
                                 immunization.vaccinationDoseId
                               ) as VaccinationDoseSingle
                             ).numberInScheme
+                          }{' '}
+                          /{' '}
+                          {
+                            vaccinationDoses.filter(
+                              (dose) =>
+                                dose.vaccinationSchemeId ===
+                                vaccinationSchemes.find(
+                                  (scheme) =>
+                                    scheme.medicationId ===
+                                    mapper.getMedicationByVaccineCode(
+                                      immunization.vaccineCode
+                                    )?.id
+                                )?.id
+                            )?.length
                           }
                         </Badge>
                       </GridItem>
@@ -301,9 +320,11 @@ export function VaccineDetailPage() {
                           textAlign={'center'}
                         >
                           {
-                            mapper.getVaccineByVaccineCode(
-                              immunization.vaccineCode
-                            )?.manufacturerId
+                            mapper.getOrganizationById(
+                              mapper.getMedicationByVaccineCode(
+                                immunization.vaccineCode
+                              )?.manufacturerId || ''
+                            )?.name
                           }
                         </Badge>
                       </GridItem>
@@ -333,6 +354,14 @@ export function VaccineDetailPage() {
                     </Grid>
                   </Stack>
                 )
+              )}
+              {diseaseWikiInfo.immunizations.length === 0 && (
+                <Stack justifyContent={'space-between'} alignItems={'center'}>
+                  <Icon as={FaFolderOpen} color={'gray.200'} w={20} h={20} />
+                  <Box pb={'15px'}>
+                    <Text color={'gray.400'}>No vaccinations yet</Text>
+                  </Box>
+                </Stack>
               )}
             </Flex>
           )}
@@ -419,7 +448,10 @@ export function VaccineDetailPage() {
                           right={'0px'}
                           minW={'100px'}
                         >
-                          {vaccine.manufacturerId}
+                          {
+                            mapper.getOrganizationById(vaccine.manufacturerId)
+                              ?.name
+                          }
                         </Badge>
                       </HStack>
                       <HStack position={'relative'}>
@@ -431,7 +463,19 @@ export function VaccineDetailPage() {
                           position={'absolute'}
                           right={'0px'}
                         >
-                          <Text fontSize={'xs'}>??????</Text>
+                          <Text fontSize={'xs'}>
+                            {
+                              vaccinationDoses.filter(
+                                // TODO: Can this be done more efficient?
+                                (dose) =>
+                                  dose.vaccinationSchemeId ===
+                                  vaccinationSchemes.find(
+                                    (scheme) =>
+                                      scheme.medicationId === vaccine.id
+                                  )?.id
+                              )?.length
+                            }
+                          </Text>
                         </Box>
                       </HStack>
                     </AccordionPanel>

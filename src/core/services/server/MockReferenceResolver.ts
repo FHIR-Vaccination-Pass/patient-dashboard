@@ -63,7 +63,7 @@ export class MockReferenceResolver implements ResourceMapper {
     );
   }
 
-  getVaccineByVaccineCode(code: CodeableConcept): Medication | undefined {
+  getMedicationByVaccineCode(code: CodeableConcept): Medication | undefined {
     return this._medicationByCodeDict.get(code.text);
   }
 
@@ -227,6 +227,14 @@ export class MockReferenceResolver implements ResourceMapper {
 
   getDiseases(): Disease[] {
     return Array.from(this._diseaseDict.values());
+  }
+
+  getAllVaccinationSchemes(): VaccinationScheme[] {
+    return Array.from(this._vaccinationSchemeDict.values());
+  }
+
+  getAllSingleVaccinationDoses(): VaccinationDoseSingle[] {
+    return Array.from(this._vaccinationDoseSingleDict.values());
   }
 
   getDiseaseByCode(code: string): Disease | undefined {
