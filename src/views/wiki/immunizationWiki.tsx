@@ -11,7 +11,7 @@ import { ChevronRightIcon, InfoIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import { Disease } from '../../core/models/Disease';
-import { useMapper } from '../../core/services/server/ResourceMapperContext';
+import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
 import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 

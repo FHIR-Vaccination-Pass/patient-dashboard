@@ -10,7 +10,7 @@ import { store } from './core';
 import { theme } from './theme/theme';
 import AppRoutes from './routes';
 import keycloak from './core/keycloak';
-import { MapperProvider } from './core/services/server/ResourceMapperContext';
+import { MapperProvider } from './core/services/resourceMapper/ResourceMapperContext';
 
 const eventLogger = (event: unknown, error: unknown) => {
   console.log('onKeycloakEvent', event, error);

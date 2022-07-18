@@ -2,7 +2,7 @@ import FHIR from 'fhirclient';
 import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react';
 import { Bundle } from 'fhir/r4';
 import { selectCurrentToken, selectCurrentUser } from '../user/user';
-import { RootState } from '../../store';
+import { RootState } from '../store';
 
 // TODO: create a central place for extracting env vars
 // TODO: use OIDC token instead of basic user

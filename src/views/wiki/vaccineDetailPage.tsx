@@ -7,7 +7,7 @@ import { Immunization } from '../../core/models/Immunization';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
 import { Medication } from '../../core/models/Medication';
 import { useLocation } from 'react-router-dom';
-import { useMapper } from '../../core/services/server/ResourceMapperContext';
+import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 
 import {
   Accordion,
@@ -34,6 +34,7 @@ import {
 } from '@chakra-ui/react';
 import { VaccinationDoseSingle } from '../../core/models/VaccinationDose';
 import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
+import { resolvePractitionerName } from '../../core/services/util/resolveHumanName';
 
 class DiseaseWikiInfo {
   get populationRecommendation(): PopulationRecommendation | undefined {
@@ -408,6 +409,19 @@ export function VaccineDetailPage() {
                               )?.manufacturerId || ''
                             )?.name
                           }
+                        </Badge>
+                      </GridItem>
+                      <GridItem w={'1fr'}>
+                        <Badge
+                          colorScheme={'purple'}
+                          variant='subtle'
+                          w={'100%'}
+                          textAlign={'center'}
+                        >
+                          {resolvePractitionerName(
+                            mapper.getPractitionerById(immunization.performerId)
+                              ?.name
+                          )}
                         </Badge>
                       </GridItem>
                       <GridItem w={'1fr'}>
