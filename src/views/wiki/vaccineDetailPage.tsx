@@ -154,9 +154,7 @@ export function VaccineDetailPage() {
   const status = calcAggregateImmunizationStatus(
     diseaseWikiInfo.recommendations
   );
-  const dueText = `Immunization due in less than a month`;
   const [showPersonalizedInfo, setShowPersonalizedInfo] = useBoolean(false);
-  console.log(diseaseWikiInfo.recommendations);
   return (
     <Box pb={5}>
       <div>
