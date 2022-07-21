@@ -15,6 +15,15 @@ export const MissingHistoryStatus: AggregatedImmunizationStatus = {
     'Your account is not associated with immunization data. Please contact your medical doctor.',
 };
 
+export const DefaultStatus: AggregatedImmunizationStatus = {
+  status: 'default',
+  iconColor: 'gray.600',
+  icon: FaInfoCircle,
+  backgroundColor: 'gray.100',
+  headline: 'No vaccinations due',
+  subline: 'No immedieate actions required',
+};
+
 export const CompleteStatus: AggregatedImmunizationStatus = {
   status: 'complete',
   iconColor: 'green.500',

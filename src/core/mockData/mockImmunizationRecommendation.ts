@@ -27,6 +27,7 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       fulfillingImmunizationIds: [],
       patientId: 'patient1',
       populationRecommendationId: 'covidRecommendation',
+      vaccinationDoseId: 'comirnaty1',
     },
   ],
   [
@@ -55,6 +56,7 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       fulfillingImmunizationIds: [],
       patientId: 'patient1',
       populationRecommendationId: 'covidRecommendation',
+      vaccinationDoseId: 'comirnaty2',
     },
   ],
   [
@@ -83,6 +85,7 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       fulfillingImmunizationIds: [],
       patientId: 'patient1',
       populationRecommendationId: 'covidRecommendation',
+      vaccinationDoseId: 'comirnaty3',
     },
   ],
   [
@@ -111,6 +114,7 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       fulfillingImmunizationIds: [],
       patientId: 'patient1',
       populationRecommendationId: 'choleraRecommendation',
+      vaccinationDoseId: 'dukoral1',
     },
   ],
 ]);

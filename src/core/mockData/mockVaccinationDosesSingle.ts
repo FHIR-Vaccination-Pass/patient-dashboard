@@ -69,4 +69,43 @@ export const MockVaccinationDosesSingle = new Map<
       timeEnd: new Date(),
     },
   ],
+  [
+    'comirnaty1',
+    {
+      id: 'comirnaty1',
+      doseQuantity: 2,
+      isProtected: true,
+      notes: '0',
+      vaccinationSchemeId: 'comirnaty-scheme',
+      numberInScheme: 1,
+      timeStart: new Date(),
+      timeEnd: new Date(),
+    },
+  ],
+  [
+    'comirnaty2',
+    {
+      id: 'comirnaty2',
+      doseQuantity: 2,
+      isProtected: true,
+      notes: '0',
+      vaccinationSchemeId: 'comirnaty-scheme',
+      numberInScheme: 2,
+      timeStart: new Date(),
+      timeEnd: new Date(),
+    },
+  ],
+  [
+    'comirnaty3',
+    {
+      id: 'comirnaty3',
+      doseQuantity: 2,
+      isProtected: true,
+      notes: '0',
+      vaccinationSchemeId: 'comirnaty-scheme',
+      numberInScheme: 3,
+      timeStart: new Date(),
+      timeEnd: new Date(),
+    },
+  ],
 ]);

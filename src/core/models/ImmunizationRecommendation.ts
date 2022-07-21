@@ -12,4 +12,5 @@ export interface ImmunizationRecommendation {
   fulfillingImmunizationIds: string[];
   patientId: string;
   populationRecommendationId: string;
+  vaccinationDoseId: string;
 }
