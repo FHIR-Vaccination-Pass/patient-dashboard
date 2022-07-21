@@ -357,14 +357,17 @@ export function VaccineDetailPage() {
                       </GridItem>
                       <GridItem w={'1fr'}>
                         <Badge
-                          colorScheme={'purple'}
+                          colorScheme={'blue'}
                           variant='subtle'
                           w={'100%'}
                           textAlign={'center'}
                         >
                           {
-                            mapper.getPractitionerById(immunization.performerId)
-                              ?.name.family
+                            mapper.getOrganizationById(
+                              mapper.getMedicationByVaccineCode(
+                                immunization.vaccineCode
+                              )?.manufacturerId || ''
+                            )?.name
                           }
                         </Badge>
                       </GridItem>
@@ -390,23 +393,6 @@ export function VaccineDetailPage() {
                               immunization.vaccineCode
                             )?.id
                           )}
-                        </Badge>
-                      </GridItem>
-
-                      <GridItem>
-                        <Badge
-                          colorScheme={'blue'}
-                          variant='subtle'
-                          w={'100%'}
-                          textAlign={'center'}
-                        >
-                          {
-                            mapper.getOrganizationById(
-                              mapper.getMedicationByVaccineCode(
-                                immunization.vaccineCode
-                              )?.manufacturerId || ''
-                            )?.name
-                          }
                         </Badge>
                       </GridItem>
                       <GridItem w={'1fr'}>
