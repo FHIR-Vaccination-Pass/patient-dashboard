@@ -44,7 +44,7 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
   const mapper: ResourceMapper = useMapper();
   const disease: Disease | undefined = mapper.getDiseaseById(diseaseId);
   return (
-    <Link to={`/dashboard/wiki/${disease?.code.text}`}>
+    <Link to={`/patient/dashboard/wiki/${disease?.code.text}`}>
       <Flex
         justifyContent={'space-between'}
         alignItems={'center'}

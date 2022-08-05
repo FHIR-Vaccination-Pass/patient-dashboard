@@ -81,7 +81,7 @@ export const DashboardHeader: FC<DashboardProps> = () => {
           alignItems={'center'}
           p={'5px'}
         >
-          <Link to={'/dashboard'}>
+          <Link to={'/md/dashboard'}>
             <Image
               src={VaccinationPass}
               w={'200px'}

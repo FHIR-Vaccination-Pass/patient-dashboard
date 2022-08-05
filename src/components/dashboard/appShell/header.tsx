@@ -71,7 +71,7 @@ export const DashboardHeader: FC<DashboardProps> = () => {
           p={'5px'}
         >
           <HamburgerIcon w={6} h={6} m={'4px'} onClick={setHideMenu.toggle} />
-          <Link to={'/dashboard'}>
+          <Link to={'/patient/dashboard'}>
             <Image src={VaccinationPass} w={'200px'} align={'center'} />
           </Link>
           <Avatar m={'5px'} w={'35px'} h={'35px'} src='avatar-1.jpg' />
