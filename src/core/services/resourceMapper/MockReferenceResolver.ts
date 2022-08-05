@@ -77,6 +77,10 @@ export class MockReferenceResolver implements ResourceMapper {
     return this._immunizationDict.get(id);
   }
 
+  public getAllPatients(): Patient[] {
+    return Array.from(this._patientDict.values());
+  }
+
   public getPatientById(id: string): Patient | undefined {
     return this._patientDict.get(id);
   }
@@ -217,15 +221,15 @@ export class MockReferenceResolver implements ResourceMapper {
     this._vaccinationDoseRepeatingDict = value;
   }
 
-  getImmunizations(): Immunization[] {
+  getAllImmunizations(): Immunization[] {
     return Array.from(this._immunizationDict.values());
   }
 
-  getRecommendations(): ImmunizationRecommendation[] {
+  getAllRecommendations(): ImmunizationRecommendation[] {
     return Array.from(this._recommendationDict.values());
   }
 
-  getDiseases(): Disease[] {
+  getAllDiseases(): Disease[] {
     return Array.from(this._diseaseDict.values());
   }
 
@@ -253,5 +257,14 @@ export class MockReferenceResolver implements ResourceMapper {
           )?.id
       )?.length;
     } else return -1;
+  }
+
+  getRecommendationsByPatientId(patientId: string) {
+    const recommendations = this.getAllRecommendations();
+    return recommendations.filter(
+      (recommendation: ImmunizationRecommendation) => {
+        return recommendation.patientId === patientId;
+      }
+    );
   }
 }

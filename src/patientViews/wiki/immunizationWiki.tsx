@@ -43,9 +43,9 @@ class WikiInformationCard {
 
 export function ImmunizationWiki() {
   const mapper = useMapper();
-  const diseases: Disease[] = mapper.getDiseases();
+  const diseases: Disease[] = mapper.getAllDiseases();
   const recommendations: ImmunizationRecommendation[] =
-    mapper.getRecommendations();
+    mapper.getAllRecommendations();
   const [showInfo, setShowInfo] = useBoolean();
 
   const wikiInformationCards: Map<string, WikiInformationCard> = new Map<

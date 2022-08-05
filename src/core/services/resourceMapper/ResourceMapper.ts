@@ -15,11 +15,11 @@ import {
 import { CodeableConcept } from '../../models/CodeableConcept';
 
 export interface ResourceMapper {
-  getImmunizations(): Immunization[];
+  getAllImmunizations(): Immunization[];
 
-  getRecommendations(): ImmunizationRecommendation[];
+  getAllRecommendations(): ImmunizationRecommendation[];
 
-  getDiseases(): Disease[];
+  getAllDiseases(): Disease[];
 
   getAllVaccinationSchemes(): VaccinationScheme[];
 
@@ -30,6 +30,8 @@ export interface ResourceMapper {
   getImmunizationById(id: string): Immunization | undefined;
 
   getPatientById(id: string): Patient | undefined;
+
+  getAllPatients(): Patient[];
 
   getPractitionerById(id: string): Practitioner | undefined;
 
@@ -56,4 +58,9 @@ export interface ResourceMapper {
   ): Medication | undefined;
 
   getNumberOfDosesByMedicationId(medicationId: string | undefined): number;
+
+  // Not needed atm, but will probably be needed in the future
+  getRecommendationsByPatientId(
+    patientId: string
+  ): ImmunizationRecommendation[];
 }
