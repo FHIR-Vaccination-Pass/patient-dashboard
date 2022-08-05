@@ -6,10 +6,15 @@ import {
   Flex,
   HStack,
   Icon,
+  IconButton,
   Image,
   Input,
   InputGroup,
   InputLeftElement,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Portal,
   useBoolean,
   useColorModeValue,
@@ -27,6 +32,7 @@ import {
   FaSignOutAlt,
   FaSyringe,
   FaUser,
+  FaUserCircle,
 } from 'react-icons/fa';
 import { NavItem } from './navitem';
 
@@ -113,7 +119,37 @@ export const DashboardHeader: FC<DashboardProps> = () => {
                 mt={'5px'}
               />
             </Link>
-            <Avatar w={'35px'} h={'35px'} src='avatar-1.jpg' />
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                aria-label='Options'
+                icon={<Avatar w={'35px'} h={'35px'} src='avatar-1.jpg' />}
+                bg={'white'}
+              />
+              <MenuList>
+                <MenuItem p={'6px 12px'} icon={<FaUserCircle />}>
+                  Profile
+                </MenuItem>
+                <MenuItem p={'0px'}>
+                  <Button
+                    isLoading={logoutLoading}
+                    leftIcon={<FaSignOutAlt />}
+                    colorScheme='red'
+                    variant='ghost'
+                    onClick={logout}
+                    isActive={false}
+                    loadingText={'Logging out'}
+                    spinnerPlacement={'start'}
+                    fontWeight={'normal'}
+                    width={'100%'}
+                    justifyContent={'flex-start'}
+                    p={'6px 12px'}
+                  >
+                    Logout
+                  </Button>
+                </MenuItem>
+              </MenuList>
+            </Menu>
           </HStack>
         </Flex>
       </Box>
