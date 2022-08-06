@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom';
 import { DashboardHeader } from '../../components/dashboard/appShell/mdHeader';
 
 export default function MDDashboard() {
-
   return (
     <Box>
       <Grid
