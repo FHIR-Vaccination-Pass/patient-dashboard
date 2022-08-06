@@ -45,6 +45,10 @@ export interface ResourceMapper {
     id: string
   ): PopulationRecommendation | undefined;
 
+  getPopulationRecommendationByDiseaseId(
+      diseaseId: string
+  ): PopulationRecommendation | undefined;
+
   getVaccinationSchemeById(id: string): VaccinationScheme | undefined;
 
   getSubstanceById(id: string): Substance | undefined;
