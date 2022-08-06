@@ -103,6 +103,20 @@ export class MockReferenceResolver implements ResourceMapper {
     return this._populationRecommendationDict.get(id);
   }
 
+  public getPopulationRecommendationByDiseaseId(
+    diseaseId: string
+  ): PopulationRecommendation | undefined {
+    const populationRecommendations: PopulationRecommendation[] = Array.from(
+      this._populationRecommendationDict.values()
+    );
+    for (const populationRecommendation of populationRecommendations) {
+      if (populationRecommendation.diseaseId === diseaseId) {
+        return populationRecommendation;
+      }
+    }
+    return undefined;
+  }
+
   public getVaccinationSchemeById(id: string): VaccinationScheme | undefined {
     return this._vaccinationSchemeDict.get(id);
   }
