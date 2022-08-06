@@ -16,7 +16,7 @@ import { Patient } from './mdViews/patient/patient';
 import { MDOverview } from './mdViews/dashboard/overview';
 import MDDashboard from './mdViews/dashboard/dashboard';
 
-const RequireAuth: FC = ({ children }) => {
+const RequirePatientAuth: FC = ({ children }) => {
   const { initialized, keycloak } = useKeycloak();
 
   useEffect(() => {
@@ -25,19 +25,10 @@ const RequireAuth: FC = ({ children }) => {
     }
   }, [initialized, keycloak, keycloak?.authenticated]);
 
-  console.log(keycloak?.idTokenParsed?.realm_access?.roles);
   // const roles =
   //   keycloak?.idTokenParsed?.resource_access?.['patient-dashboard'].roles;
   const roles = keycloak?.idTokenParsed?.realm_access?.roles;
-  console.log(roles?.includes('patient'));
-  return (
-    <>
-      {initialized &&
-        keycloak?.authenticated &&
-        children &&
-        roles?.includes('patient')}
-    </>
-  );
+  return <>{initialized && keycloak?.authenticated && children}</>;
 };
 
 const RequireMDAuth: FC = ({ children }) => {
@@ -49,28 +40,39 @@ const RequireMDAuth: FC = ({ children }) => {
     }
   }, [initialized, keycloak, keycloak?.authenticated]);
 
-  console.log(keycloak?.idTokenParsed?.realm_access?.roles);
   const roles = keycloak?.idTokenParsed?.realm_access?.roles;
-  console.log(roles?.includes('md'));
-  return (
-    <>
-      {initialized &&
-        keycloak?.authenticated &&
-        children &&
-        roles?.includes('md')}
-    </>
-  );
+  return <>{initialized && keycloak?.authenticated && children}</>; // TODO: Add role checking like && roles?.includes('md')
+};
+
+const RequireUniversalAuth: FC = ({ children }) => {
+  const { initialized, keycloak } = useKeycloak();
+
+  useEffect(() => {
+    if (initialized && !keycloak.authenticated) {
+      keycloak.login();
+    }
+  }, [initialized, keycloak, keycloak?.authenticated]);
+
+  const roles = keycloak?.idTokenParsed?.realm_access?.roles;
+  return <>{initialized && keycloak?.authenticated && children}</>;
 };
 
 const AppRoutes: FC = () => (
   <Routes>
-    <Route path='/' element={<LandingPage />} />
+    <Route
+      path='/'
+      element={
+        <RequireUniversalAuth>
+          <LandingPage />
+        </RequireUniversalAuth>
+      }
+    />
     <Route
       path='patient/dashboard'
       element={
-        <RequireAuth>
+        <RequirePatientAuth>
           <Dashboard />
-        </RequireAuth>
+        </RequirePatientAuth>
       }
     >
       <Route path='' element={<Overview />} />

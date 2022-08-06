@@ -1,9 +1,8 @@
-import { Box, Grid, GridItem, useDisclosure } from '@chakra-ui/react';
+import { Box, Grid, GridItem } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import { DashboardHeader } from '../../components/dashboard/appShell/mdHeader';
 
 export default function MDDashboard() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Box>
@@ -17,11 +16,7 @@ export default function MDDashboard() {
         gap={1}
       >
         <GridItem colSpan={12} display={'flex'} justifyContent={'center'}>
-          <DashboardHeader
-            isOpen={isOpen}
-            onClose={onClose}
-            onOpen={onOpen}
-          ></DashboardHeader>
+          <DashboardHeader />
         </GridItem>
         <GridItem rowSpan={11} colSpan={12}>
           <Box h={'100%'} p='4' pb={'0'}>

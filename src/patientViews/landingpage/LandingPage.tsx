@@ -7,10 +7,31 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useKeycloak } from '@react-keycloak/web';
+
+function RequireAuth() {
+  const { initialized, keycloak } = useKeycloak();
+
+  useEffect(() => {
+    if (initialized && !keycloak.authenticated) {
+      keycloak.login();
+    }
+  }, [initialized, keycloak, keycloak?.authenticated]);
+
+  const roles = keycloak?.idTokenParsed?.realm_access?.roles;
+  if (roles?.includes('patient')) {
+    return 'patient';
+  }
+  if (roles?.includes('md')) {
+    return 'md';
+  }
+  return '';
+}
 
 export default function LandingPage() {
+  const role = RequireAuth();
   return (
     <Container
       overflowY={'hidden'}
@@ -42,7 +63,7 @@ export default function LandingPage() {
           appointments will help you to stay on track.
         </Text>
         <Stack spacing={6} direction={'row'}>
-          <Link to={'/dashboard'}>
+          <Link to={`/${role}/dashboard`}>
             <Button
               rounded={'full'}
               px={10}
