@@ -281,4 +281,9 @@ export class MockReferenceResolver implements ResourceMapper {
       }
     );
   }
+
+  saveDiseaseInformation(disease: Disease) {
+    // Save disease to server
+    return undefined;
+  }
 }

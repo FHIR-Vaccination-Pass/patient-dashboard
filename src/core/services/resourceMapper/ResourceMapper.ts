@@ -67,4 +67,6 @@ export interface ResourceMapper {
   getRecommendationsByPatientId(
     patientId: string
   ): ImmunizationRecommendation[];
+
+  saveDiseaseInformation(disease: Disease): Disease | undefined;
 }

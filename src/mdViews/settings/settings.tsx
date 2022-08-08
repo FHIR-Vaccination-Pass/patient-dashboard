@@ -46,8 +46,8 @@ export default function Settings() {
           </Flex>
         ))}
       </Flex>
-      <Tabs w={'88%'}>
-        <TabList>
+      <Tabs w={'88%'} defaultIndex={0}>
+        <TabList w={'23%'}>
           <Tab color={'gray.600'}>Disease Information</Tab>
           <Tab color={'gray.600'}>Immunization Configuration</Tab>
         </TabList>
