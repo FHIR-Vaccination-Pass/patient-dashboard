@@ -7,13 +7,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'medication1',
       code: {
         id: 'vaccineCoding1',
-        coding: 'vaccineCoding',
-        text: 'ABC',
+        coding: {
+          code: 'ABC',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: 'substance1',
       manufacturerId: 'organization1',
@@ -27,13 +31,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'dukoral',
       code: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'dukoral',
+        coding: {
+          code: 'dukoral',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: 'vibrio_cholerae_O1',
       manufacturerId: 'valneva',
@@ -47,13 +55,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'comirnaty',
       code: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'comirnaty',
+        coding: {
+          code: 'corminaty',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: '',
       manufacturerId: 'biontech-pfizer',
@@ -67,13 +79,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'jcovden',
       code: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'jcovden',
+        coding: {
+          code: 'jcovden',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: '',
       manufacturerId: 'janssen',
@@ -87,13 +103,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'nuvaxovid',
       code: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'nuvaxovid',
+        coding: {
+          code: 'nuvaxovid',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: '',
       manufacturerId: 'novavax',
@@ -107,13 +127,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'spikevax',
       code: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'spikevax',
+        coding: {
+          code: 'spikevax',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: '',
       manufacturerId: 'moderna',
@@ -127,13 +151,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'vaxzevria',
       code: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'vaxzevria',
+        coding: {
+          code: 'vaxzeyria',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: '',
       manufacturerId: 'astrazeneca',
@@ -147,13 +175,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'covid-valneva',
       code: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'covid-valneva',
+        coding: {
+          code: 'covid-valneva',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: '',
       manufacturerId: 'valneva',
@@ -167,13 +199,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'td-pur',
       code: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'td-pur',
+        coding: {
+          code: 'td-pur',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: '',
       manufacturerId: 'gsk',
@@ -187,13 +223,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'td-rix',
       code: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'td-rix',
+        coding: {
+          code: 'td-rix',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: '',
       manufacturerId: 'gsk',
@@ -207,13 +247,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'tetagam-p',
       code: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'tetagam-p',
+        coding: {
+          code: 'tetagam-p',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: '',
       manufacturerId: 'cslbehring',
@@ -227,13 +271,17 @@ export const MockMedications = new Map<string, Medication>([
       id: 'tetanol-pur',
       code: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'tetanol-pur',
+        coding: {
+          code: 'tetanol-pur',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       form: {
         id: 'formCoding1',
-        coding: 'formCoding',
-        text: 'form',
+        coding: {
+          code: 'form',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       ingredientId: '',
       manufacturerId: 'gsk',

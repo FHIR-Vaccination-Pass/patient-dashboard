@@ -35,7 +35,7 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
     // the subkey(s), resolving to `theme.colors.red.100`
     [
       getColorByStatus(
-        recommendation.forecastStatus.text as VaccinationStatus,
+        recommendation.forecastStatus.coding.code as VaccinationStatus,
         'gray'
       ) + '.300',
     ]
@@ -44,7 +44,7 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
   const mapper: ResourceMapper = useMapper();
   const disease: Disease | undefined = mapper.getDiseaseById(diseaseId);
   return (
-    <Link to={`/patient/dashboard/wiki/${disease?.code.text}`}>
+    <Link to={`/patient/dashboard/wiki/${disease?.code.coding.code}`}>
       <Flex
         justifyContent={'space-between'}
         alignItems={'center'}
@@ -59,7 +59,8 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
               <Badge
                 fontSize={'sm'}
                 colorScheme={getColorByStatus(
-                  recommendation.forecastStatus.text as VaccinationStatus,
+                  recommendation.forecastStatus.coding
+                    .code as VaccinationStatus,
                   'gray'
                 )}
                 ml={5}
@@ -69,18 +70,19 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
             </Text>
           </Box>
           {getIconByStatus(
-            recommendation.forecastStatus.text as VaccinationStatus
+            recommendation.forecastStatus.coding.code as VaccinationStatus
           ) !== undefined && (
             <Icon
               mt={'auto'}
               mb={'auto'}
               ml='3'
               as={getIconByStatus(
-                recommendation.forecastStatus.text as VaccinationStatus
+                recommendation.forecastStatus.coding.code as VaccinationStatus
               )}
               color={
                 getColorByStatus(
-                  recommendation.forecastStatus.text as VaccinationStatus,
+                  recommendation.forecastStatus.coding
+                    .code as VaccinationStatus,
                   'gray'
                 ) + '.400'
               }

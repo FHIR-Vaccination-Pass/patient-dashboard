@@ -30,8 +30,10 @@ export const MockPractitioners = new Map<string, Practitioner>([
         identifier: 'practitionerQualificationIdentifier',
         code: {
           id: 'qualificationCoding1',
-          coding: 'qualificationCoding',
-          text: 'ABC',
+          coding: {
+            code: 'ABC',
+            system: 'https://localhost:3000/url/to/typings',
+          },
         },
         issuer: 'qualificationIssuer',
       },

@@ -8,18 +8,24 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       date: new Date(),
       forecastStatus: {
         id: 'forecastStatusCoding',
-        coding: 'forecastStatusCoding',
-        text: 'due',
+        coding: {
+          code: 'due',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       forecastReason: {
         id: 'forecastReasonCoding1',
-        coding: 'forecastReasonCoding',
-        text: 'He fucked up, that simple',
+        coding: {
+          code: 'He fucked up, that simple',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'comirnaty',
+        coding: {
+          code: 'corminaty',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       recommendedStartDate: new Date(),
       isDeactivated: false,
@@ -37,18 +43,21 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       date: new Date(new Date().setFullYear(2022, 10, 17)),
       forecastStatus: {
         id: 'forecastStatusCoding',
-        coding: 'forecastStatusCoding',
-        text: '',
+        coding: { code: '', system: 'https://localhost:3000/url/to/typings' },
       },
       forecastReason: {
         id: 'forecastReasonCoding1',
-        coding: 'forecastReasonCoding',
-        text: 'He fucked up, that simple',
+        coding: {
+          code: 'He fucked up, that simple',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'comirnaty',
+        coding: {
+          code: 'corminaty',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       recommendedStartDate: new Date(),
       isDeactivated: false,
@@ -66,18 +75,21 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       date: new Date(new Date().setFullYear(2023, 0, 17)),
       forecastStatus: {
         id: 'forecastStatusCoding',
-        coding: 'forecastStatusCoding',
-        text: '',
+        coding: { code: '', system: 'https://localhost:3000/url/to/typings' },
       },
       forecastReason: {
         id: 'forecastReasonCoding1',
-        coding: 'forecastReasonCoding',
-        text: 'He fucked up, that simple',
+        coding: {
+          code: 'He fucked up',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'comirnaty',
+        coding: {
+          code: 'corminaty',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       recommendedStartDate: new Date(),
       isDeactivated: false,
@@ -95,18 +107,24 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       date: new Date(new Date().setFullYear(2022, 8, 17)),
       forecastStatus: {
         id: 'forecastStatusCoding',
-        coding: 'forecastStatusCoding',
-        text: 'due',
+        coding: {
+          code: 'due',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       forecastReason: {
         id: 'forecastReasonCoding1',
-        coding: 'forecastReasonCoding',
-        text: 'He fucked up, that simple',
+        coding: {
+          code: 'He fucked up',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'dukoral',
+        coding: {
+          code: 'dukoral',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       recommendedStartDate: new Date(),
       isDeactivated: false,

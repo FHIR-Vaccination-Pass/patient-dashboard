@@ -1,5 +1,4 @@
 export interface CodeableConcept {
   id: string;
-  coding: string;
-  text: string;
+  coding: { code: string, system: string };
 }

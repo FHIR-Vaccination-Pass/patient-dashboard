@@ -67,7 +67,7 @@ export function VaccineHistory() {
                 <Link
                   to={
                     '/md/dashboard/wiki/' +
-                    mapper.getDiseaseById(diseaseId)?.code.text
+                    mapper.getDiseaseById(diseaseId)?.code.coding.code
                   }
                 >
                   <Stack>

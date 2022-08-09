@@ -59,12 +59,12 @@ export class MockReferenceResolver implements ResourceMapper {
     this._medicationByCodeDict = new Map<string, Medication>();
 
     Array.from(this._medicationDict.values()).map((medication) =>
-      this._medicationByCodeDict.set(medication.code.text, medication)
+      this._medicationByCodeDict.set(medication.code.coding.code, medication)
     );
   }
 
   getMedicationByVaccineCode(code: CodeableConcept): Medication | undefined {
-    return this._medicationByCodeDict.get(code.text);
+    return this._medicationByCodeDict.get(code.coding.code);
   }
 
   public getRecommendationById(
@@ -91,6 +91,10 @@ export class MockReferenceResolver implements ResourceMapper {
 
   public getMedicationById(id: string): Medication | undefined {
     return this._medicationDict.get(id);
+  }
+
+  getAllMedications(): Medication[] {
+    return Array.from(this._medicationDict.values());
   }
 
   public getDiseaseById(id: string): Disease | undefined {
@@ -127,6 +131,18 @@ export class MockReferenceResolver implements ResourceMapper {
 
   public getOrganizationById(id: string): Organization | undefined {
     return this._organizationDict.get(id);
+  }
+
+  public getOrganizationByName(name: string): Organization | undefined {
+    const organizations: Organization[] = Array.from(
+      this._organizationDict.values()
+    );
+    for (const organization of organizations) {
+      if (organization.name === name) {
+        return organization;
+      }
+    }
+    return undefined;
   }
 
   public getVaccinationDoseById(id: string): VaccinationDose | undefined {
@@ -257,7 +273,7 @@ export class MockReferenceResolver implements ResourceMapper {
 
   getDiseaseByCode(code: string): Disease | undefined {
     return Array.from(this._diseaseDict.values()).find(
-      (disease: Disease) => disease.code.text === code
+      (disease: Disease) => disease.code.coding.code === code
     );
   }
 
@@ -271,6 +287,16 @@ export class MockReferenceResolver implements ResourceMapper {
           )?.id
       )?.length;
     } else return -1;
+  }
+
+  getVaccinationSchemeByMedicationId(
+    medicationId: string | undefined
+  ): VaccinationScheme | undefined {
+    if (medicationId !== undefined) {
+      return this.getAllVaccinationSchemes().find(
+        (scheme) => scheme.medicationId === medicationId
+      );
+    } else return undefined;
   }
 
   getRecommendationsByPatientId(patientId: string) {
