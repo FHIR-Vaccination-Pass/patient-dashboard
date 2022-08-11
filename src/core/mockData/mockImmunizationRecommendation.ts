@@ -23,7 +23,7 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
         coding: {
-          code: 'corminaty',
+          code: 'comirnaty',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
@@ -55,7 +55,7 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
         coding: {
-          code: 'corminaty',
+          code: 'comirnaty',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
@@ -87,7 +87,7 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
         coding: {
-          code: 'corminaty',
+          code: 'comirnaty',
           system: 'https://localhost:3000/url/to/typings',
         },
       },

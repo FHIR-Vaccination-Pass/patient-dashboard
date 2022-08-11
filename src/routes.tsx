@@ -11,10 +11,11 @@ import { ImmunizationWiki } from './patientViews/wiki/immunizationWiki';
 import { VaccineDetailPage } from './patientViews/wiki/vaccineDetailPage';
 import { Profile } from './patientViews/dashboard/profile';
 import NotFound from './patientViews/NotFound';
-import Settings from './mdViews/settings/settings';
+import DiseaseInformation from './mdViews/settings/diseaseInformation';
 import { Patient } from './mdViews/patient/patient';
 import { MDOverview } from './mdViews/dashboard/overview';
 import MDDashboard from './mdViews/dashboard/dashboard';
+import VaccineInformation from './mdViews/settings/vaccineInformation';
 
 const RequirePatientAuth: FC = ({ children }) => {
   const { initialized, keycloak } = useKeycloak();
@@ -90,7 +91,8 @@ const AppRoutes: FC = () => (
       }
     >
       <Route path='' element={<MDOverview />} />
-      <Route path='settings' element={<Settings />} />
+      <Route path='diseases' element={<DiseaseInformation />} />
+      <Route path='vaccines' element={<VaccineInformation />} />
       <Route path='patient/*' element={<Patient />}>
         <Route path='history' element={<VaccineHistory />} />
       </Route>

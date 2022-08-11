@@ -1,22 +1,14 @@
-import {
-  Flex,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Flex, Text, useColorModeValue } from '@chakra-ui/react';
 import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import { useState } from 'react';
 import { Disease } from '../../core/models/Disease';
 import { DiseaseInformationCard } from './diseaseInformationCard';
-import { ImmunizationConfigurationCard } from './immunizationConfigurationCard';
 
-export default function Settings() {
+export default function DiseaseInformation() {
   const mapper = useMapper();
-  const diseases = mapper.getAllDiseases();
+  const diseases = mapper.getAllDiseases().sort((a, b) => {
+    return a.name > b.name ? 1 : -1;
+  });
   const [currentDisease, setCurrentDisease] = useState<Disease>(diseases[0]);
 
   return (
@@ -46,20 +38,7 @@ export default function Settings() {
           </Flex>
         ))}
       </Flex>
-      <Tabs w={'88%'} defaultIndex={0}>
-        <TabList w={'23%'}>
-          <Tab color={'gray.600'}>Disease Information</Tab>
-          <Tab color={'gray.600'}>Immunization Configuration</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <DiseaseInformationCard currentDisease={currentDisease} />
-          </TabPanel>
-          <TabPanel>
-            <ImmunizationConfigurationCard currentDisease={currentDisease} />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+      <DiseaseInformationCard currentDisease={currentDisease} />
     </Flex>
   );
 }

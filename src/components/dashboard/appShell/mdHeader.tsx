@@ -22,7 +22,13 @@ import { Link } from 'react-router-dom';
 import VaccinationPass from '../../../assets/VaccinationPassV2.png';
 import { useKeycloak } from '@react-keycloak/web';
 import { KeycloakProfile } from 'keycloak-js';
-import { FaCog, FaSignOutAlt, FaUser, FaUserCircle } from 'react-icons/fa';
+import {
+  FaBookMedical,
+  FaSignOutAlt,
+  FaSyringe,
+  FaUser,
+  FaUserCircle,
+} from 'react-icons/fa';
 
 export const DashboardHeader: FC = () => {
   const { keycloak } = useKeycloak();
@@ -78,9 +84,19 @@ export const DashboardHeader: FC = () => {
             />
           </InputGroup>
           <HStack spacing={5} mr={'15px'}>
-            <Link to={'settings'}>
+            <Link to={'vaccines'}>
               <Icon
-                as={FaCog}
+                as={FaSyringe}
+                justifySelf={'center'}
+                alignSelf={'center'}
+                fontSize='x-large'
+                color={'gray.500'}
+                mt={'5px'}
+              />
+            </Link>
+            <Link to={'diseases'}>
+              <Icon
+                as={FaBookMedical}
                 justifySelf={'center'}
                 alignSelf={'center'}
                 fontSize='x-large'

@@ -310,6 +310,15 @@ export class MockReferenceResolver implements ResourceMapper {
 
   saveDiseaseInformation(disease: Disease) {
     // Save disease to server
+    console.log('Update the following disease on the FHIR server:');
+    console.log(disease);
+    return undefined;
+  }
+
+  saveVaccineInformation(medication: Medication) {
+    // Save medication to server
+    console.log('Update the following vaccine on the FHIR server:');
+    console.log(medication);
     return undefined;
   }
 }

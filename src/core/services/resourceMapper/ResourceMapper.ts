@@ -37,6 +37,8 @@ export interface ResourceMapper {
 
   getMedicationById(id: string): Medication | undefined;
 
+  getAllMedications(): Medication[];
+
   getDiseaseById(id: string): Disease | undefined;
 
   getDiseaseByCode(code: string): Disease | undefined;
@@ -46,7 +48,7 @@ export interface ResourceMapper {
   ): PopulationRecommendation | undefined;
 
   getPopulationRecommendationByDiseaseId(
-      diseaseId: string
+    diseaseId: string
   ): PopulationRecommendation | undefined;
 
   getVaccinationSchemeById(id: string): VaccinationScheme | undefined;
@@ -54,6 +56,8 @@ export interface ResourceMapper {
   getSubstanceById(id: string): Substance | undefined;
 
   getOrganizationById(id: string): Organization | undefined;
+
+  getOrganizationByName(name: string): Organization | undefined;
 
   getVaccinationDoseById(id: string): VaccinationDose | undefined;
 
@@ -63,10 +67,16 @@ export interface ResourceMapper {
 
   getNumberOfDosesByMedicationId(medicationId: string | undefined): number;
 
+  getVaccinationSchemeByMedicationId(
+    medicationId: string
+  ): VaccinationScheme | undefined;
+
   // Not needed atm, but will probably be needed in the future
   getRecommendationsByPatientId(
     patientId: string
   ): ImmunizationRecommendation[];
 
   saveDiseaseInformation(disease: Disease): Disease | undefined;
+
+  saveVaccineInformation(medication: Medication): Medication | undefined;
 }
