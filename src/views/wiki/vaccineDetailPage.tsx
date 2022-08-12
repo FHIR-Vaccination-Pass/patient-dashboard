@@ -35,6 +35,7 @@ import {
 import { VaccinationDoseSingle } from '../../core/models/VaccinationDose';
 import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 import { resolvePractitionerName } from '../../core/services/util/resolveHumanName';
+import { targetDiseaseApi } from '../../core/services/redux/fhir/targetDiseaseApi';
 
 class DiseaseWikiInfo {
   get populationRecommendation(): PopulationRecommendation | undefined {
@@ -105,8 +106,10 @@ export function VaccineDetailPage() {
   const pathComponents: string[] = location.pathname.split('/');
   const mapper = useMapper();
   const diseaseCode: string = pathComponents[pathComponents.length - 1];
-  const disease: Disease | undefined = mapper.getDiseaseByCode(diseaseCode);
-  const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(disease);
+
+  const { data: targetDisease } =
+    targetDiseaseApi.endpoints.getTargetDiseaseById.useQuery(diseaseCode, {});
+  const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(targetDisease);
 
   mapper.getImmunizations().forEach((immunization: Immunization) => {
     const vaccine: Medication | undefined = mapper.getMedicationByVaccineCode(
@@ -115,7 +118,7 @@ export function VaccineDetailPage() {
     if (vaccine !== undefined) {
       let included: boolean = false;
       vaccine.targetDiseaseIds.forEach((id) => {
-        if (id === disease?.id) included = true;
+        if (id === targetDisease?.id) included = true;
       });
       if (included) diseaseWikiInfo.addImmunizatuion(immunization);
     }
@@ -128,7 +131,7 @@ export function VaccineDetailPage() {
         mapper.getMedicationByVaccineCode(recommendation.vaccineCode);
       if (medication !== undefined) {
         medication.targetDiseaseIds.forEach((id) => {
-          if (id === disease?.id) {
+          if (id === targetDisease?.id) {
             if (diseaseWikiInfo.recommendations !== undefined) {
               diseaseWikiInfo.recommendations.push(recommendation);
             } else {
@@ -139,7 +142,7 @@ export function VaccineDetailPage() {
       }
     });
 
-  disease?.vaccineIds.forEach((vaccineId: string) => {
+  targetDisease?.vaccineIds.forEach((vaccineId: string) => {
     const vaccine: Medication | undefined = mapper.getMedicationById(vaccineId);
     if (vaccine !== undefined) {
       diseaseWikiInfo.addMedication(vaccine);
@@ -148,7 +151,7 @@ export function VaccineDetailPage() {
 
   diseaseWikiInfo.populationRecommendation =
     mapper.getPopulationRecommendationById(
-      disease?.populationRecommendationId ?? ''
+      targetDisease?.populationRecommendationId ?? ''
     );
 
   const status = calcAggregateImmunizationStatus(

@@ -14,6 +14,7 @@ import { Disease } from '../../core/models/Disease';
 import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
 import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
+import { targetDiseaseApi } from '../../core/services/redux/fhir/targetDiseaseApi';
 
 class WikiInformationCard {
   private _disease: Disease;
@@ -42,8 +43,10 @@ class WikiInformationCard {
 }
 
 export function ImmunizationWiki() {
+  const { data: targetDiseases } =
+    targetDiseaseApi.endpoints.getTargetDiseases.useQuery(undefined, {});
+
   const mapper = useMapper();
-  const diseases: Disease[] = mapper.getDiseases();
   const recommendations: ImmunizationRecommendation[] =
     mapper.getRecommendations();
   const [showInfo, setShowInfo] = useBoolean();
@@ -53,7 +56,7 @@ export function ImmunizationWiki() {
     WikiInformationCard
   >();
 
-  diseases.forEach((disease: Disease) => {
+  targetDiseases?.forEach((disease: Disease) => {
     wikiInformationCards.set(disease.id, new WikiInformationCard(disease));
   });
 
@@ -105,7 +108,7 @@ export function ImmunizationWiki() {
       >
         {Array.from(wikiInformationCards.values()).map((card) => (
           <div>
-            <Link to={`/dashboard/wiki/${card.disease.code.text}`}>
+            <Link to={`/dashboard/wiki/${card.disease.id}`}>
               <Flex
                 justifyContent={'space-between'}
                 alignItems={'center'}
