@@ -8,7 +8,7 @@ import Dashboard from './views/dashboard/dashboard';
 import { Overview } from './views/dashboard/overview';
 import { VaccineHistory } from './views/history/vaccineHistory';
 import { ImmunizationWiki } from './views/wiki/immunizationWiki';
-import { VaccineDetailPage } from './views/wiki/vaccineDetailPage';
+import { VaccineDetailPage } from './views/wiki/VaccineDetailPage/VaccineDetailPage';
 import { Profile } from './views/dashboard/profile';
 import NotFound from './views/NotFound';
 
