@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Basic, Bundle, Coding } from 'fhir/r4';
+import { Basic, Bundle, Coding, Extension } from 'fhir/r4';
 import { Disease } from '../../../models/Disease';
 import { CodeableConcept } from '../../../models/CodeableConcept';
 import * as fhirpath from 'fhirpath';
@@ -32,13 +32,15 @@ class TargetDiseaseMapped implements Disease {
   }
 
   get name(): string {
-    return fhirpath.evaluate(
+    const nameExtension = fhirpath.evaluate(
       this._raw,
       `extension('${settings.fhir.profileBaseUrl}/vp-target-disease-extension')` +
-        `.extension('name').value`,
+        `.extension('name')`,
       undefined,
       fhirpath_r4_model
-    )[0] as string;
+    )[0] as Extension;
+
+    return nameExtension.valueString!;
   }
 
   get description(): string {

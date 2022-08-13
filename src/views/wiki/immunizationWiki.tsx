@@ -108,7 +108,7 @@ export function ImmunizationWiki() {
       >
         {Array.from(wikiInformationCards.values()).map((card) => (
           <div>
-            <Link to={`/dashboard/wiki/${card.disease.id}`}>
+            <Link to={`/dashboard/wiki/${card.disease.code.coding}`}>
               <Flex
                 justifyContent={'space-between'}
                 alignItems={'center'}

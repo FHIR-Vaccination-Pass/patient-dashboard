@@ -108,7 +108,12 @@ export function VaccineDetailPage() {
   const diseaseCode: string = pathComponents[pathComponents.length - 1];
 
   const { data: targetDisease } =
-    targetDiseaseApi.endpoints.getTargetDiseaseById.useQuery(diseaseCode, {});
+    targetDiseaseApi.endpoints.getTargetDiseases.useQuery(undefined, {
+      selectFromResult: (result) => ({
+        ...result,
+        data: result.data?.find((x) => x.code.coding === diseaseCode),
+      }),
+    });
   const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(targetDisease);
 
   mapper.getImmunizations().forEach((immunization: Immunization) => {
