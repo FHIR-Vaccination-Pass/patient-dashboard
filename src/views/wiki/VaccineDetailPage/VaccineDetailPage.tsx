@@ -1,4 +1,7 @@
-import { PopulationRecommendation } from '../../../core/models/PopulationRecommendation';
+import {
+  PopulationRecommendation,
+  PopulationRecommendationMapper,
+} from '../../../core/models/PopulationRecommendation';
 import React, { FC } from 'react';
 import WorldMap from '../../../assets/worldMaps/WorldMap.svg';
 import { FaChevronDown, FaChevronUp, FaFolderOpen } from 'react-icons/fa';
@@ -37,76 +40,15 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { calcAggregateImmunizationStatus } from '../../../components/dashboard/immunizationStatus/immunizationStatusCard';
-import { targetDiseaseApi } from '../../../core/services/redux/fhir/targetDiseaseApi';
-import { immunizationApi } from '../../../core/services/redux/fhir/immunizationApi';
-import { medicationApi } from '../../../core/services/redux/fhir/medicationApi';
+import {
+  immunizationApi,
+  immunizationRecommendationApi,
+  medicationApi,
+  populationRecommendationApi,
+  targetDiseaseApi,
+} from '../../../core/services/redux/fhir';
 import { skipToken } from '@reduxjs/toolkit/query';
-import { immunizationRecommendationApi } from '../../../core/services/redux/fhir/immunizationRecommendationApi';
 import { ImmunizationCard, RecommendationCard } from '.';
-
-class DiseaseWikiInfo {
-  get populationRecommendation(): PopulationRecommendation | undefined {
-    return this._populationRecommendation;
-  }
-
-  set populationRecommendation(value: PopulationRecommendation | undefined) {
-    this._populationRecommendation = value;
-  }
-
-  private _disease: Disease | undefined;
-  private _immunizations: Immunization[];
-  private _recommendations: ImmunizationRecommendation[];
-  private _medications: Medication[];
-  private _populationRecommendation: PopulationRecommendation | undefined;
-
-  constructor(disease: Disease | undefined) {
-    this._disease = disease;
-    this._immunizations = [];
-    this._recommendations = [];
-    this._medications = [];
-    this._populationRecommendation = undefined;
-  }
-
-  get disease(): Disease | undefined {
-    return this._disease;
-  }
-
-  set disease(value: Disease | undefined) {
-    this._disease = value;
-  }
-
-  get immunizations(): Immunization[] {
-    return this._immunizations;
-  }
-
-  set immunizations(value: Immunization[]) {
-    this._immunizations = value;
-  }
-
-  get recommendations(): ImmunizationRecommendation[] {
-    return this._recommendations;
-  }
-
-  set recommendations(value: ImmunizationRecommendation[]) {
-    this._recommendations = value;
-  }
-
-  get medications(): Medication[] {
-    return this._medications;
-  }
-
-  set medications(value: Medication[]) {
-    this._medications = value;
-  }
-
-  public addMedication(medication: Medication) {
-    this._medications.push(medication);
-  }
-
-  public addImmunizatuion(immunization: Immunization) {
-    this._immunizations.push(immunization);
-  }
-}
 
 interface VaccineDetailHeaderProps {
   disease: Disease;
@@ -228,6 +170,52 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({
 }) => {
   const mapper = useMapper();
 
+  const generatePopulationRecommendationText = () => {
+    if (populationRecommendation === undefined) {
+      return (
+        <Text color={'gray.500'}>
+          The STIKO recommends start immunization for {disease.name} for all
+          ages.
+        </Text>
+      );
+    }
+    if (
+      populationRecommendation.ageStart !== undefined &&
+      populationRecommendation.ageEnd !== undefined
+    ) {
+      return (
+        <Text color={'gray.500'}>
+          The STIKO recommends start immunization for {disease.name} earliest
+          from age {populationRecommendation.ageStart} and latest until age{' '}
+          {populationRecommendation.ageEnd}.
+        </Text>
+      );
+    }
+    if (populationRecommendation.ageStart !== undefined) {
+      return (
+        <Text color={'gray.500'}>
+          The STIKO recommends start immunization for {disease.name} earliest
+          from age {populationRecommendation.ageStart}.
+        </Text>
+      );
+    }
+    if (populationRecommendation.ageEnd !== undefined) {
+      return (
+        <Text color={'gray.500'}>
+          The STIKO recommends start immunization for {disease.name} latest
+          until age {populationRecommendation.ageEnd}.
+        </Text>
+      );
+    }
+
+    return (
+      <Text color={'gray.500'}>
+        The STIKO does not see a need to vacinate against {disease.name} at this
+        time.
+      </Text>
+    );
+  };
+
   return (
     <VStack
       marginLeft={'20px !important'}
@@ -256,11 +244,7 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({
         >
           Recommendations
         </Heading>
-        <Text color={'gray.500'}>
-          The STIKO recommends start immunization for {disease.name} earlies
-          from age {populationRecommendation?.ageStart} and latest until age{' '}
-          {populationRecommendation?.ageEnd}.
-        </Text>
+        {generatePopulationRecommendationText()}
       </Box>
       <Box mb={'20px'}>
         <Heading
@@ -336,7 +320,6 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({
 export function VaccineDetailPage() {
   const location = useLocation();
   const pathComponents: string[] = location.pathname.split('/');
-  const mapper = useMapper();
   const diseaseCode: string = pathComponents[pathComponents.length - 1];
 
   const { data: targetDisease } = targetDiseaseApi.endpoints.get.useQuery(
@@ -394,21 +377,17 @@ export function VaccineDetailPage() {
       }
     );
 
-  const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(targetDisease);
-
-  immunizations?.forEach((immunization) =>
-    diseaseWikiInfo.addImmunizatuion(immunization)
-  );
-  medications?.forEach((medication) =>
-    diseaseWikiInfo.addMedication(medication)
-  );
-  recommendations?.forEach((recommendation) =>
-    diseaseWikiInfo.recommendations.push(recommendation)
-  );
-
-  diseaseWikiInfo.populationRecommendation =
-    mapper.getPopulationRecommendationById(
-      targetDisease?.populationRecommendationId ?? ''
+  const { data: populationRecommendation } =
+    populationRecommendationApi.endpoints.get.useQuery(
+      {},
+      {
+        selectFromResult: (result) => ({
+          ...result,
+          data: result.data
+            ?.map(PopulationRecommendationMapper.fromResource)
+            .find((pr) => pr.diseaseId === diseaseCode),
+        }),
+      }
     );
 
   return (
@@ -447,9 +426,7 @@ export function VaccineDetailPage() {
             <VaccineDetailBody
               disease={targetDisease}
               medications={medications}
-              populationRecommendation={
-                diseaseWikiInfo.populationRecommendation
-              }
+              populationRecommendation={populationRecommendation}
             />
           )}
         </VStack>

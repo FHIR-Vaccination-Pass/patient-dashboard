@@ -1,10 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 import { userSliceReducer } from './user/user';
-import { immunizationRecommendationApi } from './fhir/immunizationRecommendationApi';
-import { targetDiseaseApi } from './fhir/targetDiseaseApi';
-import { immunizationApi } from './fhir/immunizationApi';
-import { medicationApi } from './fhir/medicationApi';
+import {
+  immunizationApi,
+  immunizationRecommendationApi,
+  medicationApi,
+  populationRecommendationApi,
+  targetDiseaseApi,
+} from './fhir';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +15,8 @@ export const store = configureStore({
     [immunizationRecommendationApi.reducerPath]:
       immunizationRecommendationApi.reducer,
     [medicationApi.reducerPath]: medicationApi.reducer,
+    [populationRecommendationApi.reducerPath]:
+      populationRecommendationApi.reducer,
     [targetDiseaseApi.reducerPath]: targetDiseaseApi.reducer,
     user: userSliceReducer,
   },
@@ -22,6 +27,7 @@ export const store = configureStore({
       immunizationApi.middleware,
       immunizationRecommendationApi.middleware,
       medicationApi.middleware,
+      populationRecommendationApi.middleware,
       targetDiseaseApi.middleware
     ),
 });
