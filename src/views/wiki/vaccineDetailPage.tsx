@@ -3,7 +3,10 @@ import React from 'react';
 import WorldMap from '../../assets/worldMaps/WorldMap.svg';
 import { FaChevronDown, FaChevronUp, FaFolderOpen } from 'react-icons/fa';
 import { Disease, DiseaseMapper } from '../../core/models/Disease';
-import { Immunization } from '../../core/models/Immunization';
+import {
+  Immunization,
+  ImmunizationMapper,
+} from '../../core/models/Immunization';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
 import { Medication } from '../../core/models/Medication';
 import { useLocation } from 'react-router-dom';
@@ -36,6 +39,7 @@ import { VaccinationDoseSingle } from '../../core/models/VaccinationDose';
 import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 import { resolvePractitionerName } from '../../core/services/util/resolveHumanName';
 import { targetDiseaseApi } from '../../core/services/redux/fhir/targetDiseaseApi';
+import { immunizationApi } from '../../core/services/redux/fhir/immunizationApi';
 
 class DiseaseWikiInfo {
   get populationRecommendation(): PopulationRecommendation | undefined {
@@ -118,6 +122,17 @@ export function VaccineDetailPage() {
       }),
     }
   );
+
+  const { data: immunizations } = immunizationApi.endpoints.get.useQuery(
+    {},
+    {
+      selectFromResult: (result) => ({
+        ...result,
+        data: result.data?.map(ImmunizationMapper.fromResource),
+      }),
+    }
+  );
+
   const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(targetDisease);
 
   mapper.getImmunizations().forEach((immunization: Immunization) => {

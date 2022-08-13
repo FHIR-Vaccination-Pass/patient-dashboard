@@ -63,7 +63,7 @@ export class ImmunizationRecommendationMapper
   get vaccineCode(): CodeableConcept {
     const vaccineCodeCoding = fhirpath.evaluate(
       this._raw,
-      `recommendation.forecastStatus.coding.where(system = 'http://fhir.de/CodeSystem/ifa/pzn')`,
+      `recommendation.vaccineCode.coding.where(system = 'http://fhir.de/CodeSystem/ifa/pzn')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRCoding;

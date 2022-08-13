@@ -3,9 +3,11 @@ import { setupListeners } from '@reduxjs/toolkit/query/react';
 import { userSliceReducer } from './user/user';
 import { immunizationRecommendationApi } from './fhir/immunizationRecommendationApi';
 import { targetDiseaseApi } from './fhir/targetDiseaseApi';
+import { immunizationApi } from './fhir/immunizationApi';
 
 export const store = configureStore({
   reducer: {
+    [immunizationApi.reducerPath]: immunizationApi.reducer,
     [immunizationRecommendationApi.reducerPath]:
       immunizationRecommendationApi.reducer,
     [targetDiseaseApi.reducerPath]: targetDiseaseApi.reducer,
@@ -15,6 +17,7 @@ export const store = configureStore({
   // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
+      immunizationApi.middleware,
       immunizationRecommendationApi.middleware,
       targetDiseaseApi.middleware
     ),
