@@ -107,15 +107,17 @@ export function VaccineDetailPage() {
   const mapper = useMapper();
   const diseaseCode: string = pathComponents[pathComponents.length - 1];
 
-  const { data: targetDisease } =
-    targetDiseaseApi.endpoints.getTargetDiseases.useQuery(undefined, {
+  const { data: targetDisease } = targetDiseaseApi.endpoints.get.useQuery(
+    {},
+    {
       selectFromResult: (result) => ({
         ...result,
         data: result.data
           ?.map(DiseaseMapper.fromResource)
           .find((x) => x.code.coding === diseaseCode),
       }),
-    });
+    }
+  );
   const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(targetDisease);
 
   mapper.getImmunizations().forEach((immunization: Immunization) => {

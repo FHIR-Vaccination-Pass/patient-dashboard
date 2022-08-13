@@ -11,11 +11,6 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
         coding: 'forecastStatusCoding',
         text: 'due',
       },
-      forecastReason: {
-        id: 'forecastReasonCoding1',
-        coding: 'forecastReasonCoding',
-        text: 'He fucked up, that simple',
-      },
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
         coding: 'SNOMEDCTMedicationCodes',
@@ -39,11 +34,6 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
         id: 'forecastStatusCoding',
         coding: 'forecastStatusCoding',
         text: '',
-      },
-      forecastReason: {
-        id: 'forecastReasonCoding1',
-        coding: 'forecastReasonCoding',
-        text: 'He fucked up, that simple',
       },
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
@@ -69,11 +59,6 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
         coding: 'forecastStatusCoding',
         text: '',
       },
-      forecastReason: {
-        id: 'forecastReasonCoding1',
-        coding: 'forecastReasonCoding',
-        text: 'He fucked up, that simple',
-      },
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
         coding: 'SNOMEDCTMedicationCodes',
@@ -97,11 +82,6 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
         id: 'forecastStatusCoding',
         coding: 'forecastStatusCoding',
         text: '',
-      },
-      forecastReason: {
-        id: 'forecastReasonCoding1',
-        coding: 'forecastReasonCoding',
-        text: 'He fucked up, that simple',
       },
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',

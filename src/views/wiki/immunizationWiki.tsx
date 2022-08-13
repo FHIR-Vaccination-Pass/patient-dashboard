@@ -11,10 +11,10 @@ import { ChevronRightIcon, InfoIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
 import React, { FC } from 'react';
 import { Disease, DiseaseMapper } from '../../core/models/Disease';
-import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
-import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
 import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 import { targetDiseaseApi } from '../../core/services/redux/fhir/targetDiseaseApi';
+import { immunizationRecommendationApi } from '../../core/services/redux/fhir/immunizationRecommendationApi';
+import { ImmunizationRecommendationMapper } from '../../core/models/ImmunizationRecommendation';
 
 export interface WikiInformationCardProps {
   disease: Disease;
@@ -23,20 +23,22 @@ export interface WikiInformationCardProps {
 export const WikiInformationCard: FC<WikiInformationCardProps> = ({
   disease,
 }) => {
-  const mapper = useMapper();
-  const recommendations: ImmunizationRecommendation[] = mapper
-    .getRecommendations()
-    .filter((recommendation) => {
-      const diseaseIds: string[] | undefined =
-        mapper.getMedicationByVaccineCode(
-          recommendation.vaccineCode
-        )?.targetDiseaseIds;
+  const { data: recommendations } =
+    immunizationRecommendationApi.endpoints.get.useQuery(
+      {
+        'target-disease': disease.code.coding,
+      },
+      {
+        selectFromResult: (result) => ({
+          ...result,
+          data: result.data?.map(ImmunizationRecommendationMapper.fromResource),
+        }),
+      }
+    );
+  if (recommendations === undefined) {
+    return <></>;
+  }
 
-      return (
-        diseaseIds &&
-        diseaseIds.find((diseaseId) => diseaseId === disease.code.coding)
-      );
-    });
   const aggregateImmunizationStatus =
     calcAggregateImmunizationStatus(recommendations);
 
@@ -69,10 +71,15 @@ export const WikiInformationCard: FC<WikiInformationCardProps> = ({
 };
 
 export function ImmunizationWiki() {
-  const { data: targetDiseasesRaw } =
-    targetDiseaseApi.endpoints.getTargetDiseases.useQuery(undefined, {});
-  const targetDiseases = targetDiseasesRaw?.map(DiseaseMapper.fromResource);
-
+  const { data: targetDiseases } = targetDiseaseApi.endpoints.get.useQuery(
+    {},
+    {
+      selectFromResult: (result) => ({
+        ...result,
+        data: result.data?.map(DiseaseMapper.fromResource),
+      }),
+    }
+  );
   const [showInfo, setShowInfo] = useBoolean();
 
   return (

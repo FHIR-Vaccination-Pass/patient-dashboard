@@ -1,17 +1,23 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 import { userSliceReducer } from './user/user';
+import { immunizationRecommendationApi } from './fhir/immunizationRecommendationApi';
 import { targetDiseaseApi } from './fhir/targetDiseaseApi';
 
 export const store = configureStore({
   reducer: {
+    [immunizationRecommendationApi.reducerPath]:
+      immunizationRecommendationApi.reducer,
     [targetDiseaseApi.reducerPath]: targetDiseaseApi.reducer,
     user: userSliceReducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(targetDiseaseApi.middleware),
+    getDefaultMiddleware().concat(
+      immunizationRecommendationApi.middleware,
+      targetDiseaseApi.middleware
+    ),
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors

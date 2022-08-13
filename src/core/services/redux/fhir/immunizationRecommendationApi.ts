@@ -1,14 +1,18 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Basic, Bundle } from 'fhir/r4';
+import { Bundle, ImmunizationRecommendation } from 'fhir/r4';
 import { settings } from '../../../../settings';
 
-type TResource = Basic;
-interface GetArgs {}
-const resourceName = 'TargetDisease' as const;
-const resourcePath = '/Basic' as const;
+type TResource = ImmunizationRecommendation;
+interface GetArgs {
+  patient?: string;
+  'vaccine-type'?: string;
+  'target-disease'?: string;
+}
+const resourceName = 'ImmunizationRecommendation' as const;
+const resourcePath = '/ImmunizationRecommendation' as const;
 
-export const targetDiseaseApi = createApi({
-  reducerPath: 'targetDiseaseApi',
+export const immunizationRecommendationApi = createApi({
+  reducerPath: 'immunizationRecommendationApi',
   baseQuery: fetchBaseQuery({
     baseUrl: settings.fhir.baseUrl,
     prepareHeaders: (headers) => {
@@ -20,11 +24,11 @@ export const targetDiseaseApi = createApi({
   tagTypes: [resourceName],
   endpoints: (build) => ({
     get: build.query<TResource[], GetArgs>({
-      query: () => ({
+      query: (args) => ({
         url: resourcePath,
         params: {
-          code: resourceName,
-          _profile: `${settings.fhir.profileBaseUrl}/vp-target-disease`,
+          ...args,
+          _profile: `${settings.fhir.profileBaseUrl}/vp-immunization-recommendation`,
         },
       }),
       transformResponse: ({ entry }: Bundle) =>
