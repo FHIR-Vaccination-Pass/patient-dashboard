@@ -4,6 +4,7 @@ import { settings } from '../../../../settings';
 
 type TResource = Medication;
 interface GetArgs {
+  _id?: string;
   code?: string;
   manufacturer?: string;
   form?: string;

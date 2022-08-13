@@ -44,11 +44,16 @@ import {
   immunizationApi,
   immunizationRecommendationApi,
   medicationApi,
+  organizationApi,
   populationRecommendationApi,
   targetDiseaseApi,
 } from '../../../core/services/redux/fhir';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { ImmunizationCard, RecommendationCard } from '.';
+import {
+  Organization,
+  OrganizationMapper,
+} from '../../../core/models/Organization';
 
 interface VaccineDetailHeaderProps {
   disease: Disease;
@@ -161,11 +166,13 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({
 interface VaccineDetailBodyProps {
   disease: Disease;
   medications: Medication[];
+  organizations: Organization[];
   populationRecommendation: PopulationRecommendation | undefined;
 }
 const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({
   disease,
   medications,
+  organizations,
   populationRecommendation,
 }) => {
   const mapper = useMapper();
@@ -291,7 +298,12 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({
                     right={'0px'}
                     minW={'100px'}
                   >
-                    {mapper.getOrganizationById(vaccine.manufacturerId)?.name}
+                    {
+                      organizations.find(
+                        (organization) =>
+                          organization.id === vaccine.manufacturerId
+                      )?.name
+                    }
                   </Badge>
                 </HStack>
                 <HStack position={'relative'}>
@@ -344,6 +356,22 @@ export function VaccineDetailPage() {
           .filter((medication) =>
             medication.targetDiseaseIds.includes(diseaseCode)
           ),
+      }),
+    }
+  );
+
+  const { data: organizations } = organizationApi.endpoints.get.useQuery(
+    medications
+      ? {
+          _id: medications
+            .map((medication) => medication.manufacturerId)
+            .join(','),
+        }
+      : skipToken,
+    {
+      selectFromResult: (result) => ({
+        ...result,
+        data: result.data?.map(OrganizationMapper.fromResource),
       }),
     }
   );
@@ -422,10 +450,11 @@ export function VaccineDetailPage() {
               recommendations={recommendations}
             />
           )}
-          {targetDisease && medications && (
+          {targetDisease && medications && organizations && (
             <VaccineDetailBody
               disease={targetDisease}
               medications={medications}
+              organizations={organizations}
               populationRecommendation={populationRecommendation}
             />
           )}

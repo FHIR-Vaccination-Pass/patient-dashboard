@@ -3,7 +3,9 @@ import { Basic, Bundle } from 'fhir/r4';
 import { settings } from '../../../../settings';
 
 type TResource = Basic;
-interface GetArgs {}
+interface GetArgs {
+  _id?: string;
+}
 const resourceName = 'PopulationRecommendation' as const;
 const resourcePath = '/Basic' as const;
 

@@ -4,6 +4,7 @@ import { settings } from '../../../../settings';
 
 type TResource = Immunization;
 interface GetArgs {
+  _id?: string;
   status?: string;
   'vaccine-code'?: string;
   patient?: string;

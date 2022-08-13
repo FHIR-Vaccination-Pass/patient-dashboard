@@ -1,16 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Basic, Bundle } from 'fhir/r4';
+import { Bundle, Organization } from 'fhir/r4';
 import { settings } from '../../../../settings';
 
-type TResource = Basic;
+type TResource = Organization;
 interface GetArgs {
   _id?: string;
+  name?: string;
 }
-const resourceName = 'TargetDisease' as const;
-const resourcePath = '/Basic' as const;
+const resourceName = 'Organization' as const;
+const resourcePath = '/Organization' as const;
 
-export const targetDiseaseApi = createApi({
-  reducerPath: 'targetDiseaseApi',
+export const organizationApi = createApi({
+  reducerPath: 'organizationApi',
   baseQuery: fetchBaseQuery({
     baseUrl: settings.fhir.baseUrl,
     prepareHeaders: (headers) => {
@@ -22,11 +23,11 @@ export const targetDiseaseApi = createApi({
   tagTypes: [resourceName],
   endpoints: (build) => ({
     get: build.query<TResource[], GetArgs>({
-      query: () => ({
+      query: (args) => ({
         url: resourcePath,
         params: {
-          code: resourceName,
-          _profile: `${settings.fhir.profileBaseUrl}/vp-target-disease`,
+          ...args,
+          _profile: `${settings.fhir.profileBaseUrl}/vp-organization`,
         },
       }),
       transformResponse: ({ entry }: Bundle) =>
