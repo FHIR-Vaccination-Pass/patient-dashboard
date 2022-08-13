@@ -8,7 +8,7 @@ import {
   ImmunizationMapper,
 } from '../../core/models/Immunization';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
-import { Medication } from '../../core/models/Medication';
+import { Medication, MedicationMapper } from '../../core/models/Medication';
 import { useLocation } from 'react-router-dom';
 import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 
@@ -40,6 +40,7 @@ import { calcAggregateImmunizationStatus } from '../../components/dashboard/immu
 import { resolvePractitionerName } from '../../core/services/util/resolveHumanName';
 import { targetDiseaseApi } from '../../core/services/redux/fhir/targetDiseaseApi';
 import { immunizationApi } from '../../core/services/redux/fhir/immunizationApi';
+import { medicationApi } from '../../core/services/redux/fhir/medicationApi';
 
 class DiseaseWikiInfo {
   get populationRecommendation(): PopulationRecommendation | undefined {
@@ -119,6 +120,16 @@ export function VaccineDetailPage() {
         data: result.data
           ?.map(DiseaseMapper.fromResource)
           .find((x) => x.code.coding === diseaseCode),
+      }),
+    }
+  );
+
+  const { data: medications } = medicationApi.endpoints.get.useQuery(
+    {},
+    {
+      selectFromResult: (result) => ({
+        ...result,
+        data: result.data?.map(MedicationMapper.fromResource),
       }),
     }
   );

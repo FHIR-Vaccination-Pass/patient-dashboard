@@ -4,12 +4,14 @@ import { userSliceReducer } from './user/user';
 import { immunizationRecommendationApi } from './fhir/immunizationRecommendationApi';
 import { targetDiseaseApi } from './fhir/targetDiseaseApi';
 import { immunizationApi } from './fhir/immunizationApi';
+import { medicationApi } from './fhir/medicationApi';
 
 export const store = configureStore({
   reducer: {
     [immunizationApi.reducerPath]: immunizationApi.reducer,
     [immunizationRecommendationApi.reducerPath]:
       immunizationRecommendationApi.reducer,
+    [medicationApi.reducerPath]: medicationApi.reducer,
     [targetDiseaseApi.reducerPath]: targetDiseaseApi.reducer,
     user: userSliceReducer,
   },
@@ -19,6 +21,7 @@ export const store = configureStore({
     getDefaultMiddleware().concat(
       immunizationApi.middleware,
       immunizationRecommendationApi.middleware,
+      medicationApi.middleware,
       targetDiseaseApi.middleware
     ),
 });
