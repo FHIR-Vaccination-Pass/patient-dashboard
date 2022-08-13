@@ -10,7 +10,7 @@ import {
 import { ChevronRightIcon, InfoIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
 import React, { FC } from 'react';
-import { Disease } from '../../core/models/Disease';
+import { Disease, DiseaseMapper } from '../../core/models/Disease';
 import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
 import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
@@ -69,8 +69,10 @@ export const WikiInformationCard: FC<WikiInformationCardProps> = ({
 };
 
 export function ImmunizationWiki() {
-  const { data: targetDiseases } =
+  const { data: targetDiseasesRaw } =
     targetDiseaseApi.endpoints.getTargetDiseases.useQuery(undefined, {});
+  const targetDiseases = targetDiseasesRaw?.map(DiseaseMapper.fromResource);
+
   const [showInfo, setShowInfo] = useBoolean();
 
   return (

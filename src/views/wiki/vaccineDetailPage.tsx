@@ -2,7 +2,7 @@ import { PopulationRecommendation } from '../../core/models/PopulationRecommenda
 import React from 'react';
 import WorldMap from '../../assets/worldMaps/WorldMap.svg';
 import { FaChevronDown, FaChevronUp, FaFolderOpen } from 'react-icons/fa';
-import { Disease } from '../../core/models/Disease';
+import { Disease, DiseaseMapper } from '../../core/models/Disease';
 import { Immunization } from '../../core/models/Immunization';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
 import { Medication } from '../../core/models/Medication';
@@ -111,7 +111,9 @@ export function VaccineDetailPage() {
     targetDiseaseApi.endpoints.getTargetDiseases.useQuery(undefined, {
       selectFromResult: (result) => ({
         ...result,
-        data: result.data?.find((x) => x.code.coding === diseaseCode),
+        data: result.data
+          ?.map(DiseaseMapper.fromResource)
+          .find((x) => x.code.coding === diseaseCode),
       }),
     });
   const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(targetDisease);
