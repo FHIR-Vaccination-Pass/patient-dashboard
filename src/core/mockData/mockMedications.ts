@@ -58,7 +58,7 @@ export const MockMedications = new Map<string, Medication>([
       ingredientId: '',
       manufacturerId: 'biontech-pfizer',
       tradeName: 'Comirnaty',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseIds: ['U07.1'],
     },
   ],
   [
@@ -78,7 +78,7 @@ export const MockMedications = new Map<string, Medication>([
       ingredientId: '',
       manufacturerId: 'janssen',
       tradeName: 'JCOVDEN',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseIds: ['U07.1'],
     },
   ],
   [
@@ -98,7 +98,7 @@ export const MockMedications = new Map<string, Medication>([
       ingredientId: '',
       manufacturerId: 'novavax',
       tradeName: 'Nuvaxovid',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseIds: ['U07.1'],
     },
   ],
   [
@@ -118,7 +118,7 @@ export const MockMedications = new Map<string, Medication>([
       ingredientId: '',
       manufacturerId: 'moderna',
       tradeName: 'Spikevax',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseIds: ['U07.1'],
     },
   ],
   [
@@ -138,7 +138,7 @@ export const MockMedications = new Map<string, Medication>([
       ingredientId: '',
       manufacturerId: 'astrazeneca',
       tradeName: 'Vaxzevria',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseIds: ['U07.1'],
     },
   ],
   [
@@ -158,7 +158,7 @@ export const MockMedications = new Map<string, Medication>([
       ingredientId: '',
       manufacturerId: 'valneva',
       tradeName: 'COVID-19 Vaccine Valneva',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseIds: ['U07.1'],
     },
   ],
   [
