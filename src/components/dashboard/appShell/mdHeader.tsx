@@ -48,7 +48,6 @@ export const DashboardHeader: FC = () => {
   return (
     <>
       <Box
-        bg={useColorModeValue('white', 'gray.900')}
         m={'10px'}
         position='fixed'
         h={'55px'}
@@ -57,8 +56,9 @@ export const DashboardHeader: FC = () => {
         zIndex={1000}
       >
         <Flex
-          borderRadius={'12px'}
+          bg={useColorModeValue('white', 'gray.900')}
           boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.25)'
+          borderRadius={'12px'}
           justifyContent={'space-between'}
           alignItems={'center'}
           p={'5px'}
