@@ -21,13 +21,13 @@ import {
   FaUserInjured,
 } from 'react-icons/fa';
 import { NavItem } from '../../components/dashboard/appShell/navitem';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Patient } from '../../core/models/Patient';
 import { resolvePatientName } from '../../core/services/util/resolveHumanName';
+import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 
 interface SidebarProps extends BoxProps {
   onClose: () => void;
-  patient: Patient | undefined;
 }
 
 interface LinkItemProps {
@@ -37,7 +37,7 @@ interface LinkItemProps {
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Patient Status', icon: FaUserInjured, link: 'status' },
+  { name: 'Patient Status', icon: FaUserInjured, link: '' },
   {
     name: 'Vaccination History',
     icon: FaSyringe,
@@ -47,17 +47,28 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Vacation Plans', icon: FaPlane, link: 'vacations' },
 ];
 
-export const PatientSidebar = ({ onClose, patient, ...rest }: SidebarProps) => {
+export const PatientSidebar = ({ onClose, ...rest }: SidebarProps) => {
+  const location = useLocation();
+  const pathComponents: string[] = location.pathname.split('/');
+  const mapper = useMapper();
+  let patientId: string;
+
+  //TODO: This is way to hacky, please find a better solution to resolve the patient...
+  if (pathComponents.length === 6) {
+    patientId = pathComponents[pathComponents.length - 2];
+  } else {
+    patientId = pathComponents[pathComponents.length - 1];
+  }
+  const patient: Patient | undefined = mapper.getPatientById(patientId);
   const [navSize, changeNavSize] = useState('large');
   return (
     <Flex
       bg={useColorModeValue('white', 'gray.900')}
       boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
-      borderRadius={navSize === 'small' ? '20px' : '30px'}
+      borderRadius={navSize === 'small' ? '10px' : '15px'}
       flexDir='column'
       justifyContent='space-between'
-      m={'10px'}
-      h={'95%'}
+      h={'100%'}
       pos='sticky'
       left='5'
       w={navSize === 'small' ? '75px' : '200px'}
@@ -79,7 +90,9 @@ export const PatientSidebar = ({ onClose, patient, ...rest }: SidebarProps) => {
             _hover={{ boxShadow: '0 4px 12px 0 rgba(0, 0, 0, 0.10)' }}
           >
             <Avatar></Avatar>
-            <Text ml={2}>{resolvePatientName(patient?.name)}</Text>
+            <Text ml={2} display={navSize === 'small' ? 'none' : 'block'}>
+              {resolvePatientName(patient?.name)}
+            </Text>
           </Flex>
         </Link>
 
@@ -90,7 +103,7 @@ export const PatientSidebar = ({ onClose, patient, ...rest }: SidebarProps) => {
             icon={navLink.icon}
             navSize={navSize}
             active={false}
-            link={`${patient?.id}/${navLink.link}`}
+            link={`/md/dashboard/patient/${patient?.id}/${navLink.link}`}
             onClose={onClose}
           >
             {navLink.name}

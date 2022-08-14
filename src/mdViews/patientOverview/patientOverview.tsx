@@ -1,23 +1,16 @@
 import { Flex } from '@chakra-ui/react';
 import { PatientSidebar } from './patientSidebar';
-import { useLocation } from 'react-router-dom';
-import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
-import { Patient } from '../../core/models/Patient';
+import { Outlet } from 'react-router-dom';
 
 export function PatientOverview() {
-  const location = useLocation();
-  const pathComponents: string[] = location.pathname.split('/');
-  const mapper = useMapper();
-  const patientId: string = pathComponents[pathComponents.length - 1];
-  const patient: Patient | undefined = mapper.getPatientById(patientId);
   return (
-    <Flex h={'100%'} flexDirection={'row'}>
+    <Flex h={'100%'} w={'full'} flexDirection={'row'}>
       <PatientSidebar
         onClose={() => {
           return;
         }}
-        patient={patient}
       ></PatientSidebar>
+      <Outlet></Outlet>
     </Flex>
   );
 }
