@@ -49,7 +49,7 @@ export class DiseaseMapper implements Disease {
   get code(): CodeableConcept {
     const coding = fhirpath.evaluate(
       this._targetDiseaseExtension,
-      `extension('code').value.coding.where(system = 'http://hl7.org/fhir/sid/icd-10')`,
+      `extension.where(url = 'code').value.coding.where(system = 'http://hl7.org/fhir/sid/icd-10')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRCoding;
@@ -60,7 +60,7 @@ export class DiseaseMapper implements Disease {
   get name(): string {
     const nameExtension = fhirpath.evaluate(
       this._targetDiseaseExtension,
-      `extension('name')`,
+      `extension.where(url = 'name')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
@@ -71,7 +71,7 @@ export class DiseaseMapper implements Disease {
   get description(): string {
     return fhirpath.evaluate(
       this._targetDiseaseExtension,
-      `extension('description').value`,
+      `extension.where(url = 'description').value`,
       undefined,
       fhirpath_r4_model
     )[0] as string;
