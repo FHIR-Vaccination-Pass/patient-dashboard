@@ -6,10 +6,12 @@ export const MockVacationPlans = new Map<string, VacationPlan>([
     {
       id: 'vaccationplan1',
       departureDate: new Date(),
-      location: {
-        country: 'Germany',
-        state: 'Bavaria',
-      },
+      locations: [
+        {
+          country: 'Germany',
+          state: 'Bavaria',
+        },
+      ],
     },
   ],
 ]);

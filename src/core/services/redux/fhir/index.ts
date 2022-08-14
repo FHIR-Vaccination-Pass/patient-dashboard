@@ -6,3 +6,4 @@ export { patientApi } from './patientApi';
 export { populationRecommendationApi } from './populationRecommendationApi';
 export { practitionerApi } from './practitionerApi';
 export { targetDiseaseApi } from './targetDiseaseApi';
+export { vacationPlanApi } from './vacationPlanApi';
