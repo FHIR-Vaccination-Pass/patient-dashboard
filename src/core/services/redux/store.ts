@@ -11,6 +11,7 @@ import {
   practitionerApi,
   targetDiseaseApi,
   vacationPlanApi,
+  vaccinationDoseApi,
 } from './fhir';
 
 export const store = configureStore({
@@ -26,6 +27,7 @@ export const store = configureStore({
     [practitionerApi.reducerPath]: practitionerApi.reducer,
     [targetDiseaseApi.reducerPath]: targetDiseaseApi.reducer,
     [vacationPlanApi.reducerPath]: vacationPlanApi.reducer,
+    [vaccinationDoseApi.reducerPath]: vaccinationDoseApi.reducer,
     user: userSliceReducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,
@@ -40,7 +42,8 @@ export const store = configureStore({
       populationRecommendationApi.middleware,
       practitionerApi.middleware,
       targetDiseaseApi.middleware,
-      vacationPlanApi.middleware
+      vacationPlanApi.middleware,
+      vaccinationDoseApi.middleware
     ),
 });
 
