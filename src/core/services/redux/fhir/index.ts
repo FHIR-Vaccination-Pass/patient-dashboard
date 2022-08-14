@@ -8,3 +8,4 @@ export { practitionerApi } from './practitionerApi';
 export { targetDiseaseApi } from './targetDiseaseApi';
 export { vacationPlanApi } from './vacationPlanApi';
 export { vaccinationDoseApi } from './vaccinationDoseApi';
+export { vaccinationSchemeApi } from './vaccinationSchemeApi';
