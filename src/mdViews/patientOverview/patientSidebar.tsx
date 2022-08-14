@@ -77,18 +77,12 @@ export const PatientSidebar = ({ onClose, ...rest }: SidebarProps) => {
       <Flex
         mt={2}
         flexDir='column'
-        p='4%'
         w='100%'
+        h={'100%'}
         alignItems={navSize === 'small' ? 'center' : 'flex-start'}
       >
         <Link to={`/md/dashboard/patient/${patient?.id}`}>
-          <Flex
-            mb={4}
-            align='center'
-            borderRadius={'20px'}
-            p={navSize === 'small' ? '2px' : '5px'}
-            _hover={{ boxShadow: '0 4px 12px 0 rgba(0, 0, 0, 0.10)' }}
-          >
+          <Flex m={1} align='center' p={navSize === 'small' ? '2px' : '5px'}>
             <Avatar></Avatar>
             <Text ml={2} display={navSize === 'small' ? 'none' : 'block'}>
               {resolvePatientName(patient?.name)}
@@ -96,7 +90,7 @@ export const PatientSidebar = ({ onClose, ...rest }: SidebarProps) => {
           </Flex>
         </Link>
 
-        <Divider mb={2} />
+        <Divider />
         {LinkItems.map((navLink) => (
           <NavItem
             title={navLink.name}
@@ -115,7 +109,6 @@ export const PatientSidebar = ({ onClose, ...rest }: SidebarProps) => {
         <Flex
           mt={2}
           flexDir='column'
-          p='5%'
           w='100%'
           alignItems={navSize === 'small' ? 'center' : 'flex-start'}
         >
@@ -123,17 +116,17 @@ export const PatientSidebar = ({ onClose, ...rest }: SidebarProps) => {
           <Flex align='center' w={navSize === 'small' ? 'unset' : '100%'}>
             <Menu placement='right'>
               <Flex
-                borderRadius={'15px'}
                 p={3}
                 pt={1}
                 pb={1}
                 mt={2}
                 mb={2}
+                w={'100%'}
+                h={'100%'}
                 _hover={{
                   textDecor: 'none',
                   backgroundColor: 'brand.10',
                 }}
-                w={'100%'}
                 color={'gray.500'}
                 onClick={() => {
                   if (navSize === 'small') changeNavSize('large');
