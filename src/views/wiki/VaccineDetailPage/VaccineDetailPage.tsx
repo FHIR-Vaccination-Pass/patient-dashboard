@@ -1,22 +1,6 @@
-import {
-  PopulationRecommendation,
-  PopulationRecommendationMapper,
-} from '../../../core/models/PopulationRecommendation';
 import React, { FC } from 'react';
-import WorldMap from '../../../assets/worldMaps/WorldMap.svg';
-import { FaChevronDown, FaChevronUp, FaFolderOpen } from 'react-icons/fa';
-import { Disease, DiseaseMapper } from '../../../core/models/Disease';
-import {
-  Immunization,
-  ImmunizationMapper,
-} from '../../../core/models/Immunization';
-import {
-  ImmunizationRecommendation,
-  ImmunizationRecommendationMapper,
-} from '../../../core/models/ImmunizationRecommendation';
-import { Medication, MedicationMapper } from '../../../core/models/Medication';
 import { useLocation } from 'react-router-dom';
-
+import { FaChevronDown, FaChevronUp, FaFolderOpen } from 'react-icons/fa';
 import {
   Accordion,
   AccordionButton,
@@ -38,32 +22,32 @@ import {
   useColorModeValue,
   VStack,
 } from '@chakra-ui/react';
+import { skipToken } from '@reduxjs/toolkit/query';
+
+import WorldMap from '../../../assets/worldMaps/WorldMap.svg';
 import { calcAggregateImmunizationStatus } from '../../../components/dashboard/immunizationStatus/immunizationStatusCard';
+import {
+  Disease,
+  DiseaseMapper,
+  Immunization,
+  ImmunizationMapper,
+  ImmunizationRecommendation,
+  ImmunizationRecommendationMapper,
+  Medication,
+  MedicationMapper,
+  PopulationRecommendation,
+  PopulationRecommendationMapper,
+} from '../../../core/models';
 import {
   immunizationApi,
   immunizationRecommendationApi,
   medicationApi,
-  organizationApi,
   populationRecommendationApi,
   targetDiseaseApi,
-  vaccinationDoseApi,
-  vaccinationSchemeApi,
 } from '../../../core/services/redux/fhir';
-import { skipToken } from '@reduxjs/toolkit/query';
+import { useMedicationGraph } from '../../../hooks';
+
 import { ImmunizationCard, RecommendationCard } from '.';
-import {
-  Organization,
-  OrganizationMapper,
-} from '../../../core/models/Organization';
-import {
-  VaccinationScheme,
-  VaccinationSchemeMapper,
-} from '../../../core/models/VaccinationScheme';
-import {
-  VaccinationDose,
-  VaccinationDoseMapper,
-} from '../../../core/models/VaccinationDose';
-import { MedicationGraphNode, useMedicationGraph } from '../../../hooks';
 
 interface VaccineDetailHeaderProps {
   disease: Disease;
