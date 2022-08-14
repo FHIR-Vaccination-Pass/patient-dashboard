@@ -1,3 +1,4 @@
+export { activeVaccinationSchemeApi } from './activeVaccinationSchemeApi';
 export { immunizationApi } from './immunizationApi';
 export { immunizationRecommendationApi } from './immunizationRecommendationApi';
 export { medicationApi } from './medicationApi';
