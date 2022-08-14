@@ -16,7 +16,6 @@ import {
 } from '../../../core/models/ImmunizationRecommendation';
 import { Medication, MedicationMapper } from '../../../core/models/Medication';
 import { useLocation } from 'react-router-dom';
-import { useMapper } from '../../../core/services/resourceMapper/ResourceMapperContext';
 
 import {
   Accordion,
@@ -47,6 +46,8 @@ import {
   organizationApi,
   populationRecommendationApi,
   targetDiseaseApi,
+  vaccinationDoseApi,
+  vaccinationSchemeApi,
 } from '../../../core/services/redux/fhir';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { ImmunizationCard, RecommendationCard } from '.';
@@ -54,6 +55,15 @@ import {
   Organization,
   OrganizationMapper,
 } from '../../../core/models/Organization';
+import {
+  VaccinationScheme,
+  VaccinationSchemeMapper,
+} from '../../../core/models/VaccinationScheme';
+import {
+  VaccinationDose,
+  VaccinationDoseMapper,
+} from '../../../core/models/VaccinationDose';
+import { MedicationGraphNode, useMedicationGraph } from '../../../hooks';
 
 interface VaccineDetailHeaderProps {
   disease: Disease;
@@ -166,16 +176,14 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({
 interface VaccineDetailBodyProps {
   disease: Disease;
   medications: Medication[];
-  organizations: Organization[];
   populationRecommendation: PopulationRecommendation | undefined;
 }
 const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({
   disease,
   medications,
-  organizations,
   populationRecommendation,
 }) => {
-  const mapper = useMapper();
+  const medicationGraph = useMedicationGraph(medications);
 
   const generatePopulationRecommendationText = () => {
     if (populationRecommendation === undefined) {
@@ -280,49 +288,53 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({
           Vaccines
         </Heading>
         <Accordion defaultIndex={[]} allowMultiple mb={'20px'}>
-          {medications.map((vaccine: Medication) => (
-            <AccordionItem>
-              <AccordionButton>
-                <Box flex='1' textAlign='left'>
-                  {vaccine.tradeName}
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel pb={4} mr={'-15px'}>
-                <HStack position={'relative'}>
-                  <Text>Manufacturer:</Text>
-                  <Badge
-                    colorScheme={'blue'}
-                    textAlign={'center'}
-                    position={'absolute'}
-                    right={'0px'}
-                    minW={'100px'}
-                  >
-                    {
-                      organizations.find(
-                        (organization) =>
-                          organization.id === vaccine.manufacturerId
-                      )?.name
-                    }
-                  </Badge>
-                </HStack>
-                <HStack position={'relative'}>
-                  <Text>Number of Doses:</Text>
-                  <Box
-                    width={'100px'}
-                    backgroundColor={'gray.100'}
-                    textAlign={'center'}
-                    position={'absolute'}
-                    right={'0px'}
-                  >
-                    <Text fontSize={'xs'}>
-                      {mapper.getNumberOfDosesByMedicationId(vaccine.id)}
-                    </Text>
-                  </Box>
-                </HStack>
-              </AccordionPanel>
-            </AccordionItem>
-          ))}
+          {medicationGraph &&
+            Array.from(
+              medicationGraph.values(),
+              ({ medication, organization, schemes }) => (
+                <AccordionItem>
+                  <AccordionButton>
+                    <Box flex='1' textAlign='left'>
+                      {medication.tradeName}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4} mr={'-15px'}>
+                    <HStack position={'relative'}>
+                      <Text>Manufacturer:</Text>
+                      <Badge
+                        colorScheme={'blue'}
+                        textAlign={'center'}
+                        position={'absolute'}
+                        right={'0px'}
+                        minW={'100px'}
+                      >
+                        {organization?.name}
+                      </Badge>
+                    </HStack>
+                    <HStack position={'relative'}>
+                      <Text>Number of Doses:</Text>
+                      <Box
+                        width={'100px'}
+                        backgroundColor={'gray.100'}
+                        textAlign={'center'}
+                        position={'absolute'}
+                        right={'0px'}
+                      >
+                        <Text fontSize={'xs'}>
+                          {
+                            Array.from(schemes.values()).find(
+                              ({ vaccinationScheme }) =>
+                                vaccinationScheme.type === 'standard'
+                            )?.doses.size
+                          }
+                        </Text>
+                      </Box>
+                    </HStack>
+                  </AccordionPanel>
+                </AccordionItem>
+              )
+            )}
         </Accordion>
       </Box>
     </VStack>
@@ -356,22 +368,6 @@ export function VaccineDetailPage() {
           .filter((medication) =>
             medication.targetDiseaseIds.includes(diseaseCode)
           ),
-      }),
-    }
-  );
-
-  const { data: organizations } = organizationApi.endpoints.get.useQuery(
-    medications
-      ? {
-          _id: medications
-            .map((medication) => medication.manufacturerId)
-            .join(','),
-        }
-      : skipToken,
-    {
-      selectFromResult: (result) => ({
-        ...result,
-        data: result.data?.map(OrganizationMapper.fromResource),
       }),
     }
   );
@@ -450,11 +446,10 @@ export function VaccineDetailPage() {
               recommendations={recommendations}
             />
           )}
-          {targetDisease && medications && organizations && (
+          {targetDisease && medications && (
             <VaccineDetailBody
               disease={targetDisease}
               medications={medications}
-              organizations={organizations}
               populationRecommendation={populationRecommendation}
             />
           )}
