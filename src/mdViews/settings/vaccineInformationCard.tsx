@@ -11,19 +11,39 @@ import {
   EditablePreview,
   EditableTextarea,
   Flex,
+  FormControl,
+  FormLabel,
   HStack,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  Switch,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Medication } from '../../core/models/Medication';
 import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import { VaccinationScheme } from '../../core/models/VaccinationScheme';
 import Select, { OnChangeValue } from 'react-select';
+import { SmallCloseIcon } from '@chakra-ui/icons';
 
 interface VaccineInformationCardProps extends BoxProps {
   selectedMedication: Medication;
@@ -50,10 +70,15 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
   selectedMedication,
 }) => {
   const mapper = useMapper();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const initialRef = React.useRef(null);
   const vaccinationSchemes = mapper
     .getAllVaccinationSchemes()
     .filter((scheme) => scheme.medicationId === selectedMedication.id);
   const diseases = mapper.getAllDiseases();
+  const dosesMap = mapper.getVaccinationDosesForVaccinationSchemes(
+    vaccinationSchemes.map((scheme) => scheme.id)
+  );
 
   // options for select component
   const diseaseOptions: OptionType[] = convertArrayToOptionArray(
@@ -93,6 +118,16 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
     const result = mapper.saveVaccineInformation(currentMedication);
     console.log(currentMedication);
   }
+
+  function monthDiff(d1: Date, d2: Date) {
+    var months;
+    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth();
+    months += d2.getMonth();
+    return months <= 0 ? 0 : months;
+  }
+
+  function addDoseToScheme(scheme: VaccinationScheme) {}
 
   function addScheme(scheme: VaccinationScheme) {}
   return (
@@ -207,6 +242,19 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4}>
+              <Flex flexDirection={'row'}>
+                <Text color={'gray.600'} mr={'5px'}>
+                  Standard Scheme
+                </Text>
+                <Switch
+                  id='email-alerts'
+                  mb={'15px'}
+                  colorScheme='green'
+                  size={'lg'}
+                  isChecked={scheme.isPreferred}
+                  onChange={() => (scheme.isPreferred = !scheme.isPreferred)}
+                />
+              </Flex>
               <HStack mb={'30px'} spacing={'20px'} w={'100%'}>
                 <Flex flexDirection={'column'} w={'50%'}>
                   <Text fontSize={'sm'} color={'gray.500'}>
@@ -252,6 +300,94 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
                   </NumberInput>
                 </Flex>
               </HStack>
+
+              <TableContainer>
+                <Table variant='simple'>
+                  <Thead>
+                    <Tr>
+                      <Th>Dose Number</Th>
+                      <Th>Type</Th>
+                      <Th>Dose Quantity</Th>
+                      <Th>Time Frame</Th>
+                      <Th>Notes</Th>
+                      <Th isNumeric></Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {dosesMap.get(scheme.id)?.map((dose) => (
+                      <Tr>
+                        <Td>
+                          {dose.numberInScheme}/
+                          {dosesMap.get(scheme.id)?.length}
+                        </Td>
+                        <Td>Single</Td>
+                        <Td>{dose.doseQuantity}</Td>
+                        <Td>
+                          {monthDiff(dose.timeStart, dose.timeEnd)} months after
+                        </Td>
+                        <Td>{dose.notes}</Td>
+                        <Td isNumeric>
+                          <SmallCloseIcon />
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+              <Button
+                variant={'solid'}
+                color={'white'}
+                bg={'green.400'}
+                _hover={{ bg: 'green.500' }}
+                _active={{ bg: 'green.500' }}
+                _focus={{
+                  bg: 'green.500',
+                }}
+                mt={'10px'}
+                onClick={onOpen}
+              >
+                Add Dose
+              </Button>
+              <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Create Vaccination Dose</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody pb={6}>
+                    <FormControl>
+                      <FormLabel>Dose Number</FormLabel>
+                      <Input ref={initialRef} placeholder='' />
+                    </FormControl>
+
+                    <FormControl mt={4}>
+                      <FormLabel>Type</FormLabel>
+                      <Input placeholder='' />
+                    </FormControl>
+
+                    <FormControl mt={4}>
+                      <FormLabel>Dose Quantity</FormLabel>
+                      <Input placeholder='' />
+                    </FormControl>
+
+                    <FormControl mt={4}>
+                      <FormLabel>Time Frame</FormLabel>
+                      <Input placeholder='' />
+                    </FormControl>
+
+                    <FormControl mt={4}>
+                      <FormLabel>Notes</FormLabel>
+                      <Input placeholder='' />
+                    </FormControl>
+                  </ModalBody>
+
+                  <ModalFooter>
+                    <Button colorScheme='blue' mr={3}>
+                      Save
+                    </Button>
+                    <Button onClick={onClose}>Cancel</Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
             </AccordionPanel>
           </AccordionItem>
         ))}

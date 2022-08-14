@@ -10,7 +10,7 @@ export const MockVaccinationDosesRepeating = new Map<
       id: 'vaccinationdose1',
       doseQuantity: 1,
       isProtected: true,
-      notes: '0',
+      notes: 'Notes',
       vaccinationSchemeId: 'vaccinationscheme1',
       interval: [],
     },

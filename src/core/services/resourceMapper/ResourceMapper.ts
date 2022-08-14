@@ -76,6 +76,10 @@ export interface ResourceMapper {
     patientId: string
   ): ImmunizationRecommendation[];
 
+  getVaccinationDosesForVaccinationSchemes(
+    vaccinationSchemeIds: string[]
+  ): Map<string, VaccinationDoseSingle[]>;
+
   saveDiseaseInformation(disease: Disease): Disease | undefined;
 
   saveVaccineInformation(medication: Medication): Medication | undefined;

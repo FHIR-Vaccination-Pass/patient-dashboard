@@ -308,6 +308,20 @@ export class MockReferenceResolver implements ResourceMapper {
     );
   }
 
+  getVaccinationDosesForVaccinationSchemes(
+    vaccinationSchemeIds: string[]
+  ): Map<string, VaccinationDoseSingle[]> {
+    let dosesMap = new Map<string, VaccinationDoseSingle[]>();
+    const doses = this.getAllSingleVaccinationDoses();
+    vaccinationSchemeIds.forEach((schemeId) => {
+      dosesMap.set(
+        schemeId,
+        doses.filter((dose) => dose.vaccinationSchemeId === schemeId)
+      );
+    });
+    return dosesMap;
+  }
+
   saveDiseaseInformation(disease: Disease) {
     // Save disease to server
     console.log('Update the following disease on the FHIR server:');

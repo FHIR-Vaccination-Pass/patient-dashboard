@@ -14,6 +14,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Tooltip,
   useBoolean,
   useColorModeValue,
 } from '@chakra-ui/react';
@@ -105,12 +106,14 @@ export const DashboardHeader: FC = () => {
               />
             </Link>
             <Menu>
-              <MenuButton
-                as={IconButton}
-                aria-label='Options'
-                icon={<Avatar w={'35px'} h={'35px'} src='avatar-1.jpg' />}
-                bg={'white'}
-              />
+              <Tooltip label={`${profile?.firstName} ${profile?.lastName}`}>
+                <MenuButton
+                  as={IconButton}
+                  aria-label='Options'
+                  icon={<Avatar w={'35px'} h={'35px'} src='avatar-1.jpg' />}
+                  bg={'white'}
+                />
+              </Tooltip>
               <MenuList>
                 <MenuItem p={'6px 12px'} icon={<FaUserCircle />}>
                   Profile
