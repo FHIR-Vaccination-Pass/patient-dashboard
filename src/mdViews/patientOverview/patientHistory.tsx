@@ -57,7 +57,7 @@ export function PatientHistory() {
   const mapper = useMapper();
   //TODO: Query for the actual immunizations of the patient
   return (
-    <Box ml={'300px'} w={'70%'} alignItems={'center'}>
+    <Box ml={'100px'} w={'70%'} alignItems={'center'}>
       <VerticalTimeline layout={'1-column-left'} lineColor={`${color}`}>
         {mapper.getAllImmunizations().map((immunization) => {
           return mapper

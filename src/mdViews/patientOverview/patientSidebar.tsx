@@ -68,7 +68,7 @@ export const PatientSidebar = ({ onClose, ...rest }: SidebarProps) => {
       borderRadius={navSize === 'small' ? '10px' : '15px'}
       flexDir='column'
       justifyContent='space-between'
-      h={'100%'}
+      h={'85vh'}
       pos='fixed'
       left='5'
       w={navSize === 'small' ? '75px' : '200px'}
