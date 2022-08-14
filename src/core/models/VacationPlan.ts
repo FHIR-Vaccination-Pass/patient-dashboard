@@ -13,15 +13,22 @@ export interface VacationPlan {
 
 export class VacationPlanMapper {
   private _raw: FHIRBasic;
+  private _vacationPlanExtension: FHIRExtension;
   locations: Location[];
 
   constructor(resource: FHIRBasic) {
     this._raw = resource;
 
-    const locationExtensions = fhirpath.evaluate(
+    this._vacationPlanExtension = fhirpath.evaluate(
       this._raw,
-      `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-vacation-plan-extension')` +
-        `.extension.where(url = '${settings.fhir.profileBaseUrl}/vp-location-extension')`,
+      `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-vacation-plan-extension')`,
+      undefined,
+      fhirpath_r4_model
+    )[0] as FHIRExtension;
+
+    const locationExtensions = fhirpath.evaluate(
+      this._vacationPlanExtension,
+      `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-location-extension')`,
       undefined,
       fhirpath_r4_model
     ) as FHIRExtension[];
@@ -42,9 +49,8 @@ export class VacationPlanMapper {
 
   get departureDate(): Date {
     const departureDateExtension = fhirpath.evaluate(
-      this._raw,
-      `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-vacation-plan-extension')` +
-        `.extension.where(url = 'departureDate')`,
+      this._vacationPlanExtension,
+      `extension.where(url = 'departureDate')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;

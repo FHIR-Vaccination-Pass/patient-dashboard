@@ -1,12 +1,11 @@
-import { Address } from './Address';
-import { HumanName } from './HumanName';
+import { Address, AddressMapper } from './Address';
+import { HumanName, HumanNameMapper } from './HumanName';
 import { Gender } from './Gender';
 
 import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import {
   Address as FHIRAddress,
-  Coding as FHIRCoding,
   Extension as FHIRExtension,
   HumanName as FHIRHumanName,
   Patient as FHIRPatient,
@@ -27,9 +26,27 @@ export interface Patient {
 
 export class PatientMapper implements Patient {
   private _raw: FHIRPatient;
+  name: HumanName;
+  address: Address;
 
   constructor(resource: FHIRPatient) {
     this._raw = resource;
+
+    const officialHumanName = fhirpath.evaluate(
+      this._raw,
+      `name.where(use = 'official')`,
+      undefined,
+      fhirpath_r4_model
+    )[0] as FHIRHumanName;
+    this.name = HumanNameMapper.fromResource(officialHumanName);
+
+    const homeAddress = fhirpath.evaluate(
+      this._raw,
+      `address.where(use = 'home')`,
+      undefined,
+      fhirpath_r4_model
+    )[0] as FHIRAddress;
+    this.address = AddressMapper.fromResource(homeAddress);
   }
 
   static fromResource(resource: FHIRPatient) {
@@ -48,20 +65,6 @@ export class PatientMapper implements Patient {
     return this._raw.active!;
   }
 
-  get name(): HumanName {
-    const officialHumanName = fhirpath.evaluate(
-      this._raw,
-      `name.where(use = 'official')`,
-      undefined,
-      fhirpath_r4_model
-    )[0] as FHIRHumanName;
-
-    return {
-      family: officialHumanName.family!,
-      given: officialHumanName.given!,
-    };
-  }
-
   get gender(): Gender {
     return this._raw.gender!;
   }
@@ -74,42 +77,6 @@ export class PatientMapper implements Patient {
     return this._raw.deceasedDateTime
       ? new Date(this._raw.deceasedDateTime)
       : this._raw.deceasedBoolean!;
-  }
-
-  get address(): Address {
-    const homeAddress = fhirpath.evaluate(
-      this._raw,
-      `address.where(use = 'home')`,
-      undefined,
-      fhirpath_r4_model
-    )[0] as FHIRAddress;
-
-    const countryCoding = fhirpath.evaluate(
-      homeAddress,
-      `country.extension.where(url = '${settings.fhir.profileBaseUrl}/vp-country-code-extension')` +
-        `.value.coding.where(system = 'urn:iso:std:iso:3166')`,
-      undefined,
-      fhirpath_r4_model
-    )[0] as FHIRCoding;
-
-    const stateCoding = fhirpath.evaluate(
-      homeAddress,
-      `state.extension.where(url = '${settings.fhir.profileBaseUrl}/vp-state-code-extension')` +
-        `.value.coding.where(system = 'urn:iso:std:iso:3166:-2')`,
-      undefined,
-      fhirpath_r4_model
-    )[0] as FHIRCoding;
-
-    return {
-      country: homeAddress.country!,
-      countryCode: countryCoding.code!,
-      state: homeAddress.state!,
-      stateCode: stateCoding.code!,
-      district: homeAddress.district,
-      postalCode: homeAddress.postalCode,
-      city: homeAddress.city,
-      line: homeAddress.line,
-    };
   }
 
   get isPregnant(): boolean {
