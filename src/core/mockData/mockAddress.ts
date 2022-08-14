@@ -4,13 +4,13 @@ export const MockAddress: Map<string, Address> = new Map<string, Address>([
   [
     'address1',
     {
-      id: 'address1',
-      city: 'Munich',
       country: 'Germany',
-      district: 'Maxvorstadt',
-      line: 'Leopoldstrasse 1.',
-      postalCode: '80799',
+      countryCode: 'DE',
       state: 'Bavaria',
+      stateCode: 'DE-BY',
+      city: 'Munich',
+      postalCode: '80799',
+      line: ['Leopoldstrasse 1.'],
     },
   ],
 ]);

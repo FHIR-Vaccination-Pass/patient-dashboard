@@ -6,6 +6,7 @@ import {
   immunizationRecommendationApi,
   medicationApi,
   organizationApi,
+  patientApi,
   populationRecommendationApi,
   targetDiseaseApi,
 } from './fhir';
@@ -17,6 +18,7 @@ export const store = configureStore({
       immunizationRecommendationApi.reducer,
     [medicationApi.reducerPath]: medicationApi.reducer,
     [organizationApi.reducerPath]: organizationApi.reducer,
+    [patientApi.reducerPath]: patientApi.reducer,
     [populationRecommendationApi.reducerPath]:
       populationRecommendationApi.reducer,
     [targetDiseaseApi.reducerPath]: targetDiseaseApi.reducer,
@@ -30,6 +32,7 @@ export const store = configureStore({
       immunizationRecommendationApi.middleware,
       medicationApi.middleware,
       organizationApi.middleware,
+      patientApi.middleware,
       populationRecommendationApi.middleware,
       targetDiseaseApi.middleware
     ),

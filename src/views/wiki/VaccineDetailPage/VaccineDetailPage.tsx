@@ -45,6 +45,7 @@ import {
   immunizationRecommendationApi,
   medicationApi,
   organizationApi,
+  patientApi,
   populationRecommendationApi,
   targetDiseaseApi,
 } from '../../../core/services/redux/fhir';
@@ -54,6 +55,7 @@ import {
   Organization,
   OrganizationMapper,
 } from '../../../core/models/Organization';
+import { PatientMapper } from '../../../core/models/Patient';
 
 interface VaccineDetailHeaderProps {
   disease: Disease;
