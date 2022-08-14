@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Route, Navigate, Routes } from 'react-router-dom';
+import { FC, useEffect } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { useKeycloak } from '@react-keycloak/web';
-import { FC, useEffect } from 'react';
 import { LandingPage } from './patientViews/landingpage';
 import Dashboard from './patientViews/dashboard/dashboard';
 import { Overview } from './patientViews/dashboard/overview';
@@ -12,7 +12,7 @@ import { VaccineDetailPage } from './patientViews/wiki/vaccineDetailPage';
 import { Profile } from './patientViews/dashboard/profile';
 import NotFound from './patientViews/NotFound';
 import DiseaseInformation from './mdViews/settings/diseaseInformation';
-import { Patient } from './mdViews/patient/patient';
+import { PatientOverview } from './mdViews/patientOverview/patientOverview';
 import { MDOverview } from './mdViews/dashboard/overview';
 import MDDashboard from './mdViews/dashboard/dashboard';
 import VaccineInformation from './mdViews/settings/vaccineInformation';
@@ -93,8 +93,11 @@ const AppRoutes: FC = () => (
       <Route path='' element={<MDOverview />} />
       <Route path='diseases' element={<DiseaseInformation />} />
       <Route path='vaccines' element={<VaccineInformation />} />
-      <Route path='patient/*' element={<Patient />}>
+      <Route path='patient/*' element={<PatientOverview />}>
+        <Route path='status' element={<VaccineHistory />} />
         <Route path='history' element={<VaccineHistory />} />
+        <Route path='record' element={<VaccineHistory />} />
+        <Route path='vacations' element={<VaccineHistory />} />
       </Route>
     </Route>
     <Route path='/404' element={<NotFound />} />
