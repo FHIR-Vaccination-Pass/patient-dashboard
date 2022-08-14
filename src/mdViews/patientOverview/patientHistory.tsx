@@ -13,7 +13,7 @@ import {
   VerticalTimeline,
   VerticalTimelineElement,
 } from 'react-vertical-timeline-component';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { resolvePractitionerName } from '../../core/services/util/resolveHumanName';
 import { VaccinationDoseSingle } from '../../core/models/VaccinationDose';
 
@@ -25,6 +25,10 @@ export function PatientHistory() {
     ['gray.300']
     // a single fallback or fallback array matching the length of the previous arg
   );
+
+  const location = useLocation();
+  const pathComponents: string[] = location.pathname.split('/');
+  const patientId: string = pathComponents[pathComponents.length - 2];
 
   const timelineElementStyles: React.CSSProperties = {
     boxShadow: `0 0px 0px 2.5px ${color}`,
@@ -51,8 +55,9 @@ export function PatientHistory() {
   };
 
   const mapper = useMapper();
+  //TODO: Query for the actual immunizations of the patient
   return (
-    <Box ml={6}>
+    <Box ml={'300px'} w={'70%'} alignItems={'center'}>
       <VerticalTimeline layout={'1-column-left'} lineColor={`${color}`}>
         {mapper.getAllImmunizations().map((immunization) => {
           return mapper
@@ -65,7 +70,7 @@ export function PatientHistory() {
               >
                 <Link
                   to={
-                    '/patient/dashboard/wiki/' +
+                    `/md/dashboard/patient/${patientId}/record/` +
                     mapper.getDiseaseById(diseaseId)?.code.coding.code
                   }
                 >
