@@ -4,4 +4,5 @@ export { medicationApi } from './medicationApi';
 export { organizationApi } from './organizationApi';
 export { patientApi } from './patientApi';
 export { populationRecommendationApi } from './populationRecommendationApi';
+export { practitionerApi } from './practitionerApi';
 export { targetDiseaseApi } from './targetDiseaseApi';

@@ -8,6 +8,7 @@ import {
   organizationApi,
   patientApi,
   populationRecommendationApi,
+  practitionerApi,
   targetDiseaseApi,
 } from './fhir';
 
@@ -21,6 +22,7 @@ export const store = configureStore({
     [patientApi.reducerPath]: patientApi.reducer,
     [populationRecommendationApi.reducerPath]:
       populationRecommendationApi.reducer,
+    [practitionerApi.reducerPath]: practitionerApi.reducer,
     [targetDiseaseApi.reducerPath]: targetDiseaseApi.reducer,
     user: userSliceReducer,
   },
@@ -34,6 +36,7 @@ export const store = configureStore({
       organizationApi.middleware,
       patientApi.middleware,
       populationRecommendationApi.middleware,
+      practitionerApi.middleware,
       targetDiseaseApi.middleware
     ),
 });

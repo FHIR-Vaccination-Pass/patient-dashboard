@@ -1,22 +1,47 @@
-import { CodeableConcept } from './CodeableConcept';
-import { Address } from './Address';
 import { HumanName } from './HumanName';
-import { Gender } from './Gender';
+
+import fhirpath from 'fhirpath';
+import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
+import {
+  HumanName as FHIRHumanName,
+  Practitioner as FHIRPractitioner,
+} from 'fhir/r4';
 
 export interface Practitioner {
   id: string;
-  identifier: string;
-  active: boolean;
   name: HumanName;
-  phoneNumber: string;
-  email: string;
-  gender: Gender;
-  address: Address;
-  qualification: PractitionerQualification;
 }
 
-interface PractitionerQualification {
-  identifier: string;
-  code: CodeableConcept;
-  issuer: string; // id refering to the id of an organization
+export class PractitionerMapper {
+  private _raw: FHIRPractitioner;
+
+  constructor(resource: FHIRPractitioner) {
+    this._raw = resource;
+  }
+
+  static fromResource(resource: FHIRPractitioner) {
+    return new PractitionerMapper(resource);
+  }
+
+  toResource(): FHIRPractitioner {
+    return this._raw;
+  }
+
+  get id(): string {
+    return this._raw.id!;
+  }
+
+  get name(): HumanName {
+    const officialHumanName = fhirpath.evaluate(
+      this._raw,
+      `name.where(use = 'official')`,
+      undefined,
+      fhirpath_r4_model
+    )[0] as FHIRHumanName;
+
+    return {
+      family: officialHumanName.family!,
+      given: officialHumanName.given!,
+    };
+  }
 }
