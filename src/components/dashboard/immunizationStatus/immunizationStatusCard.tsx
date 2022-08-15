@@ -53,7 +53,7 @@ export function calcAggregateImmunizationStatus(
   // Do later: Check history and recommendations to set missing history status
   let currentStatus: string | undefined = '';
   recommendations.forEach((recommendation: ImmunizationRecommendation) => {
-    currentStatus = recommendation.forecastStatus.text;
+    currentStatus = recommendation.forecastStatus.coding.code;
     // When current status is undefined then don't change anything.
     if (currentStatus !== undefined) {
       // Due > Complete & MissingHistory

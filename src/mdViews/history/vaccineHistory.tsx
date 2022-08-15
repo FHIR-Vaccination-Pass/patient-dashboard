@@ -55,7 +55,7 @@ export function VaccineHistory() {
   return (
     <Box h={'full'}>
       <VerticalTimeline lineColor={`${color}`}>
-        {mapper.getImmunizations().map((immunization) => {
+        {mapper.getAllImmunizations().map((immunization) => {
           return mapper
             .getMedicationByVaccineCode(immunization.vaccineCode)
             ?.targetDiseaseIds.map((diseaseId) => (
@@ -66,8 +66,8 @@ export function VaccineHistory() {
               >
                 <Link
                   to={
-                    '/dashboard/wiki/' +
-                    mapper.getDiseaseById(diseaseId)?.code.text
+                    '/md/dashboard/wiki/' +
+                    mapper.getDiseaseById(diseaseId)?.code.coding.code
                   }
                 >
                   <Stack>

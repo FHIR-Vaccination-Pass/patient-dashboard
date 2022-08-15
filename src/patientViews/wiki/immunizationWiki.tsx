@@ -43,9 +43,9 @@ class WikiInformationCard {
 
 export function ImmunizationWiki() {
   const mapper = useMapper();
-  const diseases: Disease[] = mapper.getDiseases();
+  const diseases: Disease[] = mapper.getAllDiseases();
   const recommendations: ImmunizationRecommendation[] =
-    mapper.getRecommendations();
+    mapper.getAllRecommendations();
   const [showInfo, setShowInfo] = useBoolean();
 
   const wikiInformationCards: Map<string, WikiInformationCard> = new Map<
@@ -105,7 +105,9 @@ export function ImmunizationWiki() {
       >
         {Array.from(wikiInformationCards.values()).map((card) => (
           <div>
-            <Link to={`/dashboard/wiki/${card.disease.code.text}`}>
+            <Link
+              to={`/patient/dashboard/wiki/${card.disease.code.coding.code}`}
+            >
               <Flex
                 justifyContent={'space-between'}
                 alignItems={'center'}

@@ -15,11 +15,11 @@ import {
 import { CodeableConcept } from '../../models/CodeableConcept';
 
 export interface ResourceMapper {
-  getImmunizations(): Immunization[];
+  getAllImmunizations(): Immunization[];
 
-  getRecommendations(): ImmunizationRecommendation[];
+  getAllRecommendations(): ImmunizationRecommendation[];
 
-  getDiseases(): Disease[];
+  getAllDiseases(): Disease[];
 
   getAllVaccinationSchemes(): VaccinationScheme[];
 
@@ -31,9 +31,13 @@ export interface ResourceMapper {
 
   getPatientById(id: string): Patient | undefined;
 
+  getAllPatients(): Patient[];
+
   getPractitionerById(id: string): Practitioner | undefined;
 
   getMedicationById(id: string): Medication | undefined;
+
+  getAllMedications(): Medication[];
 
   getDiseaseById(id: string): Disease | undefined;
 
@@ -43,11 +47,17 @@ export interface ResourceMapper {
     id: string
   ): PopulationRecommendation | undefined;
 
+  getPopulationRecommendationByDiseaseId(
+    diseaseId: string
+  ): PopulationRecommendation | undefined;
+
   getVaccinationSchemeById(id: string): VaccinationScheme | undefined;
 
   getSubstanceById(id: string): Substance | undefined;
 
   getOrganizationById(id: string): Organization | undefined;
+
+  getOrganizationByName(name: string): Organization | undefined;
 
   getVaccinationDoseById(id: string): VaccinationDose | undefined;
 
@@ -56,4 +66,27 @@ export interface ResourceMapper {
   ): Medication | undefined;
 
   getNumberOfDosesByMedicationId(medicationId: string | undefined): number;
+
+  getVaccinationSchemeByMedicationId(
+    medicationId: string
+  ): VaccinationScheme | undefined;
+
+  // Not needed atm, but will probably be needed in the future
+  getRecommendationsByPatientId(
+    patientId: string
+  ): ImmunizationRecommendation[];
+
+  getVaccinationDosesForVaccinationSchemes(
+    vaccinationSchemeIds: string[]
+  ): Map<string, VaccinationDoseSingle[]>;
+
+  saveDiseaseInformation(disease: Disease): Disease | undefined;
+
+  saveVaccineInformation(medication: Medication): Medication | undefined;
+
+  saveDose(dose: VaccinationDose): VaccinationDose | undefined;
+
+  saveVaccinationScheme(
+    vaccinationScheme: VaccinationScheme
+  ): VaccinationScheme | undefined;
 }

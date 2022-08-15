@@ -64,7 +64,7 @@ export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
         w='100%'
         alignItems={navSize === 'small' ? 'center' : 'flex-start'}
       >
-        <Link to={'/dashboard'}>
+        <Link to={'/patient/dashboard'}>
           <Flex
             mb={4}
             align='center'

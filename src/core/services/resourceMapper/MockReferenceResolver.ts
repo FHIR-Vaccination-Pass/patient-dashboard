@@ -59,12 +59,12 @@ export class MockReferenceResolver implements ResourceMapper {
     this._medicationByCodeDict = new Map<string, Medication>();
 
     Array.from(this._medicationDict.values()).map((medication) =>
-      this._medicationByCodeDict.set(medication.code.text, medication)
+      this._medicationByCodeDict.set(medication.code.coding.code, medication)
     );
   }
 
   getMedicationByVaccineCode(code: CodeableConcept): Medication | undefined {
-    return this._medicationByCodeDict.get(code.text);
+    return this._medicationByCodeDict.get(code.coding.code);
   }
 
   public getRecommendationById(
@@ -75,6 +75,10 @@ export class MockReferenceResolver implements ResourceMapper {
 
   public getImmunizationById(id: string): Immunization | undefined {
     return this._immunizationDict.get(id);
+  }
+
+  public getAllPatients(): Patient[] {
+    return Array.from(this._patientDict.values());
   }
 
   public getPatientById(id: string): Patient | undefined {
@@ -89,6 +93,10 @@ export class MockReferenceResolver implements ResourceMapper {
     return this._medicationDict.get(id);
   }
 
+  getAllMedications(): Medication[] {
+    return Array.from(this._medicationDict.values());
+  }
+
   public getDiseaseById(id: string): Disease | undefined {
     return this._diseaseDict.get(id);
   }
@@ -97,6 +105,20 @@ export class MockReferenceResolver implements ResourceMapper {
     id: string
   ): PopulationRecommendation | undefined {
     return this._populationRecommendationDict.get(id);
+  }
+
+  public getPopulationRecommendationByDiseaseId(
+    diseaseId: string
+  ): PopulationRecommendation | undefined {
+    const populationRecommendations: PopulationRecommendation[] = Array.from(
+      this._populationRecommendationDict.values()
+    );
+    for (const populationRecommendation of populationRecommendations) {
+      if (populationRecommendation.diseaseId === diseaseId) {
+        return populationRecommendation;
+      }
+    }
+    return undefined;
   }
 
   public getVaccinationSchemeById(id: string): VaccinationScheme | undefined {
@@ -109,6 +131,18 @@ export class MockReferenceResolver implements ResourceMapper {
 
   public getOrganizationById(id: string): Organization | undefined {
     return this._organizationDict.get(id);
+  }
+
+  public getOrganizationByName(name: string): Organization | undefined {
+    const organizations: Organization[] = Array.from(
+      this._organizationDict.values()
+    );
+    for (const organization of organizations) {
+      if (organization.name === name) {
+        return organization;
+      }
+    }
+    return undefined;
   }
 
   public getVaccinationDoseById(id: string): VaccinationDose | undefined {
@@ -217,15 +251,15 @@ export class MockReferenceResolver implements ResourceMapper {
     this._vaccinationDoseRepeatingDict = value;
   }
 
-  getImmunizations(): Immunization[] {
+  getAllImmunizations(): Immunization[] {
     return Array.from(this._immunizationDict.values());
   }
 
-  getRecommendations(): ImmunizationRecommendation[] {
+  getAllRecommendations(): ImmunizationRecommendation[] {
     return Array.from(this._recommendationDict.values());
   }
 
-  getDiseases(): Disease[] {
+  getAllDiseases(): Disease[] {
     return Array.from(this._diseaseDict.values());
   }
 
@@ -239,7 +273,7 @@ export class MockReferenceResolver implements ResourceMapper {
 
   getDiseaseByCode(code: string): Disease | undefined {
     return Array.from(this._diseaseDict.values()).find(
-      (disease: Disease) => disease.code.text === code
+      (disease: Disease) => disease.code.coding.code === code
     );
   }
 
@@ -253,5 +287,68 @@ export class MockReferenceResolver implements ResourceMapper {
           )?.id
       )?.length;
     } else return -1;
+  }
+
+  getVaccinationSchemeByMedicationId(
+    medicationId: string | undefined
+  ): VaccinationScheme | undefined {
+    if (medicationId !== undefined) {
+      return this.getAllVaccinationSchemes().find(
+        (scheme) => scheme.medicationId === medicationId
+      );
+    } else return undefined;
+  }
+
+  getRecommendationsByPatientId(patientId: string) {
+    const recommendations = this.getAllRecommendations();
+    return recommendations.filter(
+      (recommendation: ImmunizationRecommendation) => {
+        return recommendation.patientId === patientId;
+      }
+    );
+  }
+
+  getVaccinationDosesForVaccinationSchemes(
+    vaccinationSchemeIds: string[]
+  ): Map<string, VaccinationDoseSingle[]> {
+    let dosesMap = new Map<string, VaccinationDoseSingle[]>();
+    const doses = this.getAllSingleVaccinationDoses();
+    vaccinationSchemeIds.forEach((schemeId) => {
+      dosesMap.set(
+        schemeId,
+        doses.filter((dose) => dose.vaccinationSchemeId === schemeId)
+      );
+    });
+    return dosesMap;
+  }
+
+  saveDiseaseInformation(disease: Disease) {
+    // Save disease to server
+    console.log('Update the following disease on the FHIR server:');
+    console.log(disease);
+    return undefined;
+  }
+
+  saveVaccineInformation(medication: Medication) {
+    // Save medication to server
+    console.log('Update the following vaccine on the FHIR server:');
+    console.log(medication);
+    return undefined;
+  }
+
+  saveDose(dose: VaccinationDose): VaccinationDose | undefined {
+    // Save medication to server
+    console.log('Saving the following dose on the FHIR server:');
+    console.log(dose);
+    return undefined;
+  }
+
+  saveVaccinationScheme(
+    vaccinationScheme: VaccinationScheme
+  ): VaccinationScheme | undefined {
+    // Save medication to server
+    console.log('Saving the following vaccination scheme on the FHIR server:');
+    console.log(vaccinationScheme);
+    return undefined;
   }
 }

@@ -108,7 +108,7 @@ export function VaccineDetailPage() {
   const disease: Disease | undefined = mapper.getDiseaseByCode(diseaseCode);
   const diseaseWikiInfo: DiseaseWikiInfo = new DiseaseWikiInfo(disease);
 
-  mapper.getImmunizations().forEach((immunization: Immunization) => {
+  mapper.getAllImmunizations().forEach((immunization: Immunization) => {
     const vaccine: Medication | undefined = mapper.getMedicationByVaccineCode(
       immunization.vaccineCode
     );
@@ -122,7 +122,7 @@ export function VaccineDetailPage() {
   });
 
   mapper
-    .getRecommendations()
+    .getAllRecommendations()
     .forEach((recommendation: ImmunizationRecommendation) => {
       const medication: Medication | undefined =
         mapper.getMedicationByVaccineCode(recommendation.vaccineCode);
