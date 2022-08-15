@@ -1,12 +1,25 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Basic, Bundle } from 'fhir/r4';
 import { settings } from '../../../../settings';
+import { VaccinationSchemeMapper } from '../../../models';
+import { storeIdRecursive, NestedCartesian } from './utils';
 
 type TResource = Basic;
+const TMapper = VaccinationSchemeMapper;
 interface GetArgs {
   _id?: string;
   subject?: string;
 }
+interface GetResponseTopLevel {
+  ids: string[];
+
+  byType: Record<string, GetResponseTopLevel>;
+  byIsPreferred: Record<string, GetResponseTopLevel>;
+  byMedication: Record<string, GetResponseTopLevel>;
+}
+type GetResponse = {
+  entities: Record<string, TResource>;
+} & NestedCartesian<GetResponseTopLevel>;
 const resourceName = 'VaccinationScheme' as const;
 const resourcePath = '/Basic' as const;
 
@@ -22,7 +35,7 @@ export const vaccinationSchemeApi = createApi({
   }),
   tagTypes: [resourceName],
   endpoints: (build) => ({
-    get: build.query<TResource[], GetArgs>({
+    get: build.query<GetResponse, GetArgs>({
       query: () => ({
         url: resourcePath,
         params: {
@@ -30,12 +43,43 @@ export const vaccinationSchemeApi = createApi({
           _profile: `${settings.fhir.profileBaseUrl}/vp-vaccination-scheme`,
         },
       }),
-      transformResponse: ({ entry }: Bundle) =>
-        entry!.map(({ resource }) => resource! as TResource),
+      transformResponse: ({ entry }: Bundle) => {
+        const resources = entry!.map(({ resource }) => resource! as TResource);
+
+        const response: GetResponse = {
+          ids: [],
+          entities: {},
+
+          byType: {},
+          byIsPreferred: {},
+          byMedication: {},
+        };
+
+        for (const resource of resources) {
+          const {
+            id,
+            type,
+            isPreferred: isPreferredBoolean,
+            medicationId,
+          } = TMapper.fromResource(resource);
+          const isPreferred = String(isPreferredBoolean);
+
+          response.ids.push(id);
+          response.entities[id] = resource;
+
+          storeIdRecursive(response, id, [
+            ['byType', type],
+            ['byIsPreferred', isPreferred],
+            ['byMedication', medicationId],
+          ]);
+        }
+
+        return response;
+      },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
+              ...result.ids.map((id) => ({
                 type: resourceName,
                 id,
               })),

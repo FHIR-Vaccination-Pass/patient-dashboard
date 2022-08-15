@@ -1,14 +1,28 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Bundle, Medication } from 'fhir/r4';
 import { settings } from '../../../../settings';
+import { MedicationMapper } from '../../../models';
+import { NestedCartesian, storeIdRecursive } from './utils';
 
 type TResource = Medication;
+const TMapper = MedicationMapper;
 interface GetArgs {
   _id?: string;
   code?: string;
   manufacturer?: string;
   form?: string;
 }
+interface GetResponseTopLevel {
+  ids: string[];
+
+  byCode: Record<string, string[]>;
+  byForm: Record<string, string[]>;
+  byManufacturer: Record<string, string[]>;
+  byTargetDisease: Record<string, string[]>;
+}
+type GetResponse = {
+  entities: Record<string, TResource>;
+} & NestedCartesian<GetResponseTopLevel>;
 const resourceName = 'Medication' as const;
 const resourcePath = '/Medication' as const;
 
@@ -24,7 +38,7 @@ export const medicationApi = createApi({
   }),
   tagTypes: [resourceName],
   endpoints: (build) => ({
-    get: build.query<TResource[], GetArgs>({
+    get: build.query<GetResponse, GetArgs>({
       query: (args) => ({
         url: resourcePath,
         params: {
@@ -32,12 +46,46 @@ export const medicationApi = createApi({
           _profile: `${settings.fhir.profileBaseUrl}/vp-medication`,
         },
       }),
-      transformResponse: ({ entry }: Bundle) =>
-        entry!.map(({ resource }) => resource! as TResource),
+      transformResponse: ({ entry }: Bundle) => {
+        const resources = entry!.map(({ resource }) => resource! as TResource);
+
+        const response: GetResponse = {
+          ids: [],
+          entities: {},
+
+          byCode: {},
+          byForm: {},
+          byManufacturer: {},
+          byTargetDisease: {},
+        };
+
+        for (const resource of resources) {
+          const { id, code, form, manufacturerId, targetDiseaseIds } =
+            TMapper.fromResource(resource);
+
+          response.ids.push(id);
+          response.entities[id] = resource;
+
+          storeIdRecursive(response, id, [
+            ['byCode', code.coding],
+            ['byForm', form.coding],
+            ['byManufacturer', manufacturerId],
+            ...targetDiseaseIds.map(
+              (targetDisease) =>
+                ['byTargetDisease', targetDisease] as [
+                  'byTargetDisease',
+                  string
+                ]
+            ),
+          ]);
+        }
+
+        return response;
+      },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
+              ...result.ids.map((id) => ({
                 type: resourceName,
                 id,
               })),

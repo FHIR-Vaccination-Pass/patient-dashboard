@@ -1,11 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Bundle, Organization } from 'fhir/r4';
 import { settings } from '../../../../settings';
+import { OrganizationMapper } from '../../../models';
 
 type TResource = Organization;
+const TMapper = OrganizationMapper;
 interface GetArgs {
   _id?: string;
   name?: string;
+}
+interface GetResponse {
+  ids: string[];
+  entities: Record<string, TResource>;
 }
 const resourceName = 'Organization' as const;
 const resourcePath = '/Organization' as const;
@@ -22,7 +28,7 @@ export const organizationApi = createApi({
   }),
   tagTypes: [resourceName],
   endpoints: (build) => ({
-    get: build.query<TResource[], GetArgs>({
+    get: build.query<GetResponse, GetArgs>({
       query: (args) => ({
         url: resourcePath,
         params: {
@@ -30,12 +36,26 @@ export const organizationApi = createApi({
           _profile: `${settings.fhir.profileBaseUrl}/vp-organization`,
         },
       }),
-      transformResponse: ({ entry }: Bundle) =>
-        entry!.map(({ resource }) => resource! as TResource),
+      transformResponse: ({ entry }: Bundle) => {
+        const resources = entry!.map(({ resource }) => resource! as TResource);
+
+        const response: GetResponse = {
+          ids: [],
+          entities: {},
+        };
+        for (const resource of resources) {
+          const { id } = TMapper.fromResource(resource);
+
+          response.ids.push(id);
+          response.entities[id] = resource;
+        }
+
+        return response;
+      },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
+              ...result.ids.map((id) => ({
                 type: resourceName,
                 id,
               })),
