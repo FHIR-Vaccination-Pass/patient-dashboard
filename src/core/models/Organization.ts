@@ -12,8 +12,24 @@ export class OrganizationMapper implements Organization {
     this._raw = resource;
   }
 
-  static fromResource(resource: FHIROrganization) {
+  static fromResource<T extends FHIROrganization | undefined>(
+    resource: T
+  ): T extends FHIROrganization ? OrganizationMapper : undefined;
+
+  static fromResource(
+    resource: FHIROrganization | undefined
+  ): OrganizationMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new OrganizationMapper(resource);
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIROrganization | undefined
+  ): (id: string | undefined) => OrganizationMapper | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIROrganization {

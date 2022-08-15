@@ -1,5 +1,5 @@
 export type NestedCartesian<T extends string> = { ids: string[] } & {
-  [Attr in T]: Record<string, NestedCartesian<Exclude<T, Attr>>>;
+  [Attr in T]: Record<string, NestedCartesian<Exclude<T, Attr>> | undefined>;
 };
 
 export type GetResponse<TResource, T extends string> = {
@@ -28,8 +28,8 @@ export function storeIdRecursive<T extends string>(
         ...otherPairs.map((pair) => [pair[0], {}]),
       ]);
     }
-    response[key][value].ids.push(id);
+    response[key][value]!.ids.push(id);
 
-    storeIdRecursive(response[key][value], id, otherPairs, maxDepth - 1);
+    storeIdRecursive(response[key][value]!, id, otherPairs, maxDepth - 1);
   }
 }

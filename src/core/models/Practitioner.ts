@@ -28,8 +28,24 @@ export class PractitionerMapper {
     this.name = HumanNameMapper.fromResource(officialHumanName);
   }
 
-  static fromResource(resource: FHIRPractitioner) {
+  static fromResource<T extends FHIRPractitioner | undefined>(
+    resource: T
+  ): T extends FHIRPractitioner ? PractitionerMapper : undefined;
+
+  static fromResource(
+    resource: FHIRPractitioner | undefined
+  ): PractitionerMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new PractitionerMapper(resource);
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIRPractitioner | undefined
+  ): (id: string | undefined) => PractitionerMapper | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIRPractitioner {

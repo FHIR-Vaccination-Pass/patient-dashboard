@@ -1,4 +1,4 @@
-import { Coding as FHIRCoding, Extension as FHIRExtension } from 'fhir/r4';
+import { Basic as FHIRBasic, Coding as FHIRCoding, Extension as FHIRExtension } from 'fhir/r4';
 import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
@@ -15,7 +15,16 @@ export class LocationMapper implements Location {
     this._raw = resource;
   }
 
-  static fromResource(resource: FHIRExtension) {
+  static fromResource<T extends FHIRExtension | undefined>(
+    resource: T
+  ): T extends FHIRExtension ? LocationMapper : undefined;
+
+  static fromResource(
+    resource: FHIRExtension | undefined
+  ): LocationMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new LocationMapper(resource);
   }
 

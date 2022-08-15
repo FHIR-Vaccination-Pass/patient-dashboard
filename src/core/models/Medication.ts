@@ -4,7 +4,7 @@ import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import {
   Coding as FHIRCoding,
   Extension as FHIRExtension,
-  Medication as FHIRMedication,
+  Medication as FHIRMedication
 } from 'fhir/r4';
 import { settings } from '../../settings';
 
@@ -24,8 +24,24 @@ export class MedicationMapper implements Medication {
     this._raw = resource;
   }
 
-  static fromResource(resource: FHIRMedication) {
+  static fromResource<T extends FHIRMedication | undefined>(
+    resource: T
+  ): T extends FHIRMedication ? MedicationMapper : undefined;
+
+  static fromResource(
+    resource: FHIRMedication | undefined
+  ): MedicationMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new MedicationMapper(resource);
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIRMedication | undefined
+  ): (id: string | undefined) => MedicationMapper | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIRMedication {

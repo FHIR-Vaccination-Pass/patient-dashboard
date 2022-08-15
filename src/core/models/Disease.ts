@@ -31,8 +31,24 @@ export class DiseaseMapper implements Disease {
     )[0] as FHIRExtension;
   }
 
-  static fromResource(resource: FHIRBasic) {
+  static fromResource<T extends FHIRBasic | undefined>(
+    resource: T
+  ): T extends FHIRBasic ? DiseaseMapper : undefined;
+
+  static fromResource(
+    resource: FHIRBasic | undefined
+  ): DiseaseMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new DiseaseMapper(resource);
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIRBasic | undefined
+  ): (id: string | undefined) => DiseaseMapper | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIRBasic {

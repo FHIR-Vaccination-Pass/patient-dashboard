@@ -8,7 +8,7 @@ import {
   Address as FHIRAddress,
   Extension as FHIRExtension,
   HumanName as FHIRHumanName,
-  Patient as FHIRPatient,
+  Patient as FHIRPatient
 } from 'fhir/r4';
 import { settings } from '../../settings';
 
@@ -49,8 +49,24 @@ export class PatientMapper implements Patient {
     this.address = AddressMapper.fromResource(homeAddress);
   }
 
-  static fromResource(resource: FHIRPatient) {
+  static fromResource<T extends FHIRPatient | undefined>(
+    resource: T
+  ): T extends FHIRPatient ? PatientMapper : undefined;
+
+  static fromResource(
+    resource: FHIRPatient | undefined
+  ): PatientMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new PatientMapper(resource);
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIRPatient | undefined
+  ): (id: string | undefined) => PatientMapper | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIRPatient {

@@ -36,8 +36,24 @@ export class VacationPlanMapper {
     this.locations = locationExtensions.map(LocationMapper.fromResource);
   }
 
-  static fromResource(resource: FHIRBasic) {
+  static fromResource<T extends FHIRBasic | undefined>(
+    resource: T
+  ): T extends FHIRBasic ? VacationPlanMapper : undefined;
+
+  static fromResource(
+    resource: FHIRBasic | undefined
+  ): VacationPlanMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new VacationPlanMapper(resource);
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIRBasic | undefined
+  ): (id: string | undefined) => VacationPlanMapper | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIRBasic {

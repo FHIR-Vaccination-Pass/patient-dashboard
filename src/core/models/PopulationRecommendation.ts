@@ -44,8 +44,24 @@ export class PopulationRecommendationMapper
     this.locations = locationExtensions.map(LocationMapper.fromResource);
   }
 
-  static fromResource(resource: FHIRBasic) {
+  static fromResource<T extends FHIRBasic | undefined>(
+    resource: T
+  ): T extends FHIRBasic ? PopulationRecommendationMapper : undefined;
+
+  static fromResource(
+    resource: FHIRBasic | undefined
+  ): PopulationRecommendationMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new PopulationRecommendationMapper(resource);
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIRBasic | undefined
+  ): (id: string | undefined) => PopulationRecommendationMapper | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIRBasic {

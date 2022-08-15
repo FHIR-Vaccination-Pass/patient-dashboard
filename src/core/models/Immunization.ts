@@ -5,7 +5,7 @@ import {
   Coding as FHIRCoding,
   Extension as FHIRExtension,
   Immunization as FHIRImmunization,
-  Reference as FHIRReference,
+  Reference as FHIRReference
 } from 'fhir/r4';
 import { settings } from '../../settings';
 
@@ -29,8 +29,25 @@ export class ImmunizationMapper implements Immunization {
     this._raw = resource;
   }
 
-  static fromResource(resource: FHIRImmunization) {
+  static fromResource<T extends FHIRImmunization | undefined>(
+    resource: T
+  ): T extends FHIRImmunization ? ImmunizationMapper : undefined;
+
+  static fromResource(
+    resource: FHIRImmunization | undefined
+  ): ImmunizationMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
+
     return new ImmunizationMapper(resource);
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIRImmunization | undefined
+  ): (id: string | undefined) => ImmunizationMapper | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIRImmunization {

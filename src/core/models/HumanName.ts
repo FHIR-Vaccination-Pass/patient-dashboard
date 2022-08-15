@@ -12,7 +12,16 @@ export class HumanNameMapper implements HumanName {
     this._raw = resource;
   }
 
-  static fromResource(resource: FHIRHumanName): HumanNameMapper {
+  static fromResource<T extends FHIRHumanName | undefined>(
+    resource: T
+  ): T extends FHIRHumanName ? HumanNameMapper : undefined;
+
+  static fromResource(
+    resource: FHIRHumanName | undefined
+  ): HumanNameMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new HumanNameMapper(resource);
   }
 

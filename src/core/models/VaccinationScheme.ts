@@ -30,8 +30,24 @@ export class VaccinationSchemeMapper implements VaccinationScheme {
     )[0] as FHIRExtension;
   }
 
-  static fromResource(resource: FHIRBasic): VaccinationSchemeMapper {
+  static fromResource<T extends FHIRBasic | undefined>(
+    resource: T
+  ): T extends FHIRBasic ? VaccinationSchemeMapper : undefined;
+
+  static fromResource(
+    resource: FHIRBasic | undefined
+  ): VaccinationSchemeMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new VaccinationSchemeMapper(resource);
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIRBasic | undefined
+  ): (id: string | undefined) => VaccinationSchemeMapper | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIRBasic {

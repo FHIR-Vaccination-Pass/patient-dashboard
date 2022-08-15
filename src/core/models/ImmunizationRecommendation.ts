@@ -4,7 +4,7 @@ import {
   Extension as FHIRExtension,
   ImmunizationRecommendation as FHIRImmunizationRecommendation,
   ImmunizationRecommendationRecommendationDateCriterion as FHIRImmunizationRecommendationRecommendationDateCriterion,
-  Reference as FHIRReference,
+  Reference as FHIRReference
 } from 'fhir/r4';
 import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
@@ -33,8 +33,26 @@ export class ImmunizationRecommendationMapper
     this._raw = resource;
   }
 
-  static fromResource(resource: FHIRImmunizationRecommendation) {
+  static fromResource<T extends FHIRImmunizationRecommendation | undefined>(
+    resource: T
+  ): T extends FHIRImmunizationRecommendation
+    ? ImmunizationRecommendationMapper
+    : undefined;
+
+  static fromResource(
+    resource: FHIRImmunizationRecommendation | undefined
+  ): ImmunizationRecommendationMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new ImmunizationRecommendationMapper(resource);
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIRImmunizationRecommendation | undefined
+  ): (id: string | undefined) => ImmunizationRecommendationMapper | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIRImmunizationRecommendation {

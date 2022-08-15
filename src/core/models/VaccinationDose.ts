@@ -49,9 +49,19 @@ export class VaccinationDoseMapper implements VaccinationDose {
     )[0] as FHIRExtension;
   }
 
+  static fromResource<T extends FHIRBasic | undefined>(
+    resource: T
+  ): T extends FHIRBasic
+    ? VaccinationDoseSingleMapper | VaccinationDoseRepeatingMapper
+    : undefined;
+
   static fromResource(
-    resource: FHIRBasic
-  ): VaccinationDoseSingleMapper | VaccinationDoseRepeatingMapper {
+    resource: FHIRBasic | undefined
+  ): VaccinationDoseSingleMapper | VaccinationDoseRepeatingMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
+
     const vaccinationDoseSingleExtension = fhirpath.evaluate(
       resource,
       `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-vaccination-dose-single-extension')`,
@@ -75,6 +85,18 @@ export class VaccinationDoseMapper implements VaccinationDose {
       resource,
       vaccinationDoseRepeatingExtension
     );
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIRBasic | undefined
+  ): (
+    id: string | undefined
+  ) =>
+    | VaccinationDoseSingleMapper
+    | VaccinationDoseRepeatingMapper
+    | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIRBasic {

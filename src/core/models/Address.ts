@@ -21,8 +21,24 @@ export class AddressMapper {
     this._raw = resource;
   }
 
-  static fromResource(resource: FHIRAddress) {
+  static fromResource<T extends FHIRAddress | undefined>(
+    resource: T
+  ): T extends FHIRAddress ? AddressMapper : undefined;
+
+  static fromResource(
+    resource: FHIRAddress | undefined
+  ): AddressMapper | undefined {
+    if (resource === undefined) {
+      return undefined;
+    }
     return new AddressMapper(resource);
+  }
+
+  static curry(
+    lookupFunc: (id: string) => FHIRAddress | undefined
+  ): (id: string | undefined) => AddressMapper | undefined {
+    return (id) =>
+      this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
   toResource(): FHIRAddress {
