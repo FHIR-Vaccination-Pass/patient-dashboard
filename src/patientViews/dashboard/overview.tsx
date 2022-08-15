@@ -9,7 +9,7 @@ import { useMapper } from '../../core/services/resourceMapper/ResourceMapperCont
 export function Overview() {
   const mapper = useMapper();
   const recommendations: ImmunizationRecommendation[] =
-    mapper.getRecommendations();
+    mapper.getAllRecommendations();
   return (
     <Stack minH='100%' gap={'10px'}>
       <ImmunizationStatusCard

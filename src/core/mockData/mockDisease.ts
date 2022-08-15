@@ -7,8 +7,10 @@ export const MockDisease = new Map<string, Disease>([
       id: 'cholera',
       code: {
         id: 'icd-10',
-        coding: 'ICD-10',
-        text: 'A00',
+        coding: {
+          code: 'A00',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       name: 'Cholera',
       description:
@@ -25,8 +27,10 @@ export const MockDisease = new Map<string, Disease>([
       id: 'covid-19',
       code: {
         id: 'icd-10',
-        coding: 'ICD-10',
-        text: 'U07.1',
+        coding: {
+          code: 'U07.1',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       name: 'Covid-19',
       description:
@@ -42,8 +46,10 @@ export const MockDisease = new Map<string, Disease>([
       id: 'diphtheria',
       code: {
         id: 'icd-10',
-        coding: 'ICD-10',
-        text: 'A36',
+        coding: {
+          code: 'A36',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       name: 'Diphtheria',
       description:
@@ -56,8 +62,10 @@ export const MockDisease = new Map<string, Disease>([
       id: 'tetanus',
       code: {
         id: 'icd-10',
-        coding: 'ICD-10',
-        text: 'A34',
+        coding: {
+          code: 'A34',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       name: 'Tetanus',
       description:

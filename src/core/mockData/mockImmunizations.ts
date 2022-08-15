@@ -8,8 +8,10 @@ export const MockImmunizations = new Map<string, Immunization>([
       status: 'completed',
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'tetanol-pur',
+        coding: {
+          code: 'tetanol-pur',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       occurrenceTime: new Date(new Date().setFullYear(1998, 3, 1)),
       lotNumber: 'ABCDEF',
@@ -25,8 +27,10 @@ export const MockImmunizations = new Map<string, Immunization>([
       status: 'completed',
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'tetanol-pur',
+        coding: {
+          code: 'tetanol-pur',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       occurrenceTime: new Date(new Date().setFullYear(1998, 4, 1)),
       lotNumber: 'ABCDEF',
@@ -42,8 +46,10 @@ export const MockImmunizations = new Map<string, Immunization>([
       status: 'completed',
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'tetanol-pur',
+        coding: {
+          code: 'tetanol-pur',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       occurrenceTime: new Date(new Date().setFullYear(1998, 5, 1)),
       lotNumber: 'ABCDEF',
@@ -59,8 +65,10 @@ export const MockImmunizations = new Map<string, Immunization>([
       status: 'completed',
       vaccineCode: {
         id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'dukoral',
+        coding: {
+          code: 'dukoral',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       occurrenceTime: new Date(),
       lotNumber: 'ABCDEF',

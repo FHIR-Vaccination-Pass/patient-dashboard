@@ -7,13 +7,17 @@ export const MockSubstances = new Map<string, Substance>([
       id: 'substance1',
       category: {
         id: 'category1',
-        coding: 'category',
-        text: 'ABC',
+        coding: {
+          code: 'ABC',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       code: {
         id: 'substanceCoding1',
-        coding: 'substanceCoding',
-        text: 'ABC',
+        coding: {
+          code: 'ABC',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       description: 'Description',
     },
@@ -24,13 +28,17 @@ export const MockSubstances = new Map<string, Substance>([
       id: 'vibrio_cholerae_O1',
       category: {
         id: 'category1',
-        coding: 'category',
-        text: 'Vaccine suspension',
+        coding: {
+          code: 'Vaccine suspension',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       code: {
         id: 'substanceCoding1',
-        coding: 'substanceCoding',
-        text: 'ABC',
+        coding: {
+          code: 'ABC',
+          system: 'https://localhost:3000/url/to/typings',
+        },
       },
       description:
         'Vibrio cholerae O1 Inaba, klassischer\n' +
