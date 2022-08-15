@@ -8,7 +8,7 @@ import {
   Address as FHIRAddress,
   Extension as FHIRExtension,
   HumanName as FHIRHumanName,
-  Patient as FHIRPatient
+  Patient as FHIRPatient,
 } from 'fhir/r4';
 import { settings } from '../../settings';
 

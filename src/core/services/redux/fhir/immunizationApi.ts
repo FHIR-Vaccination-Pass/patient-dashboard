@@ -76,7 +76,7 @@ export const immunizationApi = createApi({
 
           storeIdRecursive(response, id, [
             ['byStatus', status],
-            ['byVaccineCode', vaccineCode.coding],
+            ['byVaccineCode', vaccineCode.coding.code],
             ['byLotNumber', lotNumber],
             ['byPatient', patientId],
             ['byPerformer', performerId],

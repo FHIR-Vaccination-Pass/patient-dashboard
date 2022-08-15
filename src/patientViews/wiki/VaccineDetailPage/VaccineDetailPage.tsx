@@ -44,7 +44,7 @@ import {
   targetDiseaseApi,
 } from '../../../core/services/redux/fhir';
 
-import { ImmunizationCard, RecommendationCard } from '.';
+import { ImmunizationCard, RecommendationCard } from './index';
 import { useMedicationInfo } from './useMedicationInfo';
 
 interface VaccineDetailHeaderProps {
@@ -56,7 +56,7 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
     (id) => medications?.entities[id]
   );
   const medicationsForDisease =
-    medications?.byTargetDisease[disease.code.coding];
+    medications?.byTargetDisease[disease.code.coding.code];
 
   const { data: practitioners } = practitionerApi.endpoints.get.useQuery({});
   const idToPractitioner = PractitionerMapper.curry(
@@ -68,7 +68,7 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
       ? {
           'vaccine-code': medicationsForDisease.ids
             .map(idToMedication)
-            .map((m) => m!.code.coding)
+            .map((m) => m!.code.coding.code)
             .join(','),
         }
       : skipToken
@@ -83,7 +83,7 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
         ? {
             'vaccine-type': medicationsForDisease.ids
               .map(idToMedication)
-              .map((m) => m!.code.coding)
+              .map((m) => m!.code.coding.code)
               .join(','),
           }
         : skipToken
@@ -167,7 +167,8 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
             const med =
               ir &&
               idToMedication(
-                medicationsForDisease?.byCode[ir.vaccineCode.coding]?.ids[0]
+                medicationsForDisease?.byCode[ir.vaccineCode.coding.code]
+                  ?.ids[0]
               );
             const org = idToOrganization(med?.manufacturerId);
             const vs =
@@ -210,7 +211,8 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
               const med =
                 imm &&
                 idToMedication(
-                  medicationsForDisease?.byCode[imm.vaccineCode.coding]?.ids[0]
+                  medicationsForDisease?.byCode[imm.vaccineCode.coding.code]
+                    ?.ids[0]
                 );
               const org = idToOrganization(med?.manufacturerId);
               const pract = idToPractitioner(imm?.performerId);
@@ -268,7 +270,7 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({ disease }) => {
     (id) => populationRecommendations?.entities[id]
   );
   const pr = idToPopulationRecommendation(
-    populationRecommendations?.byDisease[disease.code.coding]?.ids[0]
+    populationRecommendations?.byDisease[disease.code.coding.code]?.ids[0]
   );
 
   const { data: medications } = medicationApi.endpoints.get.useQuery({});
@@ -276,7 +278,7 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({ disease }) => {
     (id) => medications?.entities[id]
   );
   const medicationsForDisease =
-    medications?.byTargetDisease[disease.code.coding];
+    medications?.byTargetDisease[disease.code.coding.code];
 
   const {
     idToOrganization,

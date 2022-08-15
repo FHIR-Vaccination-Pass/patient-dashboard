@@ -68,7 +68,7 @@ export function MDOverview() {
                     {patient.name.given.join(' ') + ' ' + patient.name.family}
                   </Link>
                 </Td>
-                <Td>{patient.birthdate.toLocaleDateString()}</Td>
+                <Td>{patient.birthDate.toLocaleDateString()}</Td>
                 <Td>
                   <Badge
                     backgroundColor={

@@ -4,7 +4,7 @@ import {
   Extension as FHIRExtension,
   ImmunizationRecommendation as FHIRImmunizationRecommendation,
   ImmunizationRecommendationRecommendationDateCriterion as FHIRImmunizationRecommendationRecommendationDateCriterion,
-  Reference as FHIRReference
+  Reference as FHIRReference,
 } from 'fhir/r4';
 import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
@@ -75,7 +75,12 @@ export class ImmunizationRecommendationMapper
       fhirpath_r4_model
     )[0] as FHIRCoding;
 
-    return { id: '', coding: forecastStatusCoding.code!, text: '' };
+    return {
+      coding: {
+        code: forecastStatusCoding.code!,
+        system: forecastStatusCoding.system!,
+      },
+    };
   }
 
   get vaccineCode(): CodeableConcept {
@@ -86,7 +91,12 @@ export class ImmunizationRecommendationMapper
       fhirpath_r4_model
     )[0] as FHIRCoding;
 
-    return { id: '', coding: vaccineCodeCoding.code!, text: '' };
+    return {
+      coding: {
+        code: vaccineCodeCoding.code!,
+        system: vaccineCodeCoding.system!,
+      },
+    };
   }
 
   get recommendedStartDate(): Date {

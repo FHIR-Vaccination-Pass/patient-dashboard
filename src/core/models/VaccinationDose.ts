@@ -4,7 +4,7 @@ import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
 
 // normalize to days
-type AgeUnit = 'min' | 'h' | 'd' | 'wk' | 'mo' | 'a';
+export type AgeUnit = 'min' | 'h' | 'd' | 'wk' | 'mo' | 'a';
 const TIMEFRAME_VALUE_FACTORS: Record<AgeUnit, number> = {
   min: 1 / (24 * 60),
   h: 1 / 24,
@@ -31,7 +31,7 @@ export interface VaccinationDoseSingle extends VaccinationDose {
 
 export interface VaccinationDoseRepeating extends VaccinationDose {
   type: 'repeating';
-  interval: number;
+  interval: { value: number; code: AgeUnit };
 }
 
 export class VaccinationDoseMapper implements VaccinationDose {
@@ -220,7 +220,7 @@ export class VaccinationDoseRepeatingMapper
     this._vaccinationDoseRepeatingExtension = vaccinationDoseRepeatingExtension;
   }
 
-  get interval(): number {
+  get interval(): { value: number; code: AgeUnit } {
     const timeframeEndExtension = fhirpath.evaluate(
       this._vaccinationDoseRepeatingExtension,
       `extension.where(url = 'interval')`,
@@ -229,6 +229,6 @@ export class VaccinationDoseRepeatingMapper
     )[0] as FHIRExtension;
 
     const { code, value } = timeframeEndExtension.valueQuantity!;
-    return TIMEFRAME_VALUE_FACTORS[code! as AgeUnit] * value!;
+    return { code: code! as AgeUnit, value: value! };
   }
 }

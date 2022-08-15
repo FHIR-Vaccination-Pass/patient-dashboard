@@ -1,4 +1,4 @@
-import { Address } from '../models/Address';
+import { Address } from '../models';
 
 export const MockAddress: Map<string, Address> = new Map<string, Address>([
   [

@@ -14,10 +14,7 @@ import {
   Switch,
 } from '@chakra-ui/react';
 import React from 'react';
-import {
-  SCHEMETYPE,
-  VaccinationScheme,
-} from '../../core/models/VaccinationScheme';
+import { VaccinationScheme, VaccinationSchemeType } from '../../core/models';
 import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import Select from 'react-select';
 
@@ -35,7 +32,7 @@ export const AddVaccinationSchemeModal = ({
   const mapper = useMapper();
   const vaccinationScheme = {
     name: undefined,
-    type: SCHEMETYPE.NORMAL,
+    type: 'standard',
     isPreferred: false,
     ageStart: undefined,
     ageEnd: undefined,
@@ -64,15 +61,18 @@ export const AddVaccinationSchemeModal = ({
             <FormLabel>Type</FormLabel>
             <Select
               defaultValue={{
-                value: SCHEMETYPE.NORMAL,
+                value: 'standard',
                 label: 'Normal',
               }}
               options={[
-                { value: SCHEMETYPE.NORMAL, label: 'Normal' },
-                { value: SCHEMETYPE.FAST, label: 'Fast' },
+                { value: 'standard', label: 'Normal' },
+                { value: 'fast', label: 'Fast' },
               ]}
               onChange={(newValue) => {
-                vaccinationScheme.type = newValue!.value;
+                if (newValue) {
+                  vaccinationScheme.type =
+                    newValue.value as VaccinationSchemeType;
+                }
               }}
             />
           </FormControl>

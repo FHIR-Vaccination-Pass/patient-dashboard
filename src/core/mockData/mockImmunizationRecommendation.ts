@@ -1,4 +1,4 @@
-import { ImmunizationRecommendation } from '../models/ImmunizationRecommendation';
+import { ImmunizationRecommendation } from '../models';
 
 export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
   [
@@ -7,14 +7,16 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       id: 'covidRecommendation1',
       date: new Date(),
       forecastStatus: {
-        id: 'forecastStatusCoding',
-        coding: 'forecastStatusCoding',
-        text: 'due',
+        coding: {
+          code: 'due',
+          system: 'forecastStatusCoding',
+        },
       },
       vaccineCode: {
-        id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'comirnaty',
+        coding: {
+          code: '2.16.840.1.113883.4.642.3.375',
+          system: 'SNOMEDCTMedicationCodes',
+        },
       },
       recommendedStartDate: new Date(),
       isDeactivated: false,
@@ -31,14 +33,16 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       id: 'covidRecommendation2',
       date: new Date(new Date().setFullYear(2022, 10, 17)),
       forecastStatus: {
-        id: 'forecastStatusCoding',
-        coding: 'forecastStatusCoding',
-        text: '',
+        coding: {
+          code: 'due',
+          system: 'forecastStatusCoding',
+        },
       },
       vaccineCode: {
-        id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'comirnaty',
+        coding: {
+          code: '2.16.840.1.113883.4.642.3.375',
+          system: 'SNOMEDCTMedicationCodes',
+        },
       },
       recommendedStartDate: new Date(),
       isDeactivated: false,
@@ -55,14 +59,16 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       id: 'covidRecommendation3',
       date: new Date(new Date().setFullYear(2023, 0, 17)),
       forecastStatus: {
-        id: 'forecastStatusCoding',
-        coding: 'forecastStatusCoding',
-        text: '',
+        coding: {
+          code: 'due',
+          system: 'forecastStatusCoding',
+        },
       },
       vaccineCode: {
-        id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'comirnaty',
+        coding: {
+          code: '2.16.840.1.113883.4.642.3.375',
+          system: 'SNOMEDCTMedicationCodes',
+        },
       },
       recommendedStartDate: new Date(),
       isDeactivated: false,
@@ -79,14 +85,16 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       id: 'choleraRecommendation1',
       date: new Date(new Date().setFullYear(2022, 8, 17)),
       forecastStatus: {
-        id: 'forecastStatusCoding',
-        coding: 'forecastStatusCoding',
-        text: '',
+        coding: {
+          code: 'due',
+          system: 'forecastStatusCoding',
+        },
       },
       vaccineCode: {
-        id: '2.16.840.1.113883.4.642.3.375',
-        coding: 'SNOMEDCTMedicationCodes',
-        text: 'dukoral',
+        coding: {
+          code: '2.16.840.1.113883.4.642.3.375',
+          system: 'dukoral',
+        },
       },
       recommendedStartDate: new Date(),
       isDeactivated: false,

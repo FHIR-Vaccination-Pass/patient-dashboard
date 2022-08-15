@@ -46,6 +46,7 @@ export type { VacationPlan } from './VacationPlan';
 export { VacationPlanMapper } from './VacationPlan';
 
 export type {
+  AgeUnit,
   VaccinationDose,
   VaccinationDoseSingle,
   VaccinationDoseRepeating,

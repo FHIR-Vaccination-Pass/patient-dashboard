@@ -1,4 +1,4 @@
-import { Disease } from '../models/Disease';
+import { Disease } from '../models';
 
 export const MockDisease = new Map<string, Disease>([
   [
@@ -6,7 +6,6 @@ export const MockDisease = new Map<string, Disease>([
     {
       id: 'cholera',
       code: {
-        id: 'icd-10',
         coding: {
           code: 'A00',
           system: 'https://localhost:3000/url/to/typings',
@@ -26,7 +25,6 @@ export const MockDisease = new Map<string, Disease>([
     {
       id: 'covid-19',
       code: {
-        id: 'icd-10',
         coding: {
           code: 'U07.1',
           system: 'https://localhost:3000/url/to/typings',
@@ -45,7 +43,6 @@ export const MockDisease = new Map<string, Disease>([
     {
       id: 'diphtheria',
       code: {
-        id: 'icd-10',
         coding: {
           code: 'A36',
           system: 'https://localhost:3000/url/to/typings',
@@ -61,7 +58,6 @@ export const MockDisease = new Map<string, Disease>([
     {
       id: 'tetanus',
       code: {
-        id: 'icd-10',
         coding: {
           code: 'A34',
           system: 'https://localhost:3000/url/to/typings',

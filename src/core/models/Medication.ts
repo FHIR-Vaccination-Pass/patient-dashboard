@@ -4,7 +4,7 @@ import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import {
   Coding as FHIRCoding,
   Extension as FHIRExtension,
-  Medication as FHIRMedication
+  Medication as FHIRMedication,
 } from 'fhir/r4';
 import { settings } from '../../settings';
 
@@ -60,7 +60,12 @@ export class MedicationMapper implements Medication {
       fhirpath_r4_model
     )[0] as FHIRCoding;
 
-    return { id: '', coding: codeCoding.code!, text: '' };
+    return {
+      coding: {
+        code: codeCoding.code!,
+        system: codeCoding.system!,
+      },
+    };
   }
 
   get form(): CodeableConcept {
@@ -71,7 +76,12 @@ export class MedicationMapper implements Medication {
       fhirpath_r4_model
     )[0] as FHIRCoding;
 
-    return { id: '', coding: formCoding.code!, text: '' };
+    return {
+      coding: {
+        code: formCoding.code!,
+        system: formCoding.system!,
+      },
+    };
   }
 
   get manufacturerId(): string {

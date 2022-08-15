@@ -49,7 +49,7 @@ export const targetDiseaseApi = createApi({
           response.ids.push(id);
           response.entities[id] = resource;
 
-          storeIdRecursive(response, id, [['byCode', code.coding]]);
+          storeIdRecursive(response, id, [['byCode', code.coding.code]]);
         }
 
         return response;

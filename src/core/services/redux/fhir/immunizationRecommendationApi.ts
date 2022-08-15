@@ -78,8 +78,8 @@ export const immunizationRecommendationApi = createApi({
           response.entities[id] = resource;
 
           storeIdRecursive(response, id, [
-            ['byForecastStatus', forecastStatus.coding],
-            ['byVaccineCode', vaccineCode.coding],
+            ['byForecastStatus', forecastStatus.coding.code],
+            ['byVaccineCode', vaccineCode.coding.code],
             ['byIsDeactivated', String(isDeactivated)],
             ...supportingImmunizationIds.map(
               (sId): ['bySupportingImmunization', string] => [

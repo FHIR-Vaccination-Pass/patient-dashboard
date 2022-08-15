@@ -1,4 +1,4 @@
-import { HumanName } from '../models/HumanName';
+import { HumanName } from '../models';
 
 export const MockHumanName = new Map<string, HumanName>([
   [

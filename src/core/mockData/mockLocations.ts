@@ -1,4 +1,4 @@
-import { Location } from '../models/Location';
+import { Location } from '../models';
 
 export const MockLocations = new Map<string, Location>([
   [

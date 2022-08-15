@@ -30,7 +30,7 @@ export const WikiInformationCard: FC<WikiInformationCardProps> = ({
 }) => {
   const { data: immunizationRecommendations } =
     immunizationRecommendationApi.endpoints.get.useQuery({
-      'target-disease': disease.code.coding,
+      'target-disease': disease.code.coding.code,
     });
   if (immunizationRecommendations === undefined) {
     return <></>;
@@ -48,7 +48,7 @@ export const WikiInformationCard: FC<WikiInformationCardProps> = ({
 
   return (
     <div>
-      <Link to={`/dashboard/wiki/${disease.code.coding}`}>
+      <Link to={`/patient/dashboard/wiki/${disease.code.coding.code}`}>
         <Flex justifyContent={'space-between'} alignItems={'center'} pt={4}>
           <Text fontSize={'xl'} color={aggregateImmunizationStatus.iconColor}>
             {disease.name}

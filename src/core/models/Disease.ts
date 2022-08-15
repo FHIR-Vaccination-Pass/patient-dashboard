@@ -67,7 +67,7 @@ export class DiseaseMapper implements Disease {
       fhirpath_r4_model
     )[0] as FHIRCoding;
 
-    return { id: '', coding: coding.code!, text: '' };
+    return { coding: { code: coding.code!, system: coding.system! } };
   }
 
   get name(): string {

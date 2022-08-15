@@ -61,8 +61,8 @@ export const medicationApi = createApi({
           response.entities[id] = resource;
 
           storeIdRecursive(response, id, [
-            ['byCode', code.coding],
-            ['byForm', form.coding],
+            ['byCode', code.coding.code],
+            ['byForm', form.coding.code],
             ['byManufacturer', manufacturerId],
             ...targetDiseaseIds.map(
               (targetDisease) =>

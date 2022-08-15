@@ -1,4 +1,4 @@
-import { Basic as FHIRBasic, Coding as FHIRCoding, Extension as FHIRExtension } from 'fhir/r4';
+import { Coding as FHIRCoding, Extension as FHIRExtension } from 'fhir/r4';
 import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';

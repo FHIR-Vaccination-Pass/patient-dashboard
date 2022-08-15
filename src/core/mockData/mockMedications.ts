@@ -6,14 +6,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'medication1',
       code: {
-        id: 'vaccineCoding1',
         coding: {
           code: 'ABC',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
@@ -29,14 +27,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'dukoral',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'dukoral',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
@@ -52,14 +48,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'comirnaty',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'comirnaty',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
@@ -75,14 +69,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'jcovden',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'jcovden',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
@@ -98,14 +90,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'nuvaxovid',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'nuvaxovid',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
@@ -121,14 +111,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'spikevax',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'spikevax',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
@@ -144,14 +132,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'vaxzevria',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'vaxzeyria',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
@@ -167,14 +153,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'covid-valneva',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'covid-valneva',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
@@ -190,14 +174,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'td-pur',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'td-pur',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
@@ -213,14 +195,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'td-rix',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'td-rix',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
@@ -236,14 +216,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'tetagam-p',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'tetagam-p',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
@@ -259,14 +237,12 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'tetanol-pur',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'tetanol-pur',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',

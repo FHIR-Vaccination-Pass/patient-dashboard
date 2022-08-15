@@ -1,4 +1,4 @@
-import { Practitioner } from '../models/Practitioner';
+import { Practitioner } from '../models';
 
 export const MockPractitioners = new Map<string, Practitioner>([
   [

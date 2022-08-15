@@ -5,7 +5,7 @@ import {
   Coding as FHIRCoding,
   Extension as FHIRExtension,
   Immunization as FHIRImmunization,
-  Reference as FHIRReference
+  Reference as FHIRReference,
 } from 'fhir/r4';
 import { settings } from '../../settings';
 
@@ -70,7 +70,12 @@ export class ImmunizationMapper implements Immunization {
       fhirpath_r4_model
     )[0] as FHIRCoding;
 
-    return { id: '', coding: vaccineCodeCoding.code!, text: '' };
+    return {
+      coding: {
+        code: vaccineCodeCoding.code!,
+        system: vaccineCodeCoding.system!,
+      },
+    };
   }
 
   get occurrenceTime(): Date {

@@ -1,4 +1,4 @@
-import { VaccinationDoseRepeating } from '../models/VaccinationDose';
+import { VaccinationDoseRepeating } from '../models';
 
 export const MockVaccinationDosesRepeating = new Map<
   string,
@@ -13,7 +13,7 @@ export const MockVaccinationDosesRepeating = new Map<
       isProtected: true,
       notes: '0',
       vaccinationSchemeId: 'vaccinationscheme1',
-      interval: 365,
+      interval: { code: 'mo', value: 6 },
     },
   ],
 ]);

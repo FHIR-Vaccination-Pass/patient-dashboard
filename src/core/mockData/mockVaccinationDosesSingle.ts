@@ -1,4 +1,4 @@
-import { VaccinationDoseSingle } from '../models/VaccinationDose';
+import { VaccinationDoseSingle } from '../models';
 
 export const MockVaccinationDosesSingle = new Map<
   string,
