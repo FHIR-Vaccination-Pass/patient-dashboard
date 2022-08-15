@@ -9,6 +9,7 @@ export interface VacationPlan {
   id: string;
   departureDate: Date;
   locations: Location[];
+  patientId: string;
 }
 
 export class VacationPlanMapper {
@@ -56,5 +57,10 @@ export class VacationPlanMapper {
     )[0] as FHIRExtension;
 
     return new Date(departureDateExtension.valueDate!);
+  }
+
+  get patientId(): string {
+    const referenceParts = this._raw.subject!.reference!.split('/');
+    return referenceParts[referenceParts.length - 1];
   }
 }

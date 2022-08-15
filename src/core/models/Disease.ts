@@ -14,9 +14,6 @@ export interface Disease {
   code: CodeableConcept;
   name: string;
   description: string;
-  populationRecommendationId: string;
-  // Medication ids
-  vaccineIds: string[];
 }
 
 export class DiseaseMapper implements Disease {
@@ -75,15 +72,5 @@ export class DiseaseMapper implements Disease {
       undefined,
       fhirpath_r4_model
     )[0] as string;
-  }
-
-  get populationRecommendationId(): string {
-    // TODO: get rid of this
-    return '';
-  }
-
-  get vaccineIds(): string[] {
-    // TODO: get rid of this
-    return [];
   }
 }

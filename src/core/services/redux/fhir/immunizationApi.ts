@@ -1,8 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Bundle, Immunization } from 'fhir/r4';
 import { settings } from '../../../../settings';
+import { ImmunizationMapper } from '../../../models';
+import { GetResponse, storeIdRecursive } from './utils';
 
 type TResource = Immunization;
+const TMapper = ImmunizationMapper;
 interface GetArgs {
   _id?: string;
   status?: string;
@@ -12,6 +15,13 @@ interface GetArgs {
   'lot-number'?: string;
   performer?: string;
 }
+type GetResponseGroups =
+  | 'byStatus'
+  | 'byVaccineCode'
+  | 'byLotNumber'
+  | 'byPatient'
+  | 'byPerformer'
+  | 'byVaccinationDose';
 const resourceName = 'Immunization' as const;
 const resourcePath = '/Immunization' as const;
 
@@ -27,7 +37,7 @@ export const immunizationApi = createApi({
   }),
   tagTypes: [resourceName],
   endpoints: (build) => ({
-    get: build.query<TResource[], GetArgs>({
+    get: build.query<GetResponse<TResource, GetResponseGroups>, GetArgs>({
       query: (args) => ({
         url: resourcePath,
         params: {
@@ -35,12 +45,51 @@ export const immunizationApi = createApi({
           _profile: `${settings.fhir.profileBaseUrl}/vp-immunization`,
         },
       }),
-      transformResponse: ({ entry }: Bundle) =>
-        entry!.map(({ resource }) => resource! as TResource),
+      transformResponse: ({ entry }: Bundle) => {
+        const resources = entry!.map(({ resource }) => resource! as TResource);
+
+        const response: GetResponse<TResource, GetResponseGroups> = {
+          ids: [],
+          entities: {},
+
+          byStatus: {},
+          byVaccineCode: {},
+          byLotNumber: {},
+          byPatient: {},
+          byPerformer: {},
+          byVaccinationDose: {},
+        };
+
+        for (const resource of resources) {
+          const {
+            id,
+            status,
+            vaccineCode,
+            lotNumber,
+            patientId,
+            performerId,
+            vaccinationDoseId,
+          } = TMapper.fromResource(resource);
+
+          response.ids.push(id);
+          response.entities[id] = resource;
+
+          storeIdRecursive(response, id, [
+            ['byStatus', status],
+            ['byVaccineCode', vaccineCode.coding],
+            ['byLotNumber', lotNumber],
+            ['byPatient', patientId],
+            ['byPerformer', performerId],
+            ['byVaccinationDose', vaccinationDoseId],
+          ]);
+        }
+
+        return response;
+      },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
+              ...result.ids.map((id) => ({
                 type: resourceName,
                 id,
               })),

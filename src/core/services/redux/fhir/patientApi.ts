@@ -1,8 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Bundle, Patient } from 'fhir/r4';
 import { settings } from '../../../../settings';
+import { PatientMapper } from '../../../models';
+import { GetResponse, storeIdRecursive } from './utils';
 
 type TResource = Patient;
+const TMapper = PatientMapper;
 interface GetArgs {
   _id?: string;
   active?: string;
@@ -12,6 +15,12 @@ interface GetArgs {
   deceased?: string;
   address?: string;
 }
+type GetResponseGroups =
+  | 'byActive'
+  | 'byGender'
+  | 'byDeceased'
+  | 'byIsPregnant'
+  | 'byKeycloakUsername';
 const resourceName = 'Patient' as const;
 const resourcePath = '/Patient' as const;
 
@@ -27,7 +36,7 @@ export const patientApi = createApi({
   }),
   tagTypes: [resourceName],
   endpoints: (build) => ({
-    get: build.query<TResource[], GetArgs>({
+    get: build.query<GetResponse<TResource, GetResponseGroups>, GetArgs>({
       query: (args) => ({
         url: resourcePath,
         params: {
@@ -35,12 +44,42 @@ export const patientApi = createApi({
           _profile: `${settings.fhir.profileBaseUrl}/vp-patient`,
         },
       }),
-      transformResponse: ({ entry }: Bundle) =>
-        entry!.map(({ resource }) => resource! as TResource),
+      transformResponse: ({ entry }: Bundle) => {
+        const resources = entry!.map(({ resource }) => resource! as TResource);
+
+        const response: GetResponse<TResource, GetResponseGroups> = {
+          ids: [],
+          entities: {},
+
+          byActive: {},
+          byGender: {},
+          byDeceased: {},
+          byIsPregnant: {},
+          byKeycloakUsername: {},
+        };
+
+        for (const resource of resources) {
+          const { id, active, gender, deceased, isPregnant, keycloakUsername } =
+            TMapper.fromResource(resource);
+
+          response.ids.push(id);
+          response.entities[id] = resource;
+
+          storeIdRecursive(response, id, [
+            ['byActive', String(active)],
+            ['byGender', gender],
+            ['byDeceased', String(deceased)],
+            ['byIsPregnant', String(isPregnant)],
+            ['byKeycloakUsername', keycloakUsername],
+          ]);
+        }
+
+        return response;
+      },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
+              ...result.ids.map((id) => ({
                 type: resourceName,
                 id,
               })),

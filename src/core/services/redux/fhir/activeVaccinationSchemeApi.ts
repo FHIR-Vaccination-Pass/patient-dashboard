@@ -1,12 +1,16 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Basic, Bundle } from 'fhir/r4';
 import { settings } from '../../../../settings';
+import { GetResponse, storeIdRecursive } from './utils';
+import { ActiveVaccinationSchemeMapper } from '../../../models';
 
 type TResource = Basic;
+const TMapper = ActiveVaccinationSchemeMapper;
 interface GetArgs {
   _id?: string;
   subject?: string;
 }
+type GetResponseGroups = 'byVaccinationScheme' | 'byPatient';
 const resourceName = 'ActiveVaccinationScheme' as const;
 const resourcePath = '/Basic' as const;
 
@@ -22,7 +26,7 @@ export const activeVaccinationSchemeApi = createApi({
   }),
   tagTypes: [resourceName],
   endpoints: (build) => ({
-    get: build.query<TResource[], GetArgs>({
+    get: build.query<GetResponse<TResource, GetResponseGroups>, GetArgs>({
       query: () => ({
         url: resourcePath,
         params: {
@@ -30,12 +34,36 @@ export const activeVaccinationSchemeApi = createApi({
           _profile: `${settings.fhir.profileBaseUrl}/vp-active-vaccination-scheme`,
         },
       }),
-      transformResponse: ({ entry }: Bundle) =>
-        entry!.map(({ resource }) => resource! as TResource),
+      transformResponse: ({ entry }: Bundle) => {
+        const resources = entry!.map(({ resource }) => resource! as TResource);
+
+        const response: GetResponse<TResource, GetResponseGroups> = {
+          ids: [],
+          entities: {},
+
+          byVaccinationScheme: {},
+          byPatient: {},
+        };
+
+        for (const resource of resources) {
+          const { id, vaccinationSchemeId, patientId } =
+            TMapper.fromResource(resource);
+
+          response.ids.push(id);
+          response.entities[id] = resource;
+
+          storeIdRecursive(response, id, [
+            ['byVaccinationScheme', vaccinationSchemeId],
+            ['byPatient', patientId],
+          ]);
+        }
+
+        return response;
+      },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
+              ...result.ids.map((id) => ({
                 type: resourceName,
                 id,
               })),

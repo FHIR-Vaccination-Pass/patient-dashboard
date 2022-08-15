@@ -1,11 +1,15 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Basic, Bundle } from 'fhir/r4';
 import { settings } from '../../../../settings';
+import { PopulationRecommendationMapper } from '../../../models';
+import { GetResponse, storeIdRecursive } from './utils';
 
 type TResource = Basic;
+const TMapper = PopulationRecommendationMapper;
 interface GetArgs {
   _id?: string;
 }
+type GetResponseGroups = 'byCountry' | 'byState' | 'byDisease';
 const resourceName = 'PopulationRecommendation' as const;
 const resourcePath = '/Basic' as const;
 
@@ -21,7 +25,7 @@ export const populationRecommendationApi = createApi({
   }),
   tagTypes: [resourceName],
   endpoints: (build) => ({
-    get: build.query<TResource[], GetArgs>({
+    get: build.query<GetResponse<TResource, GetResponseGroups>, GetArgs>({
       query: () => ({
         url: resourcePath,
         params: {
@@ -29,12 +33,43 @@ export const populationRecommendationApi = createApi({
           _profile: `${settings.fhir.profileBaseUrl}/vp-population-recommendation`,
         },
       }),
-      transformResponse: ({ entry }: Bundle) =>
-        entry!.map(({ resource }) => resource! as TResource),
+      transformResponse: ({ entry }: Bundle) => {
+        const resources = entry!.map(({ resource }) => resource! as TResource);
+
+        const response: GetResponse<TResource, GetResponseGroups> = {
+          ids: [],
+          entities: {},
+
+          byCountry: {},
+          byState: {},
+          byDisease: {},
+        };
+
+        for (const resource of resources) {
+          const { id, locations, diseaseId } = TMapper.fromResource(resource);
+
+          response.ids.push(id);
+          response.entities[id] = resource;
+
+          storeIdRecursive(response, id, [
+            ...locations.flatMap((l): ['byCountry' | 'byState', string][] =>
+              l.state
+                ? [
+                    ['byCountry', l.country],
+                    ['byState', l.state],
+                  ]
+                : [['byCountry', l.country]]
+            ),
+            ['byDisease', diseaseId],
+          ]);
+        }
+
+        return response;
+      },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
+              ...result.ids.map((id) => ({
                 type: resourceName,
                 id,
               })),

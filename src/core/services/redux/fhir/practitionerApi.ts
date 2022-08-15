@@ -1,12 +1,16 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Bundle, Practitioner } from 'fhir/r4';
 import { settings } from '../../../../settings';
+import { PractitionerMapper } from '../../../models';
+import { GetResponse } from './utils';
 
 type TResource = Practitioner;
+const TMapper = PractitionerMapper;
 interface GetArgs {
   _id?: string;
   name?: string;
 }
+type GetResponseGroups = never;
 const resourceName = 'Practitioner' as const;
 const resourcePath = '/Practitioner' as const;
 
@@ -22,7 +26,7 @@ export const practitionerApi = createApi({
   }),
   tagTypes: [resourceName],
   endpoints: (build) => ({
-    get: build.query<TResource[], GetArgs>({
+    get: build.query<GetResponse<TResource, GetResponseGroups>, GetArgs>({
       query: (args) => ({
         url: resourcePath,
         params: {
@@ -30,12 +34,27 @@ export const practitionerApi = createApi({
           _profile: `${settings.fhir.profileBaseUrl}/vp-practitioner`,
         },
       }),
-      transformResponse: ({ entry }: Bundle) =>
-        entry!.map(({ resource }) => resource! as TResource),
+      transformResponse: ({ entry }: Bundle) => {
+        const resources = entry!.map(({ resource }) => resource! as TResource);
+
+        const response: GetResponse<TResource, GetResponseGroups> = {
+          ids: [],
+          entities: {},
+        };
+
+        for (const resource of resources) {
+          const { id } = TMapper.fromResource(resource);
+
+          response.ids.push(id);
+          response.entities[id] = resource;
+        }
+
+        return response;
+      },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
+              ...result.ids.map((id) => ({
                 type: resourceName,
                 id,
               })),

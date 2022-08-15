@@ -12,6 +12,7 @@ export const MockVacationPlans = new Map<string, VacationPlan>([
           state: 'Bavaria',
         },
       ],
+      patientId: 'patient1',
     },
   ],
 ]);

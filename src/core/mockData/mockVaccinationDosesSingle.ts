@@ -8,6 +8,7 @@ export const MockVaccinationDosesSingle = new Map<
     'vaccinationDoseSingle1',
     {
       id: 'vaccinationDoseSingle1',
+      type: 'single',
       doseQuantity: 1,
       isProtected: true,
       notes: '0',
@@ -21,6 +22,7 @@ export const MockVaccinationDosesSingle = new Map<
     'tetanol-pur1',
     {
       id: 'tetanol-pur1',
+      type: 'single',
       doseQuantity: 0.5,
       isProtected: true,
       notes: '',
@@ -34,6 +36,7 @@ export const MockVaccinationDosesSingle = new Map<
     'tetanol-pur2',
     {
       id: 'tetanol-pur2',
+      type: 'single',
       doseQuantity: 0.5,
       isProtected: true,
       notes: '0',
@@ -47,6 +50,7 @@ export const MockVaccinationDosesSingle = new Map<
     'tetanol-pur3',
     {
       id: 'tetanol-pur3',
+      type: 'single',
       doseQuantity: 0.5,
       isProtected: true,
       notes: '0',
@@ -60,6 +64,7 @@ export const MockVaccinationDosesSingle = new Map<
     'dukoral1',
     {
       id: 'dukoral1',
+      type: 'single',
       doseQuantity: 2,
       isProtected: true,
       notes: '0',
@@ -73,6 +78,7 @@ export const MockVaccinationDosesSingle = new Map<
     'comirnaty1',
     {
       id: 'comirnaty1',
+      type: 'single',
       doseQuantity: 2,
       isProtected: true,
       notes: '0',
@@ -86,6 +92,7 @@ export const MockVaccinationDosesSingle = new Map<
     'comirnaty2',
     {
       id: 'comirnaty2',
+      type: 'single',
       doseQuantity: 2,
       isProtected: true,
       notes: '0',
@@ -99,6 +106,7 @@ export const MockVaccinationDosesSingle = new Map<
     'comirnaty3',
     {
       id: 'comirnaty3',
+      type: 'single',
       doseQuantity: 2,
       isProtected: true,
       notes: '0',

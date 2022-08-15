@@ -31,13 +31,12 @@ import {
   DiseaseMapper,
   Immunization,
   ImmunizationMapper,
-  ImmunizationRecommendation,
   ImmunizationRecommendationMapper,
-  Medication,
   MedicationMapper,
   OrganizationMapper,
-  PopulationRecommendation,
   PopulationRecommendationMapper,
+  PractitionerMapper,
+  VaccinationDoseMapper,
   VaccinationSchemeMapper,
 } from '../../../core/models';
 import {
@@ -46,7 +45,9 @@ import {
   medicationApi,
   organizationApi,
   populationRecommendationApi,
+  practitionerApi,
   targetDiseaseApi,
+  vaccinationDoseApi,
   vaccinationSchemeApi,
 } from '../../../core/services/redux/fhir';
 
@@ -54,18 +55,78 @@ import { ImmunizationCard, RecommendationCard } from '.';
 
 interface VaccineDetailHeaderProps {
   disease: Disease;
-  medications: Medication[];
-  immunizations: Immunization[];
-  recommendations: ImmunizationRecommendation[];
 }
-const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({
-  disease,
-  medications,
-  immunizations,
-  recommendations,
-}) => {
+const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
+  const { data: medications } = medicationApi.endpoints.get.useQuery({});
+  const medicationsForDisease =
+    medications?.byTargetDisease[disease.code.coding];
+  const medicationsForDiseaseMapped = medicationsForDisease?.ids.map((mId) =>
+    MedicationMapper.fromResource(medications!.entities[mId])
+  );
+
+  const { data: organizations } = organizationApi.endpoints.get.useQuery({});
+
+  const { data: practitioners } = practitionerApi.endpoints.get.useQuery({});
+
+  const { data: vaccinationSchemes } =
+    vaccinationSchemeApi.endpoints.get.useQuery(
+      medicationsForDiseaseMapped
+        ? {
+            subject: medicationsForDiseaseMapped.map((med) => med.id).join(','),
+          }
+        : skipToken
+    );
+  const standardVaccinationSchemes = vaccinationSchemes?.byType['standard'];
+  const standardVaccinationSchemesMapped = standardVaccinationSchemes?.ids.map(
+    (vsId) =>
+      VaccinationSchemeMapper.fromResource(vaccinationSchemes!.entities[vsId])
+  );
+
+  const { data: vaccinationDoses } = vaccinationDoseApi.endpoints.get.useQuery(
+    standardVaccinationSchemesMapped
+      ? {
+          subject: standardVaccinationSchemesMapped
+            .map((vs) => vs.id)
+            .join(','),
+        }
+      : skipToken
+  );
+
+  const { data: immunizations } = immunizationApi.endpoints.get.useQuery(
+    medicationsForDiseaseMapped
+      ? {
+          'vaccine-code': medicationsForDiseaseMapped
+            .map((m) => m.code.coding)
+            .join(','),
+        }
+      : skipToken
+  );
+  const immunizationsMapped = immunizations?.ids.map((iId) =>
+    ImmunizationMapper.fromResource(immunizations.entities[iId])
+  );
+
+  const { data: immunizationRecommendations } =
+    immunizationRecommendationApi.endpoints.get.useQuery(
+      medicationsForDiseaseMapped
+        ? {
+            'vaccine-type': medicationsForDiseaseMapped
+              .map((m) => m.code.coding)
+              .join(','),
+          }
+        : skipToken
+    );
+
+  const immunizationRecommendationsMapped =
+    immunizationRecommendations?.ids.map((irId) =>
+      ImmunizationRecommendationMapper.fromResource(
+        immunizationRecommendations.entities[irId]
+      )
+    );
+
   const [showPersonalizedInfo, setShowPersonalizedInfo] = useBoolean(false);
-  const status = calcAggregateImmunizationStatus(recommendations);
+  const status = calcAggregateImmunizationStatus(
+    immunizationRecommendationsMapped ?? []
+  );
 
   return (
     <>
@@ -112,40 +173,86 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({
           flexDirection={'column'}
           pb={'10px'}
         >
-          {recommendations.length > 0 && (
-            <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
-              Due vaccinations
-            </Text>
-          )}
+          {immunizationRecommendationsMapped &&
+            immunizationRecommendationsMapped.length > 0 && (
+              <Text color={'gray.600'} ml={'20px'} mb={'5px'}>
+                Due vaccinations
+              </Text>
+            )}
 
-          {recommendations.map((recommendation: ImmunizationRecommendation) => (
-            <RecommendationCard
-              recommendation={recommendation}
-              medication={
-                medications.find(
-                  (medication) =>
-                    medication.code.coding === recommendation.vaccineCode.coding
-                )!
-              }
-            />
-          ))}
+          {medicationsForDisease &&
+            organizations &&
+            standardVaccinationSchemes &&
+            vaccinationDoses &&
+            immunizationRecommendationsMapped?.map((ir) => {
+              const med = MedicationMapper.fromResource(
+                medications.entities[
+                  medicationsForDisease.byCode[ir.vaccineCode.coding].ids[0]
+                ]
+              );
+              const organization = OrganizationMapper.fromResource(
+                organizations.entities[med.manufacturerId]
+              );
+              const vaccinationSchemeId =
+                standardVaccinationSchemes.byMedication[med.id].ids[0];
+              const allDoses =
+                vaccinationDoses.byVaccinationScheme[vaccinationSchemeId];
+              const dose = VaccinationDoseMapper.fromResource(
+                vaccinationDoses.entities[ir.vaccinationDoseId]
+              );
+
+              return (
+                <RecommendationCard
+                  recommendation={ir}
+                  medication={med}
+                  organization={organization}
+                  numberOfDoses={allDoses.ids.length}
+                  vaccinationDose={dose}
+                />
+              );
+            })}
 
           <Text color={'gray.600'} ml={'20px'} mb={'5px'} mt={'10px'}>
             Previous vaccinations
           </Text>
 
-          {immunizations ? (
-            immunizations.map((immunization: Immunization) => (
-              <ImmunizationCard
-                immunization={immunization}
-                medication={
-                  medications.find(
-                    (medication) =>
-                      medication.code.coding === immunization.vaccineCode.coding
-                  )!
-                }
-              />
-            ))
+          {medicationsForDisease &&
+          organizations &&
+          practitioners &&
+          standardVaccinationSchemes &&
+          vaccinationDoses &&
+          immunizationsMapped ? (
+            immunizationsMapped.map((imm: Immunization) => {
+              const med = MedicationMapper.fromResource(
+                medications.entities[
+                  medicationsForDisease.byCode[imm.vaccineCode.coding].ids[0]
+                ]
+              );
+              const organization = OrganizationMapper.fromResource(
+                organizations.entities[med.manufacturerId]
+              );
+              const pracitioner = PractitionerMapper.fromResource(
+                practitioners.entities[imm.performerId]
+              );
+              const vaccinationSchemeId =
+                standardVaccinationSchemes.byMedication[med.id].ids[0];
+              const allDoses =
+                vaccinationDoses.byVaccinationScheme[vaccinationSchemeId];
+              const dose = VaccinationDoseMapper.fromResource(
+                vaccinationDoses.entities[imm.vaccinationDoseId]
+              );
+
+              return (
+                <ImmunizationCard
+                  immunization={imm}
+                  medication={med}
+                  organization={organization}
+                  practitioner={pracitioner}
+                  numberOfDoses={allDoses.ids.length}
+                  vaccinationDose={dose}
+                />
+              );
+            })
           ) : (
             <Stack justifyContent={'space-between'} alignItems={'center'}>
               <Icon as={FaFolderOpen} color={'gray.500'} w={20} h={20} />
@@ -162,59 +269,93 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({
 
 interface VaccineDetailBodyProps {
   disease: Disease;
-  populationRecommendation: PopulationRecommendation | undefined;
 }
-const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({
-  disease,
-  populationRecommendation,
-}) => {
+const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({ disease }) => {
+  const { data: populationRecommendations } =
+    populationRecommendationApi.endpoints.get.useQuery({});
+  const populationRecommendationMapped = populationRecommendations?.byDisease[
+    disease.code.coding
+  ].ids.map((prId) =>
+    PopulationRecommendationMapper.fromResource(
+      populationRecommendations.entities[prId]
+    )
+  )[0];
+
   const { data: medications } = medicationApi.endpoints.get.useQuery({});
+  const medicationsForDisease =
+    medications?.byTargetDisease[disease.code.coding];
+  const medicationsForDiseaseMapped = medicationsForDisease?.ids.map((mId) =>
+    MedicationMapper.fromResource(medications!.entities[mId])
+  );
+
   const { data: organizations } = organizationApi.endpoints.get.useQuery({});
+
   const { data: vaccinationSchemes } =
-    vaccinationSchemeApi.endpoints.get.useQuery({});
+    vaccinationSchemeApi.endpoints.get.useQuery(
+      medicationsForDiseaseMapped
+        ? {
+            subject: medicationsForDiseaseMapped.map((med) => med.id).join(','),
+          }
+        : skipToken
+    );
+  const standardVaccinationSchemes = vaccinationSchemes?.byType['standard'];
+  const standardVaccinationSchemesMapped = standardVaccinationSchemes?.ids.map(
+    (vsId) =>
+      VaccinationSchemeMapper.fromResource(vaccinationSchemes!.entities[vsId])
+  );
+
+  const { data: vaccinationDoses } = vaccinationDoseApi.endpoints.get.useQuery(
+    standardVaccinationSchemesMapped
+      ? {
+          subject: standardVaccinationSchemesMapped
+            .map((vs) => vs.id)
+            .join(','),
+        }
+      : skipToken
+  );
 
   const generatePopulationRecommendationText = () => {
-    if (populationRecommendation === undefined) {
+    if (populationRecommendationMapped === undefined) {
       return (
         <Text color={'gray.500'}>
-          The STIKO recommends start immunization for {disease.name} for all
+          The STIKO recommends to start immunization for {disease.name} for all
           ages.
         </Text>
       );
     }
     if (
-      populationRecommendation.ageStart !== undefined &&
-      populationRecommendation.ageEnd !== undefined
+      populationRecommendationMapped.ageStart !== undefined &&
+      populationRecommendationMapped.ageEnd !== undefined
     ) {
       return (
         <Text color={'gray.500'}>
-          The STIKO recommends start immunization for {disease.name} earliest
-          from age {populationRecommendation.ageStart} and latest until age{' '}
-          {populationRecommendation.ageEnd}.
+          The STIKO recommends to start immunization for {disease.name} earliest
+          from age {populationRecommendationMapped.ageStart} and latest until
+          age {populationRecommendationMapped.ageEnd}.
         </Text>
       );
     }
-    if (populationRecommendation.ageStart !== undefined) {
+    if (populationRecommendationMapped.ageStart !== undefined) {
       return (
         <Text color={'gray.500'}>
-          The STIKO recommends start immunization for {disease.name} earliest
-          from age {populationRecommendation.ageStart}.
+          The STIKO recommends to start immunization for {disease.name} earliest
+          from age {populationRecommendationMapped.ageStart}.
         </Text>
       );
     }
-    if (populationRecommendation.ageEnd !== undefined) {
+    if (populationRecommendationMapped.ageEnd !== undefined) {
       return (
         <Text color={'gray.500'}>
-          The STIKO recommends start immunization for {disease.name} latest
-          until age {populationRecommendation.ageEnd}.
+          The STIKO recommends to start immunization for {disease.name} latest
+          until age {populationRecommendationMapped.ageEnd}.
         </Text>
       );
     }
 
     return (
       <Text color={'gray.500'}>
-        The STIKO does not see a need to vacinate against {disease.name} at this
-        time.
+        The STIKO does not see a need to vaccinate against {disease.name} at
+        this time.
       </Text>
     );
   };
@@ -260,7 +401,7 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({
           Affected Locations
         </Heading>
         <UnorderedList color={'gray.500'}>
-          {populationRecommendation?.locations.map((location) => (
+          {populationRecommendationMapped?.locations.map((location) => (
             <ListItem ml={'10px'}>{location.country}</ListItem>
           ))}
         </UnorderedList>
@@ -276,71 +417,56 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({
           Vaccines
         </Heading>
         <Accordion defaultIndex={[]} allowMultiple mb={'20px'}>
-          {medications &&
+          {medicationsForDiseaseMapped &&
             organizations &&
-            vaccinationSchemes &&
-            medications.byTargetDisease[disease.code.coding]?.ids.map(
-              (medicationId) => {
-                const medication = MedicationMapper.fromResource(
-                  medications.entities[medicationId]
-                );
-                const organization = OrganizationMapper.fromResource(
-                  organizations.entities[medication.manufacturerId]
-                );
-                const standardVaccinationSchemeRaw =
-                  vaccinationSchemes.entities[
-                    vaccinationSchemes.byMedication[medicationId].byType[
-                      'standard'
-                    ].ids[0]
-                  ];
-                const vaccinationScheme = standardVaccinationSchemeRaw
-                  ? VaccinationSchemeMapper.fromResource(
-                      standardVaccinationSchemeRaw
-                    )
-                  : undefined;
+            standardVaccinationSchemes &&
+            vaccinationDoses &&
+            medicationsForDiseaseMapped.map((med) => {
+              const organization = OrganizationMapper.fromResource(
+                organizations.entities[med.manufacturerId]
+              );
+              const vaccinationSchemeId =
+                standardVaccinationSchemes.byMedication[med.id].ids[0];
+              const doses =
+                vaccinationDoses.byVaccinationScheme[vaccinationSchemeId];
 
-                return (
-                  <AccordionItem>
-                    <AccordionButton>
-                      <Box flex='1' textAlign='left'>
-                        {medication.tradeName}
+              return (
+                <AccordionItem>
+                  <AccordionButton>
+                    <Box flex='1' textAlign='left'>
+                      {med.tradeName}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4} mr={'-15px'}>
+                    <HStack position={'relative'}>
+                      <Text>Manufacturer:</Text>
+                      <Badge
+                        colorScheme={'blue'}
+                        textAlign={'center'}
+                        position={'absolute'}
+                        right={'0px'}
+                        minW={'100px'}
+                      >
+                        {organization?.name}
+                      </Badge>
+                    </HStack>
+                    <HStack position={'relative'}>
+                      <Text>Number of Doses:</Text>
+                      <Box
+                        width={'100px'}
+                        backgroundColor={'gray.100'}
+                        textAlign={'center'}
+                        position={'absolute'}
+                        right={'0px'}
+                      >
+                        <Text fontSize={'xs'}>{doses.ids.length}</Text>
                       </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4} mr={'-15px'}>
-                      <HStack position={'relative'}>
-                        <Text>Manufacturer:</Text>
-                        <Badge
-                          colorScheme={'blue'}
-                          textAlign={'center'}
-                          position={'absolute'}
-                          right={'0px'}
-                          minW={'100px'}
-                        >
-                          {organization?.name}
-                        </Badge>
-                      </HStack>
-                      <HStack position={'relative'}>
-                        <Text>Number of Doses:</Text>
-                        <Box
-                          width={'100px'}
-                          backgroundColor={'gray.100'}
-                          textAlign={'center'}
-                          position={'absolute'}
-                          right={'0px'}
-                        >
-                          <Text fontSize={'xs'}>
-                            {
-                              // vaccinationScheme?.doses.size
-                            }
-                          </Text>
-                        </Box>
-                      </HStack>
-                    </AccordionPanel>
-                  </AccordionItem>
-                );
-              }
-            )}
+                    </HStack>
+                  </AccordionPanel>
+                </AccordionItem>
+              );
+            })}
         </Accordion>
       </Box>
     </VStack>
@@ -352,79 +478,10 @@ export function VaccineDetailPage() {
   const pathComponents: string[] = location.pathname.split('/');
   const diseaseCode: string = pathComponents[pathComponents.length - 1];
 
-  const { data: targetDisease } = targetDiseaseApi.endpoints.get.useQuery(
-    {},
-    {
-      selectFromResult: (result) => ({
-        ...result,
-        data: result.data
-          ?.map(DiseaseMapper.fromResource)
-          .find((x) => x.code.coding === diseaseCode),
-      }),
-    }
-  );
-
-  const { data: medications } = medicationApi.endpoints.get.useQuery(
-    {},
-    {
-      selectFromResult: (result) => ({
-        ...result,
-        data: result.data
-          ? result.data.ids
-              .map((medicationId) =>
-                MedicationMapper.fromResource(
-                  result.data!.entities[medicationId]
-                )
-              )
-              .filter((medication) =>
-                medication.targetDiseaseIds.includes(diseaseCode)
-              )
-          : undefined,
-      }),
-    }
-  );
-
-  const { data: immunizations } = immunizationApi.endpoints.get.useQuery(
-    medications
-      ? {
-          'vaccine-code': medications
-            .map((medication) => medication.code.coding)
-            .join(','),
-        }
-      : skipToken,
-    {
-      selectFromResult: (result) => ({
-        ...result,
-        data: result.data?.map(ImmunizationMapper.fromResource),
-      }),
-    }
-  );
-
-  const { data: recommendations } =
-    immunizationRecommendationApi.endpoints.get.useQuery(
-      {
-        'target-disease': diseaseCode,
-      },
-      {
-        selectFromResult: (result) => ({
-          ...result,
-          data: result.data?.map(ImmunizationRecommendationMapper.fromResource),
-        }),
-      }
-    );
-
-  const { data: populationRecommendation } =
-    populationRecommendationApi.endpoints.get.useQuery(
-      {},
-      {
-        selectFromResult: (result) => ({
-          ...result,
-          data: result.data
-            ?.map(PopulationRecommendationMapper.fromResource)
-            .find((pr) => pr.diseaseId === diseaseCode),
-        }),
-      }
-    );
+  const { data: targetDiseases } = targetDiseaseApi.endpoints.get.useQuery({});
+  const targetDiseaseMapped = targetDiseases?.byCode[diseaseCode].ids.map(
+    (tdId) => DiseaseMapper.fromResource(targetDiseases.entities[tdId])
+  )[0];
 
   return (
     <Box pb={5}>
@@ -450,19 +507,11 @@ export function VaccineDetailPage() {
             width: '100%',
           }}
         >
-          {targetDisease && medications && immunizations && recommendations && (
-            <VaccineDetailHeader
-              disease={targetDisease}
-              medications={medications}
-              immunizations={immunizations}
-              recommendations={recommendations}
-            />
+          {targetDiseaseMapped && (
+            <VaccineDetailHeader disease={targetDiseaseMapped} />
           )}
-          {targetDisease && medications && (
-            <VaccineDetailBody
-              disease={targetDisease}
-              populationRecommendation={populationRecommendation}
-            />
+          {targetDiseaseMapped && (
+            <VaccineDetailBody disease={targetDiseaseMapped} />
           )}
         </VStack>
       </Flex>

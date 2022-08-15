@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Basic, Bundle } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { VaccinationSchemeMapper } from '../../../models';
-import { storeIdRecursive, NestedCartesian } from './utils';
+import { storeIdRecursive, GetResponse } from './utils';
 
 type TResource = Basic;
 const TMapper = VaccinationSchemeMapper;
@@ -10,16 +10,7 @@ interface GetArgs {
   _id?: string;
   subject?: string;
 }
-interface GetResponseTopLevel {
-  ids: string[];
-
-  byType: Record<string, GetResponseTopLevel>;
-  byIsPreferred: Record<string, GetResponseTopLevel>;
-  byMedication: Record<string, GetResponseTopLevel>;
-}
-type GetResponse = {
-  entities: Record<string, TResource>;
-} & NestedCartesian<GetResponseTopLevel>;
+type GetResponseGroups = 'byType' | 'byIsPreferred' | 'byMedication';
 const resourceName = 'VaccinationScheme' as const;
 const resourcePath = '/Basic' as const;
 
@@ -35,7 +26,7 @@ export const vaccinationSchemeApi = createApi({
   }),
   tagTypes: [resourceName],
   endpoints: (build) => ({
-    get: build.query<GetResponse, GetArgs>({
+    get: build.query<GetResponse<TResource, GetResponseGroups>, GetArgs>({
       query: () => ({
         url: resourcePath,
         params: {
@@ -46,7 +37,7 @@ export const vaccinationSchemeApi = createApi({
       transformResponse: ({ entry }: Bundle) => {
         const resources = entry!.map(({ resource }) => resource! as TResource);
 
-        const response: GetResponse = {
+        const response: GetResponse<TResource, GetResponseGroups> = {
           ids: [],
           entities: {},
 

@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Bundle, Organization } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { OrganizationMapper } from '../../../models';
+import { GetResponse } from './utils';
 
 type TResource = Organization;
 const TMapper = OrganizationMapper;
@@ -9,10 +10,7 @@ interface GetArgs {
   _id?: string;
   name?: string;
 }
-interface GetResponse {
-  ids: string[];
-  entities: Record<string, TResource>;
-}
+type GetResponseGroups = never;
 const resourceName = 'Organization' as const;
 const resourcePath = '/Organization' as const;
 
@@ -28,7 +26,7 @@ export const organizationApi = createApi({
   }),
   tagTypes: [resourceName],
   endpoints: (build) => ({
-    get: build.query<GetResponse, GetArgs>({
+    get: build.query<GetResponse<TResource, GetResponseGroups>, GetArgs>({
       query: (args) => ({
         url: resourcePath,
         params: {
@@ -39,7 +37,7 @@ export const organizationApi = createApi({
       transformResponse: ({ entry }: Bundle) => {
         const resources = entry!.map(({ resource }) => resource! as TResource);
 
-        const response: GetResponse = {
+        const response: GetResponse<TResource, GetResponseGroups> = {
           ids: [],
           entities: {},
         };

@@ -23,12 +23,14 @@ export interface VaccinationDose {
 }
 
 export interface VaccinationDoseSingle extends VaccinationDose {
+  type: 'single';
   numberInScheme: number;
   timeframeStart?: number;
   timeframeEnd?: number;
 }
 
 export interface VaccinationDoseRepeating extends VaccinationDose {
+  type: 'repeating';
   interval: number;
 }
 
@@ -127,12 +129,14 @@ export class VaccinationDoseSingleMapper
   implements VaccinationDoseSingle
 {
   private _vaccinationDoseSingleExtension: FHIRExtension;
+  type: 'single';
 
   constructor(
     resource: FHIRBasic,
     vaccinationDoseSingleExtension: FHIRExtension
   ) {
     super(resource);
+    this.type = 'single';
     this._vaccinationDoseSingleExtension = vaccinationDoseSingleExtension;
   }
 
@@ -183,12 +187,14 @@ export class VaccinationDoseRepeatingMapper
   implements VaccinationDoseRepeating
 {
   private _vaccinationDoseRepeatingExtension: FHIRExtension;
+  type: 'repeating';
 
   constructor(
     resource: FHIRBasic,
     vaccinationDoseRepeatingExtension: FHIRExtension
   ) {
     super(resource);
+    this.type = 'repeating';
     this._vaccinationDoseRepeatingExtension = vaccinationDoseRepeatingExtension;
   }
 
