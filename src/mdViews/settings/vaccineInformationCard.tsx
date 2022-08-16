@@ -315,7 +315,11 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
                         <Td>Single</Td>
                         <Td>{dose.doseQuantity}</Td>
                         <Td>
-                          {monthDiff(dose.timeStart, dose.timeEnd)} months after
+                          TODO: wrong logic!
+                          {dose.timeframeStart !== undefined &&
+                            dose.timeframeEnd !== undefined &&
+                            (dose.timeframeEnd - dose.timeframeStart) / 30}{' '}
+                          months after
                         </Td>
                         <Td>{dose.notes}</Td>
                         <Td isNumeric>

@@ -8,7 +8,7 @@ import Dashboard from './patientViews/dashboard/dashboard';
 import { Overview } from './patientViews/dashboard/overview';
 import { VaccineHistory } from './patientViews/history/vaccineHistory';
 import { ImmunizationWiki } from './patientViews/wiki/immunizationWiki';
-import { VaccineDetailPage } from './patientViews/wiki/vaccineDetailPage';
+import { VaccineDetailPage } from './patientViews/wiki/VaccineDetailPage/VaccineDetailPage';
 import { Profile } from './patientViews/dashboard/profile';
 import NotFound from './patientViews/NotFound';
 import DiseaseInformation from './mdViews/settings/diseaseInformation';

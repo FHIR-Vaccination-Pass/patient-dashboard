@@ -1,13 +1,11 @@
-import { Location } from '../models/Location';
+import { Location } from '../models';
 
 export const MockLocations = new Map<string, Location>([
   [
     'location1',
     {
-      id: 'location1',
       country: 'Germany',
       state: 'Bavaria',
-      administrativeDistrict: 'Munich',
     },
   ],
 ]);

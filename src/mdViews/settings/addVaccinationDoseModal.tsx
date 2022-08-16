@@ -16,10 +16,10 @@ import {
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import {
-  INTERVAL,
+  AgeUnit,
   VaccinationDoseRepeating,
   VaccinationDoseSingle,
-} from '../../core/models/VaccinationDose';
+} from '../../core/models';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -68,7 +68,7 @@ export const AddVaccinationDoseModal = ({
   const [intervalValue, setIntervalValue] = useState<number | undefined>(
     undefined
   );
-  const [intervalCode, setIntervalCode] = useState<INTERVAL>(INTERVAL.M);
+  const [intervalCode, setIntervalCode] = useState<AgeUnit>('mo');
 
   // Single dose
   const [startDate, setStartDate] = useState(new Date());
@@ -167,17 +167,17 @@ export const AddVaccinationDoseModal = ({
               <Box alignSelf={'flex-end'} w={'100px'} h={'40px'}>
                 <Select
                   defaultValue={{
-                    value: INTERVAL.M,
+                    value: 'mo',
                     label: 'M',
                   }}
                   options={[
-                    { value: INTERVAL.D, label: 'D' },
-                    { value: INTERVAL.W, label: 'W' },
-                    { value: INTERVAL.M, label: 'M' },
-                    { value: INTERVAL.Y, label: 'Y' },
+                    { value: 'd', label: 'D' },
+                    { value: 'wk', label: 'W' },
+                    { value: 'mo', label: 'M' },
+                    { value: 'a', label: 'Y' },
                   ]}
                   onChange={(newValue) => {
-                    setIntervalCode(newValue!.value);
+                    newValue && setIntervalCode(newValue.value as AgeUnit);
                   }}
                 />
               </Box>

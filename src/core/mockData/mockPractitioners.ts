@@ -1,41 +1,13 @@
-import { Practitioner } from '../models/Practitioner';
+import { Practitioner } from '../models';
 
 export const MockPractitioners = new Map<string, Practitioner>([
   [
     'practitioner1',
     {
       id: 'practitioner1',
-      identifier: 'practitioneIdentifier',
-      active: true,
       name: {
-        id: 'name1',
         family: 'Haraldson',
         given: ['Kevin'],
-        prefix: ['Dr.'],
-        suffix: [],
-      },
-      phoneNumber: '1111111111111',
-      email: 'mock.practitioner@mock.com',
-      gender: 'male',
-      address: {
-        id: 'address1',
-        city: 'Munich',
-        country: 'Germany',
-        district: 'Maxvorstadt',
-        line: 'Leopoldstrasse 1.',
-        postalCode: '80799',
-        state: 'Bavaria',
-      },
-      qualification: {
-        identifier: 'practitionerQualificationIdentifier',
-        code: {
-          id: 'qualificationCoding1',
-          coding: {
-            code: 'ABC',
-            system: 'https://localhost:3000/url/to/typings',
-          },
-        },
-        issuer: 'qualificationIssuer',
       },
     },
   ],
