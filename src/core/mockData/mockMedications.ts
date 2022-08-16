@@ -61,7 +61,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'biontech-pfizer',
       tradeName: 'Comirnaty',
-      targetDiseaseIds: ['U07.1'],
+      targetDiseaseIds: ['covid-19'],
     },
   ],
   [
@@ -154,8 +154,8 @@ export const MockMedications = new Map<string, Medication>([
       id: 'covid-valneva',
       code: {
         coding: {
-          code: 'covid-valneva',
-          system: 'https://localhost:3000/url/to/typings',
+          code: '2.16.840.1.113883.4.642.3.375',
+          system: 'SNOMEDCTMedicationCodes',
         },
       },
       form: {
@@ -166,7 +166,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'valneva',
       tradeName: 'COVID-19 Vaccine Valneva',
-      targetDiseaseIds: ['U07.1'],
+      targetDiseaseIds: ['covid-19'],
     },
   ],
   [

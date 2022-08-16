@@ -92,8 +92,8 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       },
       vaccineCode: {
         coding: {
-          code: '2.16.840.1.113883.4.642.3.375',
-          system: 'dukoral',
+          code: 'dukoral',
+          system: 'https://localhost:3000/url/to/typings',
         },
       },
       recommendedStartDate: new Date(),
