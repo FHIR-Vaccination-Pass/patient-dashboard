@@ -9,7 +9,7 @@ export const RecentHistoryWidget: FC = ({}) => {
       borderRadius={'15px'}
       flexDir='column'
       justifyContent='space-between'
-      h={'100%'}
+      h={'95%'}
       w={'100%'}
     ></Flex>
   );

@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem } from '@chakra-ui/react';
+import { Text, Grid, GridItem } from '@chakra-ui/react';
 import { PatientInformationWidget } from './StatusComponents/PatientInformationWidget';
 import { RecommendationsWidget } from './StatusComponents/RecommendationsWidget';
 import { ImportantDiseaseWidget } from './StatusComponents/ImportantDiseaseWidget';
@@ -22,15 +22,27 @@ export function PatientStatus() {
         <QuickActions></QuickActions>
       </GridItem>
       <GridItem rowSpan={6} colSpan={6}>
+        <Text color={'gray.400'} ml={'10px'}>
+          General Information
+        </Text>
         <PatientInformationWidget></PatientInformationWidget>
       </GridItem>
       <GridItem rowSpan={6} colSpan={6}>
+        <Text color={'gray.400'} ml={'10px'}>
+          Recommendations
+        </Text>
         <RecommendationsWidget></RecommendationsWidget>
       </GridItem>
-      <GridItem rowSpan={5} colSpan={6}>
+      <GridItem mt={'20px'} rowSpan={5} colSpan={6}>
+        <Text color={'gray.400'} ml={'10px'}>
+          Important Diseases
+        </Text>
         <ImportantDiseaseWidget></ImportantDiseaseWidget>
       </GridItem>
-      <GridItem rowSpan={5} colSpan={6}>
+      <GridItem pt={'20px'} rowSpan={5} colSpan={6}>
+        <Text color={'gray.400'} ml={'10px'}>
+          Recent Immunizations
+        </Text>
         <RecentHistoryWidget></RecentHistoryWidget>
       </GridItem>
     </Grid>

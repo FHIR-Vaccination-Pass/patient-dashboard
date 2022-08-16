@@ -21,7 +21,7 @@ import {
   FaUserInjured,
 } from 'react-icons/fa';
 import { NavItem } from '../../components/dashboard/appShell/navitem';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Patient } from '../../core/models/Patient';
 import { resolvePatientName } from '../../core/services/util/resolveHumanName';
 import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
@@ -49,17 +49,12 @@ const LinkItems: Array<LinkItemProps> = [
 
 export const PatientSidebar = ({ onClose, ...rest }: SidebarProps) => {
   const location = useLocation();
-  const pathComponents: string[] = location.pathname.split('/');
   const mapper = useMapper();
-  let patientId: string;
 
-  //TODO: This is way to hacky, please find a better solution to resolve the patient...
-  if (pathComponents.length === 6) {
-    patientId = pathComponents[pathComponents.length - 2];
-  } else {
-    patientId = pathComponents[pathComponents.length - 1];
-  }
-  const patient: Patient | undefined = mapper.getPatientById(patientId);
+  const params = useParams();
+  const patient: Patient | undefined = mapper.getPatientById(
+    params['patientId'] || ''
+  );
   const [navSize, changeNavSize] = useState('large');
   return (
     <Flex
@@ -71,7 +66,7 @@ export const PatientSidebar = ({ onClose, ...rest }: SidebarProps) => {
       h={'100%'}
       pos='sticky'
       left='5'
-      w={navSize === 'small' ? '75px' : '200px'}
+      w={navSize === 'small' ? '75px' : '250px'}
       {...rest}
     >
       <Flex
