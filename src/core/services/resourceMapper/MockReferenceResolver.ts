@@ -335,4 +335,20 @@ export class MockReferenceResolver implements ResourceMapper {
     console.log(medication);
     return undefined;
   }
+
+  saveDose(dose: VaccinationDose): VaccinationDose | undefined {
+    // Save medication to server
+    console.log('Saving the following dose on the FHIR server:');
+    console.log(dose);
+    return undefined;
+  }
+
+  saveVaccinationScheme(
+    vaccinationScheme: VaccinationScheme
+  ): VaccinationScheme | undefined {
+    // Save medication to server
+    console.log('Saving the following vaccination scheme on the FHIR server:');
+    console.log(vaccinationScheme);
+    return undefined;
+  }
 }

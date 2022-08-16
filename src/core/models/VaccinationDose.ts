@@ -13,5 +13,12 @@ export interface VaccinationDoseSingle extends VaccinationDose {
 }
 
 export interface VaccinationDoseRepeating extends VaccinationDose {
-  interval: Array<number>;
+  interval: { value: { value: number; code: INTERVAL } };
+}
+
+export enum INTERVAL {
+  D = 'D',
+  W = 'W',
+  M = 'M',
+  Y = 'Y',
 }

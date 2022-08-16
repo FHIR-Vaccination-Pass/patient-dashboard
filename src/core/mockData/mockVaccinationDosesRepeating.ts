@@ -1,4 +1,4 @@
-import { VaccinationDoseRepeating } from '../models/VaccinationDose';
+import { INTERVAL, VaccinationDoseRepeating } from '../models/VaccinationDose';
 
 export const MockVaccinationDosesRepeating = new Map<
   string,
@@ -12,7 +12,7 @@ export const MockVaccinationDosesRepeating = new Map<
       isProtected: true,
       notes: 'Notes',
       vaccinationSchemeId: 'vaccinationscheme1',
-      interval: [],
+      interval: { value: { value: 6, code: INTERVAL.M } },
     },
   ],
 ]);

@@ -83,4 +83,10 @@ export interface ResourceMapper {
   saveDiseaseInformation(disease: Disease): Disease | undefined;
 
   saveVaccineInformation(medication: Medication): Medication | undefined;
+
+  saveDose(dose: VaccinationDose): VaccinationDose | undefined;
+
+  saveVaccinationScheme(
+    vaccinationScheme: VaccinationScheme
+  ): VaccinationScheme | undefined;
 }

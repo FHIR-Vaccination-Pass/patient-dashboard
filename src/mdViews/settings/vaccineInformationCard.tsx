@@ -11,17 +11,7 @@ import {
   EditablePreview,
   EditableTextarea,
   Flex,
-  FormControl,
-  FormLabel,
   HStack,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -41,9 +31,10 @@ import {
 import React, { FC, useState } from 'react';
 import { Medication } from '../../core/models/Medication';
 import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
-import { VaccinationScheme } from '../../core/models/VaccinationScheme';
 import Select, { OnChangeValue } from 'react-select';
 import { SmallCloseIcon } from '@chakra-ui/icons';
+import { AddVaccinationDoseModal } from './addVaccinationDoseModal';
+import { AddVaccinationSchemeModal } from './addVaccinationSchemeModal';
 
 interface VaccineInformationCardProps extends BoxProps {
   selectedMedication: Medication;
@@ -70,8 +61,16 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
   selectedMedication,
 }) => {
   const mapper = useMapper();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const initialRef = React.useRef(null);
+  const {
+    isOpen: isSchemeOpen,
+    onOpen: onSchemeOpen,
+    onClose: onSchemeClose,
+  } = useDisclosure();
+  const {
+    isOpen: isDoseOpen,
+    onOpen: onDoseOpen,
+    onClose: onDoseClose,
+  } = useDisclosure();
   const vaccinationSchemes = mapper
     .getAllVaccinationSchemes()
     .filter((scheme) => scheme.medicationId === selectedMedication.id);
@@ -84,22 +83,15 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
   const diseaseOptions: OptionType[] = convertArrayToOptionArray(
     diseases.map((disease) => disease.name)
   );
-  const vaccinationSchemeOptions: OptionType[] = convertArrayToOptionArray(
-    vaccinationSchemes.map((vaccinationScheme) => vaccinationScheme.name)
-  );
 
   const [currentMedication, setCurrentMedication] =
     useState<Medication>(selectedMedication);
-  const [currentScheme, setCurrentScheme] = useState<
-    VaccinationScheme | undefined
-  >(mapper.getVaccinationSchemeByMedicationId(currentMedication.id));
 
   function setNewManufacturer(name: string) {
     const organization = mapper.getOrganizationByName(name);
     if (organization) {
       currentMedication.manufacturerId = organization.id;
     }
-    console.log(vaccinationSchemes);
   }
 
   function updateTargetDiseases(
@@ -116,20 +108,15 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
 
   function saveVaccineInformation() {
     const result = mapper.saveVaccineInformation(currentMedication);
-    console.log(currentMedication);
   }
 
   function monthDiff(d1: Date, d2: Date) {
-    var months;
+    let months;
     months = (d2.getFullYear() - d1.getFullYear()) * 12;
     months -= d1.getMonth();
     months += d2.getMonth();
     return months <= 0 ? 0 : months;
   }
-
-  function addDoseToScheme(scheme: VaccinationScheme) {}
-
-  function addScheme(scheme: VaccinationScheme) {}
   return (
     <Flex flexDirection={'column'} pr={'70px'} mt={'20px'} w={'80%'}>
       <Box borderBottom={'1px'} borderBottomColor={'gray.300'} mb={'15px'}>
@@ -224,13 +211,18 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
           _focus={{
             bg: 'green.500',
           }}
-          onClick={() => addScheme(currentScheme!)}
+          onClick={onSchemeOpen}
         >
           Add Scheme
         </Button>
+        <AddVaccinationSchemeModal
+          isOpen={isSchemeOpen}
+          onClose={onSchemeClose}
+          medicationId={currentMedication.id}
+        />
       </Flex>
 
-      <Accordion defaultIndex={[0]} allowMultiple mb={'30px'}>
+      <Accordion defaultIndex={[]} allowMultiple mb={'30px'}>
         {vaccinationSchemes.map((scheme) => (
           <AccordionItem>
             <h2>
@@ -251,7 +243,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
                   mb={'15px'}
                   colorScheme='green'
                   size={'lg'}
-                  isChecked={scheme.isPreferred}
+                  defaultChecked={scheme.isPreferred}
                   onChange={() => (scheme.isPreferred = !scheme.isPreferred)}
                 />
               </Flex>
@@ -327,7 +319,20 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
                         </Td>
                         <Td>{dose.notes}</Td>
                         <Td isNumeric>
-                          <SmallCloseIcon />
+                          <SmallCloseIcon
+                            _hover={{ cursor: 'pointer' }}
+                            onClick={() => {
+                              dosesMap.set(
+                                scheme.id,
+                                dosesMap
+                                  .get(scheme.id)!
+                                  .filter(
+                                    (possibleDose) =>
+                                      possibleDose.id !== dose.id
+                                  )
+                              );
+                            }}
+                          />
                         </Td>
                       </Tr>
                     ))}
@@ -344,50 +349,15 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
                   bg: 'green.500',
                 }}
                 mt={'10px'}
-                onClick={onOpen}
+                onClick={onDoseOpen}
               >
                 Add Dose
               </Button>
-              <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader>Create Vaccination Dose</ModalHeader>
-                  <ModalCloseButton />
-                  <ModalBody pb={6}>
-                    <FormControl>
-                      <FormLabel>Dose Number</FormLabel>
-                      <Input ref={initialRef} placeholder='' />
-                    </FormControl>
-
-                    <FormControl mt={4}>
-                      <FormLabel>Type</FormLabel>
-                      <Input placeholder='' />
-                    </FormControl>
-
-                    <FormControl mt={4}>
-                      <FormLabel>Dose Quantity</FormLabel>
-                      <Input placeholder='' />
-                    </FormControl>
-
-                    <FormControl mt={4}>
-                      <FormLabel>Time Frame</FormLabel>
-                      <Input placeholder='' />
-                    </FormControl>
-
-                    <FormControl mt={4}>
-                      <FormLabel>Notes</FormLabel>
-                      <Input placeholder='' />
-                    </FormControl>
-                  </ModalBody>
-
-                  <ModalFooter>
-                    <Button colorScheme='blue' mr={3}>
-                      Save
-                    </Button>
-                    <Button onClick={onClose}>Cancel</Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
+              <AddVaccinationDoseModal
+                isOpen={isDoseOpen}
+                onClose={onDoseClose}
+                vaccinationSchemeId={scheme.id}
+              />
             </AccordionPanel>
           </AccordionItem>
         ))}
@@ -425,8 +395,8 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
         _focus={{
           bg: 'green.500',
         }}
-        size={'md'}
         w={'150px'}
+        h={'40px'}
         mt={'30px'}
         onClick={() => saveVaccineInformation()}
       >

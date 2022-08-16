@@ -7,3 +7,8 @@ export interface VaccinationScheme {
   ageEnd: number;
   medicationId: string;
 }
+
+export enum SCHEMETYPE {
+  NORMAL = 'normal',
+  FAST = 'fast',
+}
