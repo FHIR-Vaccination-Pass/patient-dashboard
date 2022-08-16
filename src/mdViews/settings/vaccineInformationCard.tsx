@@ -35,26 +35,13 @@ import Select, { OnChangeValue } from 'react-select';
 import { SmallCloseIcon } from '@chakra-ui/icons';
 import { AddVaccinationDoseModal } from './addVaccinationDoseModal';
 import { AddVaccinationSchemeModal } from './addVaccinationSchemeModal';
+import {
+  convertArrayToOptionArray,
+  OptionType,
+} from '../../core/services/util/convertArrayToOptionArray';
 
 interface VaccineInformationCardProps extends BoxProps {
   selectedMedication: Medication;
-}
-
-type OptionType = {
-  value: string;
-  label: string;
-};
-
-// Convert to option array for Select component
-function convertArrayToOptionArray(list: string[]): OptionType[] {
-  const result: OptionType[] = [];
-  list.forEach((listElement) => {
-    result.push({
-      value: listElement.toLowerCase(),
-      label: listElement,
-    });
-  });
-  return result;
 }
 
 export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
