@@ -39,7 +39,6 @@ export const ImportantDiseaseWidget: FC = ({}) => {
   const diseasesMapped = diseases.ids.map((diseaseId) =>
     DiseaseMapper.fromResource(diseases.entities[diseaseId])
   );
-  console.log(diseasesMapped);
 
   let map: Map<string, AggregatedImmunizationStatus> = new Map();
 
