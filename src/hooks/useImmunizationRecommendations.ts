@@ -1,26 +1,35 @@
 import { immunizationRecommendationApi } from '../core/services/redux/fhir';
 import { ImmunizationRecommendationMapper } from '../core/models';
+import { GetResponse } from '../core/services/redux/fhir/utils';
+import {
+  GetArgs,
+  GetResponseGroups,
+  TResource,
+} from '../core/services/redux/fhir/immunizationRecommendationApi';
+import { skipToken } from '@reduxjs/toolkit/query';
 
-type UseQueryType = typeof immunizationRecommendationApi.endpoints.get.useQuery;
-export type UseImmunizationRecommendationsParameters = Parameters<UseQueryType>;
-export type UseImmunizationRecommendationsReturnType =
-  ReturnType<UseQueryType> & {
-    idToImmunizationRecommendation: ReturnType<
-      typeof ImmunizationRecommendationMapper.curry
-    >;
-  };
+export interface UseImmunizationRecommendationsReturnType {
+  data?: GetResponse<TResource, GetResponseGroups>;
+  immunizationRecommendations?: ImmunizationRecommendationMapper[];
+  idToImmunizationRecommendation: (
+    id: string | undefined
+  ) => ImmunizationRecommendationMapper | undefined;
+}
 
 export const useImmunizationRecommendations = (
-  arg: UseImmunizationRecommendationsParameters[0],
-  options?: UseImmunizationRecommendationsParameters[1]
+  arg: GetArgs | typeof skipToken
 ): UseImmunizationRecommendationsReturnType => {
-  const queryResult = immunizationRecommendationApi.endpoints.get.useQuery(
-    arg,
-    options
-  );
+  const { data } = immunizationRecommendationApi.endpoints.get.useQuery(arg);
   const idToImmunizationRecommendation = ImmunizationRecommendationMapper.curry(
-    (id) => queryResult.data?.entities[id]
+    (id) => data?.entities[id]
+  );
+  const immunizationRecommendations = data?.ids.map(
+    (id: string) => idToImmunizationRecommendation(id)!
   );
 
-  return { ...queryResult, idToImmunizationRecommendation };
+  return {
+    data,
+    immunizationRecommendations,
+    idToImmunizationRecommendation,
+  };
 };

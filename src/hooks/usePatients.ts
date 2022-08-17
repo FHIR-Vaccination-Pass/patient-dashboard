@@ -1,20 +1,29 @@
 import { patientApi } from '../core/services/redux/fhir';
 import { PatientMapper } from '../core/models';
+import { GetResponse } from '../core/services/redux/fhir/utils';
+import {
+  GetArgs,
+  GetResponseGroups,
+  TResource,
+} from '../core/services/redux/fhir/patientApi';
+import { skipToken } from '@reduxjs/toolkit/query';
 
-type UseQueryType = typeof patientApi.endpoints.get.useQuery;
-export type UsePatientsParameters = Parameters<UseQueryType>;
-export type UsePatientsReturnType = ReturnType<UseQueryType> & {
-  idToPatient: ReturnType<typeof PatientMapper.curry>;
-};
+export interface UsePatientsReturnType {
+  data?: GetResponse<TResource, GetResponseGroups>;
+  patients?: PatientMapper[];
+  idToPatient: (id: string | undefined) => PatientMapper | undefined;
+}
 
 export const usePatients = (
-  arg: UsePatientsParameters[0],
-  options?: UsePatientsParameters[1]
+  arg: GetArgs | typeof skipToken
 ): UsePatientsReturnType => {
-  const queryResult = patientApi.endpoints.get.useQuery(arg, options);
-  const idToPatient = PatientMapper.curry(
-    (id) => queryResult.data?.entities[id]
-  );
+  const { data } = patientApi.endpoints.get.useQuery(arg);
+  const idToPatient = PatientMapper.curry((id) => data?.entities[id]);
+  const patients = data?.ids.map((id: string) => idToPatient(id)!);
 
-  return { ...queryResult, idToPatient };
+  return {
+    data,
+    patients,
+    idToPatient,
+  };
 };

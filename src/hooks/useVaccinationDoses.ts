@@ -1,20 +1,42 @@
 import { vaccinationDoseApi } from '../core/services/redux/fhir';
 import { VaccinationDoseMapper } from '../core/models';
+import { GetResponse } from '../core/services/redux/fhir/utils';
+import {
+  GetArgs,
+  GetResponseGroups,
+  TResource,
+} from '../core/services/redux/fhir/vaccinationDoseApi';
+import { skipToken } from '@reduxjs/toolkit/query';
+import {
+  VaccinationDoseRepeatingMapper,
+  VaccinationDoseSingleMapper,
+} from '../core/models/VaccinationDose';
 
-type UseQueryType = typeof vaccinationDoseApi.endpoints.get.useQuery;
-export type UseVaccinationDosesParameters = Parameters<UseQueryType>;
-export type UseVaccinationDosesReturnType = ReturnType<UseQueryType> & {
-  idToVaccinationDose: ReturnType<typeof VaccinationDoseMapper.curry>;
-};
+export interface UseVaccinationDosesReturnType {
+  data?: GetResponse<TResource, GetResponseGroups>;
+  vaccinationDoses?: (
+    | VaccinationDoseSingleMapper
+    | VaccinationDoseRepeatingMapper
+  )[];
+  idToVaccinationDose: (
+    id: string | undefined
+  ) => VaccinationDoseSingleMapper | VaccinationDoseRepeatingMapper | undefined;
+}
 
 export const useVaccinationDoses = (
-  arg: UseVaccinationDosesParameters[0],
-  options?: UseVaccinationDosesParameters[1]
+  arg: GetArgs | typeof skipToken
 ): UseVaccinationDosesReturnType => {
-  const queryResult = vaccinationDoseApi.endpoints.get.useQuery(arg, options);
+  const { data } = vaccinationDoseApi.endpoints.get.useQuery(arg);
   const idToVaccinationDose = VaccinationDoseMapper.curry(
-    (id) => queryResult.data?.entities[id]
+    (id) => data?.entities[id]
+  );
+  const vaccinationDoses = data?.ids.map(
+    (id: string) => idToVaccinationDose(id)!
   );
 
-  return { ...queryResult, idToVaccinationDose };
+  return {
+    data,
+    vaccinationDoses,
+    idToVaccinationDose,
+  };
 };

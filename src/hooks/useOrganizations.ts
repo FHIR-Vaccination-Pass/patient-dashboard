@@ -1,20 +1,29 @@
 import { organizationApi } from '../core/services/redux/fhir';
 import { OrganizationMapper } from '../core/models';
+import { GetResponse } from '../core/services/redux/fhir/utils';
+import {
+  GetArgs,
+  GetResponseGroups,
+  TResource,
+} from '../core/services/redux/fhir/organizationApi';
+import { skipToken } from '@reduxjs/toolkit/query';
 
-type UseQueryType = typeof organizationApi.endpoints.get.useQuery;
-export type UseOrganizationsParameters = Parameters<UseQueryType>;
-export type UseOrganizationsReturnType = ReturnType<UseQueryType> & {
-  idToOrganization: ReturnType<typeof OrganizationMapper.curry>;
-};
+export interface UseOrganizationsReturnType {
+  data?: GetResponse<TResource, GetResponseGroups>;
+  organizations?: OrganizationMapper[];
+  idToOrganization: (id: string | undefined) => OrganizationMapper | undefined;
+}
 
 export const useOrganizations = (
-  arg: UseOrganizationsParameters[0],
-  options?: UseOrganizationsParameters[1]
+  arg: GetArgs | typeof skipToken
 ): UseOrganizationsReturnType => {
-  const queryResult = organizationApi.endpoints.get.useQuery(arg, options);
-  const idToOrganization = OrganizationMapper.curry(
-    (id) => queryResult.data?.entities[id]
-  );
+  const { data } = organizationApi.endpoints.get.useQuery(arg);
+  const idToOrganization = OrganizationMapper.curry((id) => data?.entities[id]);
+  const organizations = data?.ids.map((id: string) => idToOrganization(id)!);
 
-  return { ...queryResult, idToOrganization };
+  return {
+    data,
+    organizations,
+    idToOrganization,
+  };
 };

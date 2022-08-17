@@ -1,20 +1,29 @@
 import { targetDiseaseApi } from '../core/services/redux/fhir';
 import { DiseaseMapper } from '../core/models';
+import { GetResponse } from '../core/services/redux/fhir/utils';
+import {
+  GetArgs,
+  GetResponseGroups,
+  TResource,
+} from '../core/services/redux/fhir/targetDiseaseApi';
+import { skipToken } from '@reduxjs/toolkit/query';
 
-type UseQueryType = typeof targetDiseaseApi.endpoints.get.useQuery;
-export type UseTargetDiseasesParameters = Parameters<UseQueryType>;
-export type UseTargetDiseasesReturnType = ReturnType<UseQueryType> & {
-  idToTargetDisease: ReturnType<typeof DiseaseMapper.curry>;
-};
+export interface UseTargetDiseasesReturnType {
+  data?: GetResponse<TResource, GetResponseGroups>;
+  targetDiseases?: DiseaseMapper[];
+  idToTargetDisease: (id: string | undefined) => DiseaseMapper | undefined;
+}
 
 export const useTargetDiseases = (
-  arg: UseTargetDiseasesParameters[0],
-  options?: UseTargetDiseasesParameters[1]
+  arg: GetArgs | typeof skipToken
 ): UseTargetDiseasesReturnType => {
-  const queryResult = targetDiseaseApi.endpoints.get.useQuery(arg, options);
-  const idToTargetDisease = DiseaseMapper.curry(
-    (id) => queryResult.data?.entities[id]
-  );
+  const { data } = targetDiseaseApi.endpoints.get.useQuery(arg);
+  const idToTargetDisease = DiseaseMapper.curry((id) => data?.entities[id]);
+  const targetDiseases = data?.ids.map((id: string) => idToTargetDisease(id)!);
 
-  return { ...queryResult, idToTargetDisease };
+  return {
+    data,
+    targetDiseases,
+    idToTargetDisease,
+  };
 };

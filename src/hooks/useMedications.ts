@@ -1,20 +1,29 @@
 import { medicationApi } from '../core/services/redux/fhir';
 import { MedicationMapper } from '../core/models';
+import { GetResponse } from '../core/services/redux/fhir/utils';
+import {
+  GetArgs,
+  GetResponseGroups,
+  TResource,
+} from '../core/services/redux/fhir/medicationApi';
+import { skipToken } from '@reduxjs/toolkit/query';
 
-type UseQueryType = typeof medicationApi.endpoints.get.useQuery;
-export type UseMedicationsParameters = Parameters<UseQueryType>;
-export type UseMedicationsReturnType = ReturnType<UseQueryType> & {
-  idToMedication: ReturnType<typeof MedicationMapper.curry>;
-};
+export interface UseMedicationsReturnType {
+  data?: GetResponse<TResource, GetResponseGroups>;
+  medications?: MedicationMapper[];
+  idToMedication: (id: string | undefined) => MedicationMapper | undefined;
+}
 
 export const useMedications = (
-  arg: UseMedicationsParameters[0],
-  options?: UseMedicationsParameters[1]
+  arg: GetArgs | typeof skipToken
 ): UseMedicationsReturnType => {
-  const queryResult = medicationApi.endpoints.get.useQuery(arg, options);
-  const idToMedication = MedicationMapper.curry(
-    (id) => queryResult.data?.entities[id]
-  );
+  const { data } = medicationApi.endpoints.get.useQuery(arg);
+  const idToMedication = MedicationMapper.curry((id) => data?.entities[id]);
+  const medications = data?.ids.map((id: string) => idToMedication(id)!);
 
-  return { ...queryResult, idToMedication };
+  return {
+    data,
+    medications,
+    idToMedication,
+  };
 };

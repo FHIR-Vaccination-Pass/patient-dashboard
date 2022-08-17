@@ -4,15 +4,15 @@ import { settings } from '../../../../settings';
 import { ImmunizationRecommendationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
 
-type TResource = ImmunizationRecommendation;
-const TMapper = ImmunizationRecommendationMapper;
-interface GetArgs {
+export type TResource = ImmunizationRecommendation;
+export const TMapper = ImmunizationRecommendationMapper;
+export interface GetArgs {
   _id?: string;
   patient?: string;
   'vaccine-type'?: string;
   'target-disease'?: string;
 }
-type GetResponseGroups =
+export type GetResponseGroups =
   | 'byForecastStatus'
   | 'byVaccineCode'
   | 'byIsDeactivated'

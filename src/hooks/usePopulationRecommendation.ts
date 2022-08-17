@@ -1,26 +1,35 @@
 import { populationRecommendationApi } from '../core/services/redux/fhir';
 import { PopulationRecommendationMapper } from '../core/models';
+import { GetResponse } from '../core/services/redux/fhir/utils';
+import {
+  GetArgs,
+  GetResponseGroups,
+  TResource,
+} from '../core/services/redux/fhir/populationRecommendationApi';
+import { skipToken } from '@reduxjs/toolkit/query';
 
-type UseQueryType = typeof populationRecommendationApi.endpoints.get.useQuery;
-export type UsePopulationRecommendationsParameters = Parameters<UseQueryType>;
-export type UsePopulationRecommendationsReturnType =
-  ReturnType<UseQueryType> & {
-    idToPopulationRecommendation: ReturnType<
-      typeof PopulationRecommendationMapper.curry
-    >;
-  };
+export interface UsePopulationRecommendationsReturnType {
+  data?: GetResponse<TResource, GetResponseGroups>;
+  populationRecommendations?: PopulationRecommendationMapper[];
+  idToPopulationRecommendation: (
+    id: string | undefined
+  ) => PopulationRecommendationMapper | undefined;
+}
 
 export const usePopulationRecommendations = (
-  arg: UsePopulationRecommendationsParameters[0],
-  options?: UsePopulationRecommendationsParameters[1]
+  arg: GetArgs | typeof skipToken
 ): UsePopulationRecommendationsReturnType => {
-  const queryResult = populationRecommendationApi.endpoints.get.useQuery(
-    arg,
-    options
-  );
+  const { data } = populationRecommendationApi.endpoints.get.useQuery(arg);
   const idToPopulationRecommendation = PopulationRecommendationMapper.curry(
-    (id) => queryResult.data?.entities[id]
+    (id) => data?.entities[id]
+  );
+  const populationRecommendations = data?.ids.map(
+    (id: string) => idToPopulationRecommendation(id)!
   );
 
-  return { ...queryResult, idToPopulationRecommendation };
+  return {
+    data,
+    populationRecommendations,
+    idToPopulationRecommendation,
+  };
 };

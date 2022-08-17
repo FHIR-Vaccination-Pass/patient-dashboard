@@ -1,20 +1,29 @@
 import { vacationPlanApi } from '../core/services/redux/fhir';
 import { VacationPlanMapper } from '../core/models';
+import { GetResponse } from '../core/services/redux/fhir/utils';
+import {
+  GetArgs,
+  GetResponseGroups,
+  TResource,
+} from '../core/services/redux/fhir/vacationPlanApi';
+import { skipToken } from '@reduxjs/toolkit/query';
 
-type UseQueryType = typeof vacationPlanApi.endpoints.get.useQuery;
-export type UseVacationPlansParameters = Parameters<UseQueryType>;
-export type UseVacationPlansReturnType = ReturnType<UseQueryType> & {
-  idToVacationPlan: ReturnType<typeof VacationPlanMapper.curry>;
-};
+export interface UseVacationPlansReturnType {
+  data?: GetResponse<TResource, GetResponseGroups>;
+  vacationPlans?: VacationPlanMapper[];
+  idToVacationPlan: (id: string | undefined) => VacationPlanMapper | undefined;
+}
 
 export const useVacationPlans = (
-  arg: UseVacationPlansParameters[0],
-  options?: UseVacationPlansParameters[1]
+  arg: GetArgs | typeof skipToken
 ): UseVacationPlansReturnType => {
-  const queryResult = vacationPlanApi.endpoints.get.useQuery(arg, options);
-  const idToVacationPlan = VacationPlanMapper.curry(
-    (id) => queryResult.data?.entities[id]
-  );
+  const { data } = vacationPlanApi.endpoints.get.useQuery(arg);
+  const idToVacationPlan = VacationPlanMapper.curry((id) => data?.entities[id]);
+  const vacationPlans = data?.ids.map((id: string) => idToVacationPlan(id)!);
 
-  return { ...queryResult, idToVacationPlan };
+  return {
+    data,
+    vacationPlans,
+    idToVacationPlan,
+  };
 };

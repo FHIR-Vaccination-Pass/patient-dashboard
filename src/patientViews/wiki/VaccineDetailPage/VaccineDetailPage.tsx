@@ -26,7 +26,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 
 import WorldMap from '../../../assets/worldMaps/WorldMap.svg';
 import { calcAggregateImmunizationStatus } from '../../../components/dashboard/immunizationStatus/immunizationStatusCard';
-import { Disease, Medication } from '../../../core/models';
+import { Disease } from '../../../core/models';
 
 import { ImmunizationCard, RecommendationCard } from './index';
 import {
@@ -52,7 +52,7 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
       ? {
           'vaccine-code': medicationsForDisease.ids
             .map(idToMedication)
-            .map((m: Medication) => m.code.coding.code)
+            .map((m) => m!.code.coding.code)
             .join(','),
         }
       : skipToken
@@ -63,7 +63,7 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
         ? {
             'vaccine-type': medicationsForDisease.ids
               .map(idToMedication)
-              .map((m: Medication) => m.code.coding.code)
+              .map((m) => m!.code.coding.code)
               .join(','),
           }
         : skipToken
