@@ -32,16 +32,22 @@ export const NavItem = ({
       onClick={onClose}
       align='center'
       w={navSize === 'small' ? 'unset' : '100%'}
+      h={'55px'}
     >
       <Menu placement='right'>
-        <Link as={ReactLink} to={link} w={'100%'} textDecor='none !important'>
+        <Link
+          as={ReactLink}
+          to={link}
+          h={'100%'}
+          w={'100%'}
+          textDecor='none !important'
+        >
           <Flex
-            borderRadius={'15px'}
             p={3}
             pt={1}
             pb={1}
-            mt={2}
             mb={2}
+            h={'100%'}
             _hover={{
               textDecor: 'none',
               backgroundColor: 'brand.10',

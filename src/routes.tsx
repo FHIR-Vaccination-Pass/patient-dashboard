@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Route, Navigate, Routes } from 'react-router-dom';
+import { FC, useEffect } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { useKeycloak } from '@react-keycloak/web';
-import { FC, useEffect } from 'react';
 import { LandingPage } from './patientViews/landingpage';
 import Dashboard from './patientViews/dashboard/dashboard';
 import { Overview } from './patientViews/dashboard/overview';
@@ -12,10 +12,14 @@ import { VaccineDetailPage } from './patientViews/wiki/VaccineDetailPage/Vaccine
 import { Profile } from './patientViews/dashboard/profile';
 import NotFound from './patientViews/NotFound';
 import DiseaseInformation from './mdViews/settings/diseaseInformation';
-import { Patient } from './mdViews/patient/patient';
+import { PatientOverview } from './mdViews/patientOverview/patientOverview';
 import { MDOverview } from './mdViews/dashboard/overview';
 import MDDashboard from './mdViews/dashboard/dashboard';
 import VaccineInformation from './mdViews/settings/vaccineInformation';
+import { PatientStatus } from './mdViews/patientOverview/patientStatus';
+import { PatientHistory } from './mdViews/patientOverview/patientHistory';
+import { PatientDiseaseRecord } from './mdViews/patientOverview/patientDiseaseRecord';
+import { PatientVacationPlans } from './mdViews/patientOverview/patientVacationPlans';
 
 const RequirePatientAuth: FC = ({ children }) => {
   const { initialized, keycloak } = useKeycloak();
@@ -93,8 +97,11 @@ const AppRoutes: FC = () => (
       <Route path='' element={<MDOverview />} />
       <Route path='diseases' element={<DiseaseInformation />} />
       <Route path='vaccines' element={<VaccineInformation />} />
-      <Route path='patient/*' element={<Patient />}>
-        <Route path='history' element={<VaccineHistory />} />
+      <Route path='patient/:patientId' element={<PatientOverview />}>
+        <Route path='' element={<PatientStatus />} />
+        <Route path='history' element={<PatientHistory />} />
+        <Route path='record' element={<PatientDiseaseRecord />} />
+        <Route path='vacations' element={<PatientVacationPlans />} />
       </Route>
     </Route>
     <Route path='/404' element={<NotFound />} />
