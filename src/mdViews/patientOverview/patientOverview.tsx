@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { PatientSidebar } from './patientSidebar';
 import { Outlet } from 'react-router-dom';
 
@@ -10,7 +10,9 @@ export function PatientOverview() {
           return;
         }}
       ></PatientSidebar>
-      <Outlet></Outlet>
+      <Box ml={'200px'} w={'full'}>
+        <Outlet></Outlet>
+      </Box>
     </Flex>
   );
 }
