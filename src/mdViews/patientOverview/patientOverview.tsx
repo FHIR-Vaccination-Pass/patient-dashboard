@@ -10,7 +10,7 @@ export function PatientOverview() {
           return;
         }}
       ></PatientSidebar>
-      <Box ml={'200px'} w={'full'}>
+      <Box ml={'250px'} w={'full'}>
         <Outlet></Outlet>
       </Box>
     </Flex>
