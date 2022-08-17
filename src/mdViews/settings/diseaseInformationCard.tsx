@@ -81,7 +81,7 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
             Minimum Age
           </Text>
           <Editable
-            defaultValue={populationRecommendation?.ageStart.toString() ?? ''}
+            defaultValue={populationRecommendation?.ageStart?.toString() ?? ''}
             p={'5px 10px'}
             border={'1px'}
             borderColor={'gray.200'}
@@ -106,7 +106,7 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
             Maximum Age
           </Text>
           <Editable
-            defaultValue={populationRecommendation?.ageEnd.toString() ?? ''}
+            defaultValue={populationRecommendation?.ageEnd?.toString() ?? ''}
             p={'5px 10px'}
             border={'1px'}
             borderColor={'gray.200'}

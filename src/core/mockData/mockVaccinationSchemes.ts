@@ -1,4 +1,4 @@
-import { VaccinationScheme } from '../models/VaccinationScheme';
+import { VaccinationScheme } from '../models';
 
 export const MockVaccinationSchemes = new Map<string, VaccinationScheme>([
   [

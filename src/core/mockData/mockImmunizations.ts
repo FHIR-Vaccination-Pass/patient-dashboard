@@ -1,4 +1,4 @@
-import { Immunization } from '../models/Immunization';
+import { Immunization } from '../models';
 
 export const MockImmunizations = new Map<string, Immunization>([
   [
@@ -7,15 +7,12 @@ export const MockImmunizations = new Map<string, Immunization>([
       id: 'tetanol-pur1',
       status: 'completed',
       vaccineCode: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'tetanol-pur',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       occurrenceTime: new Date(new Date().setFullYear(1998, 3, 1)),
-      occurrence: '2 months after birth',
-      primarySource: true,
       lotNumber: 'ABCDEF',
       patientId: 'patient1',
       performerId: 'practitioner1',
@@ -28,15 +25,12 @@ export const MockImmunizations = new Map<string, Immunization>([
       id: 'tetanol-pur2',
       status: 'completed',
       vaccineCode: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'tetanol-pur',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       occurrenceTime: new Date(new Date().setFullYear(1998, 4, 1)),
-      occurrence: '2 months after birth',
-      primarySource: true,
       lotNumber: 'ABCDEF',
       patientId: 'patient1',
       performerId: 'practitioner1',
@@ -49,15 +43,12 @@ export const MockImmunizations = new Map<string, Immunization>([
       id: 'tetanol-pur3',
       status: 'completed',
       vaccineCode: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'tetanol-pur',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       occurrenceTime: new Date(new Date().setFullYear(1998, 5, 1)),
-      occurrence: '2 months after birth',
-      primarySource: true,
       lotNumber: 'ABCDEF',
       patientId: 'patient1',
       performerId: 'practitioner1',
@@ -70,15 +61,12 @@ export const MockImmunizations = new Map<string, Immunization>([
       id: 'dukoral1',
       status: 'completed',
       vaccineCode: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'dukoral',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       occurrenceTime: new Date(),
-      occurrence: '',
-      primarySource: true,
       lotNumber: 'ABCDEF',
       patientId: 'patient1',
       performerId: 'practitioner1',

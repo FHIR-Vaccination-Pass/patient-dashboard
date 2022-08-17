@@ -9,70 +9,77 @@ import {
 } from '@chakra-ui/react';
 import { ChevronRightIcon, InfoIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
-import React from 'react';
-import { Disease } from '../../core/models/Disease';
-import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
-import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
+import React, { FC } from 'react';
+import {
+  Disease,
+  DiseaseMapper,
+  ImmunizationRecommendationMapper,
+} from '../../core/models';
 import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
+import {
+  immunizationRecommendationApi,
+  targetDiseaseApi,
+} from '../../core/services/redux/fhir';
 
-class WikiInformationCard {
-  private _disease: Disease;
-  private _recommendations: ImmunizationRecommendation[];
-
-  constructor(disease: Disease) {
-    this._disease = disease;
-    this._recommendations = [];
-  }
-
-  get disease(): Disease {
-    return this._disease;
-  }
-
-  set disease(value: Disease) {
-    this._disease = value;
-  }
-
-  get recommendations(): ImmunizationRecommendation[] {
-    return this._recommendations;
-  }
-
-  set recommendations(value: ImmunizationRecommendation[]) {
-    this._recommendations = value;
-  }
+export interface WikiInformationCardProps {
+  disease: Disease;
 }
 
+export const WikiInformationCard: FC<WikiInformationCardProps> = ({
+  disease,
+}) => {
+  const { data: immunizationRecommendations } =
+    immunizationRecommendationApi.endpoints.get.useQuery({
+      'target-disease': disease.code.coding.code,
+    });
+  if (immunizationRecommendations === undefined) {
+    return <></>;
+  }
+
+  const immunizationRecommendationsMapped = immunizationRecommendations.ids.map(
+    (irId) =>
+      ImmunizationRecommendationMapper.fromResource(
+        immunizationRecommendations.entities[irId]
+      )
+  );
+  const aggregateImmunizationStatus = calcAggregateImmunizationStatus(
+    immunizationRecommendationsMapped
+  );
+
+  return (
+    <div>
+      <Link to={`/patient/dashboard/wiki/${disease.code.coding.code}`}>
+        <Flex justifyContent={'space-between'} alignItems={'center'} pt={4}>
+          <Text fontSize={'xl'} color={aggregateImmunizationStatus.iconColor}>
+            {disease.name}
+          </Text>
+          <Flex justifyContent={'space-between'} alignItems={'center'}>
+            {immunizationRecommendationsMapped.length > 0 && (
+              <Icon
+                mt={'auto'}
+                mb={'auto'}
+                ml='3'
+                as={aggregateImmunizationStatus.icon}
+                color={aggregateImmunizationStatus.iconColor}
+                w={6}
+                h={6}
+              />
+            )}
+            <ChevronRightIcon ml={5} boxSize={8}></ChevronRightIcon>
+          </Flex>
+        </Flex>
+      </Link>
+      <Divider orientation='horizontal' mt={'10px'} />
+    </div>
+  );
+};
+
 export function ImmunizationWiki() {
-  const mapper = useMapper();
-  const diseases: Disease[] = mapper.getAllDiseases();
-  const recommendations: ImmunizationRecommendation[] =
-    mapper.getAllRecommendations();
+  const { data: targetDiseases } = targetDiseaseApi.endpoints.get.useQuery({});
+  const targetDiseasesMapped = targetDiseases?.ids.map((tdId) =>
+    DiseaseMapper.fromResource(targetDiseases.entities[tdId])
+  );
   const [showInfo, setShowInfo] = useBoolean();
-
-  const wikiInformationCards: Map<string, WikiInformationCard> = new Map<
-    string,
-    WikiInformationCard
-  >();
-
-  diseases.forEach((disease: Disease) => {
-    wikiInformationCards.set(disease.id, new WikiInformationCard(disease));
-  });
-
-  recommendations.forEach((recommendation: ImmunizationRecommendation) => {
-    const diseaseIds: string[] | undefined = mapper.getMedicationByVaccineCode(
-      recommendation.vaccineCode
-    )?.targetDiseaseIds;
-
-    if (diseaseIds !== undefined) {
-      diseaseIds.forEach((diseaseId: string) => {
-        let card: WikiInformationCard | undefined =
-          wikiInformationCards.get(diseaseId);
-        if (card !== undefined) {
-          card.recommendations.push(recommendation);
-          wikiInformationCards.set(diseaseId, card);
-        }
-      });
-    }
-  });
 
   return (
     <Box pb={5}>
@@ -103,49 +110,8 @@ export function ImmunizationWiki() {
         pl={5}
         pr={5}
       >
-        {Array.from(wikiInformationCards.values()).map((card) => (
-          <div>
-            <Link
-              to={`/patient/dashboard/wiki/${card.disease.code.coding.code}`}
-            >
-              <Flex
-                justifyContent={'space-between'}
-                alignItems={'center'}
-                pt={4}
-              >
-                <Text
-                  fontSize={'xl'}
-                  color={
-                    calcAggregateImmunizationStatus(card.recommendations)
-                      .iconColor
-                  }
-                >
-                  {card.disease.name}
-                </Text>
-                <Flex justifyContent={'space-between'} alignItems={'center'}>
-                  {card.recommendations.length > 0 && (
-                    <Icon
-                      mt={'auto'}
-                      mb={'auto'}
-                      ml='3'
-                      as={
-                        calcAggregateImmunizationStatus(card.recommendations)
-                          .icon
-                      }
-                      color={
-                        calcAggregateImmunizationStatus(card.recommendations)
-                          .iconColor
-                      }
-                      w={6}
-                      h={6}
-                    />
-                  )}
-                  <ChevronRightIcon ml={5} boxSize={8}></ChevronRightIcon>
-                </Flex>
-              </Flex>
-            </Link>
-            <Divider orientation='horizontal' mt={'10px'} />
-          </div>
+        {targetDiseasesMapped?.map((targetDisease) => (
+          <WikiInformationCard disease={targetDisease} />
         ))}
       </Box>
     </Box>

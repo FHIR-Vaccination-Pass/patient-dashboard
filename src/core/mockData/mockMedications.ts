@@ -6,20 +6,17 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'medication1',
       code: {
-        id: 'vaccineCoding1',
         coding: {
           code: 'ABC',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: 'substance1',
       manufacturerId: 'organization1',
       tradeName: 'Vaccine1',
       targetDiseaseIds: ['disease1'],
@@ -30,20 +27,17 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'dukoral',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'dukoral',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: 'vibrio_cholerae_O1',
       manufacturerId: 'valneva',
       tradeName: 'Dukoral',
       targetDiseaseIds: ['cholera'],
@@ -54,20 +48,17 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'comirnaty',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'comirnaty',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: '',
       manufacturerId: 'biontech-pfizer',
       tradeName: 'Comirnaty',
       targetDiseaseIds: ['covid-19'],
@@ -78,23 +69,20 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'jcovden',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'jcovden',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: '',
       manufacturerId: 'janssen',
       tradeName: 'JCOVDEN',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseIds: ['U07.1'],
     },
   ],
   [
@@ -102,23 +90,20 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'nuvaxovid',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'nuvaxovid',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: '',
       manufacturerId: 'novavax',
       tradeName: 'Nuvaxovid',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseIds: ['U07.1'],
     },
   ],
   [
@@ -126,23 +111,20 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'spikevax',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'spikevax',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: '',
       manufacturerId: 'moderna',
       tradeName: 'Spikevax',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseIds: ['U07.1'],
     },
   ],
   [
@@ -150,23 +132,20 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'vaxzevria',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'vaxzeyria',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: '',
       manufacturerId: 'astrazeneca',
       tradeName: 'Vaxzevria',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseIds: ['U07.1'],
     },
   ],
   [
@@ -174,20 +153,17 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'covid-valneva',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
-          code: 'covid-valneva',
-          system: 'https://localhost:3000/url/to/typings',
+          code: '2.16.840.1.113883.4.642.3.375',
+          system: 'SNOMEDCTMedicationCodes',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: '',
       manufacturerId: 'valneva',
       tradeName: 'COVID-19 Vaccine Valneva',
       targetDiseaseIds: ['covid-19'],
@@ -198,20 +174,17 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'td-pur',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'td-pur',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: '',
       manufacturerId: 'gsk',
       tradeName: 'Td-pur',
       targetDiseaseIds: ['diphtheria', 'tetanus'],
@@ -222,20 +195,17 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'td-rix',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'td-rix',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: '',
       manufacturerId: 'gsk',
       tradeName: 'Td-RIX',
       targetDiseaseIds: ['diphtheria', 'tetanus'],
@@ -246,20 +216,17 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'tetagam-p',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'tetagam-p',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: '',
       manufacturerId: 'cslbehring',
       tradeName: 'TETAGAM P',
       targetDiseaseIds: ['tetanus'],
@@ -270,20 +237,17 @@ export const MockMedications = new Map<string, Medication>([
     {
       id: 'tetanol-pur',
       code: {
-        id: '2.16.840.1.113883.4.642.3.375',
         coding: {
           code: 'tetanol-pur',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       form: {
-        id: 'formCoding1',
         coding: {
           code: 'form',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
-      ingredientId: '',
       manufacturerId: 'gsk',
       tradeName: 'Tetanol pur',
       targetDiseaseIds: ['tetanus'],

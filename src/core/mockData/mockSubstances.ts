@@ -1,19 +1,16 @@
-import { Substance } from '../models/Substance';
+import { Substance } from '../models';
 
 export const MockSubstances = new Map<string, Substance>([
   [
     'substance1',
     {
-      id: 'substance1',
       category: {
-        id: 'category1',
         coding: {
           code: 'ABC',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       code: {
-        id: 'substanceCoding1',
         coding: {
           code: 'ABC',
           system: 'https://localhost:3000/url/to/typings',
@@ -25,16 +22,13 @@ export const MockSubstances = new Map<string, Substance>([
   [
     'vibrio_cholerae_O1',
     {
-      id: 'vibrio_cholerae_O1',
       category: {
-        id: 'category1',
         coding: {
           code: 'Vaccine suspension',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
       code: {
-        id: 'substanceCoding1',
         coding: {
           code: 'ABC',
           system: 'https://localhost:3000/url/to/typings',

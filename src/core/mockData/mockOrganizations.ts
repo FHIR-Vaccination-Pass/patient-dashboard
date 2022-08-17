@@ -1,4 +1,4 @@
-import { Organization } from '../models/Organization';
+import { Organization } from '../models';
 
 export const MockOrganizations = new Map<string, Organization>([
   [

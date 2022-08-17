@@ -4,5 +4,12 @@ export function resolvePractitionerName(name: HumanName | undefined): string {
   if (name === undefined) {
     return '';
   }
-  return [...name.prefix, name.family].join(' ');
+  return [...name.given, name.family].join(' ');
+}
+
+export function resolvePatientName(name: HumanName | undefined): string {
+  if (name === undefined) {
+    return '';
+  }
+  return [...name.given, name.family].join(' ');
 }

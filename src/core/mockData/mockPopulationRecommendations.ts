@@ -1,4 +1,4 @@
-import { PopulationRecommendation } from '../models/PopulationRecommendation';
+import { PopulationRecommendation } from '../models';
 
 export const MockPopulationRecommendations = new Map<
   string,
