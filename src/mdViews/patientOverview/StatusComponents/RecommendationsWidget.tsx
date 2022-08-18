@@ -115,7 +115,7 @@ export const RecommendationsWidget: FC = ({}) => {
                       >
                         Dose:{' '}
                         {'numberInScheme' in dose!
-                          ? `${dose.numberInScheme} / ${allDoses!}`
+                          ? `${dose.numberInScheme} / ${allDoses!.length}`
                           : 'Booster'}
                       </Badge>
                     )}
