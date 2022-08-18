@@ -1,24 +1,26 @@
 import { Flex, Icon, Stack, Text } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import { AggregatedImmunizationStatus } from '../../../core/models/AggregatedImmunizationStatus';
 import {
   CompleteStatus,
   DefaultStatus,
   DueStatus,
-  MissingHistoryStatus,
   OverdueStatus,
 } from './immunizationCardConfigurations';
-import { ImmunizationRecommendation } from '../../../core/models/ImmunizationRecommendation';
+import {
+  AggregatedImmunizationStatus,
+  ImmunizationRecommendation,
+} from '../../../core/models';
 
 interface ImmunizationStatusCardProps {
-  recommendations: ImmunizationRecommendation[];
+  recommendations?: ImmunizationRecommendation[];
 }
 
 export const ImmunizationStatusCard: FC<ImmunizationStatusCardProps> = ({
   recommendations,
 }) => {
-  let status: AggregatedImmunizationStatus =
-    calcAggregateImmunizationStatus(recommendations);
+  let status: AggregatedImmunizationStatus = calcAggregateImmunizationStatus(
+    recommendations ?? []
+  );
   return (
     <Flex
       bg={status.backgroundColor}
@@ -48,33 +50,15 @@ export const ImmunizationStatusCard: FC<ImmunizationStatusCardProps> = ({
 export function calcAggregateImmunizationStatus(
   recommendations: ImmunizationRecommendation[]
 ): AggregatedImmunizationStatus {
-  // If no recommendations or no recommendation status fields set, then immunization complete
-  let aggregatedImmunizationStatus = DefaultStatus;
-  // Do later: Check history and recommendations to set missing history status
-  let currentStatus: string | undefined = '';
-  recommendations.forEach((recommendation: ImmunizationRecommendation) => {
-    currentStatus = recommendation.forecastStatus.coding.code;
-    // When current status is undefined then don't change anything.
-    if (currentStatus !== undefined) {
-      // Due > Complete & MissingHistory
-      if (
-        currentStatus === 'due' &&
-        (aggregatedImmunizationStatus === CompleteStatus ||
-          aggregatedImmunizationStatus === MissingHistoryStatus ||
-          aggregatedImmunizationStatus === DefaultStatus)
-      ) {
-        aggregatedImmunizationStatus = DueStatus;
-        // Overdue > all else
-      } else if (currentStatus === 'overdue') {
-        aggregatedImmunizationStatus = OverdueStatus;
-        // Complete = complete or immune or contraindicated
-      } else if (
-        aggregatedImmunizationStatus !== OverdueStatus &&
-        aggregatedImmunizationStatus !== DueStatus
-      ) {
-        aggregatedImmunizationStatus = CompleteStatus;
-      }
-    }
-  });
-  return aggregatedImmunizationStatus;
+  if (recommendations.length <= 0) {
+    return DefaultStatus;
+  }
+  if (recommendations.some(({ status }) => status === 'overdue')) {
+    return OverdueStatus;
+  }
+  if (recommendations.some(({ status }) => status === 'due')) {
+    return DueStatus;
+  }
+
+  return CompleteStatus;
 }
