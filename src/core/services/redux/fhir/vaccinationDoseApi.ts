@@ -10,7 +10,10 @@ export interface GetArgs {
   _id?: string;
   subject?: string;
 }
-export type GetResponseGroups = 'byType' | 'byIsProtected' | 'byVaccinationScheme';
+export type GetResponseGroups =
+  | 'byType'
+  | 'byIsProtected'
+  | 'byVaccinationScheme';
 const resourceName = 'VaccinationDose' as const;
 const resourcePath = '/Basic' as const;
 
