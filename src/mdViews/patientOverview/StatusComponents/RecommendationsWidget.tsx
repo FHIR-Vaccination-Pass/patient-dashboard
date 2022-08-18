@@ -51,17 +51,13 @@ export const RecommendationsWidget: FC = ({}) => {
                 medicationsData?.byCode[recommendation.vaccineCode.coding.code]
                   ?.ids[0]
               );
-            const vs =
-              med &&
-              idToVaccinationScheme(
-                standardVaccinationSchemes?.byMedication[med?.id]?.ids[0]
-              );
+            const dose = idToVaccinationDose(recommendation?.vaccinationDoseId);
+            const vs = dose && idToVaccinationScheme(dose?.vaccinationSchemeId);
             const allDoses =
               vs &&
               vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
                 idToVaccinationDose
               );
-            const dose = idToVaccinationDose(recommendation?.vaccinationDoseId);
 
             return (
               <Stack>
