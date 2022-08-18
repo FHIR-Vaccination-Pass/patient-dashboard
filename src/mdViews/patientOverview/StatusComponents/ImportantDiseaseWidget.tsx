@@ -34,7 +34,7 @@ export const ImportantDiseaseWidget: FC = () => {
       borderRadius={'15px'}
       flexDir='column'
       justifyContent='space-between'
-      h={'95%'}
+      h={'100%'}
       w={'100%'}
     >
       <Box overflowY={'scroll'}>
