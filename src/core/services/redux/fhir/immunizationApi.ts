@@ -4,9 +4,9 @@ import { settings } from '../../../../settings';
 import { ImmunizationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
 
-type TResource = Immunization;
-const TMapper = ImmunizationMapper;
-interface GetArgs {
+export type TResource = Immunization;
+export const TMapper = ImmunizationMapper;
+export interface GetArgs {
   _id?: string;
   status?: string;
   'vaccine-code'?: string;
@@ -15,7 +15,7 @@ interface GetArgs {
   'lot-number'?: string;
   performer?: string;
 }
-type GetResponseGroups =
+export type GetResponseGroups =
   | 'byStatus'
   | 'byVaccineCode'
   | 'byLotNumber'

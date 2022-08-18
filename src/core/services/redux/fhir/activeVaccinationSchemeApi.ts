@@ -4,13 +4,13 @@ import { settings } from '../../../../settings';
 import { GetResponse, storeIdRecursive } from './utils';
 import { ActiveVaccinationSchemeMapper } from '../../../models';
 
-type TResource = Basic;
-const TMapper = ActiveVaccinationSchemeMapper;
-interface GetArgs {
+export type TResource = Basic;
+export const TMapper = ActiveVaccinationSchemeMapper;
+export interface GetArgs {
   _id?: string;
   subject?: string;
 }
-type GetResponseGroups = 'byVaccinationScheme' | 'byPatient';
+export type GetResponseGroups = 'byVaccinationScheme' | 'byPatient';
 const resourceName = 'ActiveVaccinationScheme' as const;
 const resourcePath = '/Basic' as const;
 
