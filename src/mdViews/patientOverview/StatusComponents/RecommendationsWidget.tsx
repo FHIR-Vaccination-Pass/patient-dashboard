@@ -1,38 +1,11 @@
 import React, { FC } from 'react';
-import {
-  Badge,
-  Button,
-  Divider,
-  Flex,
-  Icon,
-  Stack,
-  Text,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Badge, Button, Divider, Flex, Stack, Text } from '@chakra-ui/react';
 import { Link, useParams } from 'react-router-dom';
-import { useMapper } from '../../../core/services/resourceMapper/ResourceMapperContext';
-import {
-  AggregatedImmunizationStatus,
-  Disease,
-  DiseaseMapper,
-  ImmunizationRecommendation,
-  ImmunizationRecommendationMapper,
-  Patient,
-  PopulationRecommendationMapper,
-} from '../../../core/models';
-import {
-  immunizationRecommendationApi,
-  populationRecommendationApi,
-  targetDiseaseApi,
-} from '../../../core/services/redux/fhir';
-import { DefaultStatus } from '../../../components/dashboard/immunizationStatus/immunizationCardConfigurations';
-import { calcAggregateImmunizationStatus } from '../../../components/dashboard/immunizationStatus/immunizationStatusCard';
+import { ImmunizationRecommendation } from '../../../core/models';
 import {
   useImmunizationRecommendations,
   useMedicationInfo,
   useMedications,
-  usePatients,
-  usePopulationRecommendations,
   useTargetDiseases,
 } from '../../../hooks';
 
@@ -47,7 +20,6 @@ export const RecommendationsWidget: FC = ({}) => {
 
   const { data: medicationsData, idToMedication } = useMedications({});
   const {
-    idToOrganization,
     vaccinationSchemes,
     idToVaccinationScheme,
     vaccinationDoses,
