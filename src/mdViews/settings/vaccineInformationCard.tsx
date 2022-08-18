@@ -8,8 +8,8 @@ import {
   BoxProps,
   Button,
   Editable,
+  EditableInput,
   EditablePreview,
-  EditableTextarea,
   Flex,
   HStack,
   NumberDecrementStepper,
@@ -40,13 +40,13 @@ interface VaccineInformationCardProps extends BoxProps {
   selectedMedication: Medication;
 }
 
-type OptionType = {
+export type OptionType = {
   value: string;
   label: string;
 };
 
 // Convert to option array for Select component
-function convertArrayToOptionArray(list: string[]): OptionType[] {
+export function convertArrayToOptionArray(list: string[]): OptionType[] {
   const result: OptionType[] = [];
   list.forEach((listElement) => {
     result.push({
@@ -144,7 +144,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             }}
           >
             <EditablePreview />
-            <EditableTextarea />
+            <EditableInput />
           </Editable>
         </Flex>
 
@@ -165,7 +165,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             }}
           >
             <EditablePreview />
-            <EditableTextarea />
+            <EditableInput />
           </Editable>
         </Flex>
 
@@ -186,7 +186,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             }}
           >
             <EditablePreview />
-            <EditableTextarea />
+            <EditableInput />
           </Editable>
         </Flex>
       </HStack>

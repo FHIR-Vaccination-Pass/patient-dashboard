@@ -4,12 +4,12 @@ import { settings } from '../../../../settings';
 import { PopulationRecommendationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
 
-type TResource = Basic;
-const TMapper = PopulationRecommendationMapper;
-interface GetArgs {
+export type TResource = Basic;
+export const TMapper = PopulationRecommendationMapper;
+export interface GetArgs {
   _id?: string;
 }
-type GetResponseGroups = 'byCountry' | 'byState' | 'byDisease';
+export type GetResponseGroups = 'byCountry' | 'byState' | 'byDisease';
 const resourceName = 'PopulationRecommendation' as const;
 const resourcePath = '/Basic' as const;
 

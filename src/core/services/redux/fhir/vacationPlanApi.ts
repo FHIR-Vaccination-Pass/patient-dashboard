@@ -4,13 +4,13 @@ import { settings } from '../../../../settings';
 import { VacationPlanMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
 
-type TResource = Basic;
-const TMapper = VacationPlanMapper;
-interface GetArgs {
+export type TResource = Basic;
+export const TMapper = VacationPlanMapper;
+export interface GetArgs {
   _id?: string;
   subject?: string;
 }
-type GetResponseGroups = 'byCountry' | 'byState' | 'byPatient';
+export type GetResponseGroups = 'byCountry' | 'byState' | 'byPatient';
 const resourceName = 'VacationPlan' as const;
 const resourcePath = '/Basic' as const;
 

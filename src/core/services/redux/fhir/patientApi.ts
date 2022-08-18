@@ -4,9 +4,9 @@ import { settings } from '../../../../settings';
 import { PatientMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
 
-type TResource = Patient;
-const TMapper = PatientMapper;
-interface GetArgs {
+export type TResource = Patient;
+export const TMapper = PatientMapper;
+export interface GetArgs {
   _id?: string;
   active?: string;
   name?: string;
@@ -15,7 +15,7 @@ interface GetArgs {
   deceased?: string;
   address?: string;
 }
-type GetResponseGroups =
+export type GetResponseGroups =
   | 'byActive'
   | 'byGender'
   | 'byDeceased'

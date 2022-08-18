@@ -33,7 +33,7 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
   }
 
   return (
-    <Flex pt={'30px'} flexDirection={'column'}>
+    <Flex pt={'30px'} flexDirection={'column'} w={'100%'}>
       <Flex
         flexDirection={'row'}
         justifyContent={'space-between'}
@@ -68,6 +68,7 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
         onChange={(value) => {
           currentDisease.description = value;
         }}
+        w={'100%'}
       >
         <EditablePreview />
         <EditableTextarea />

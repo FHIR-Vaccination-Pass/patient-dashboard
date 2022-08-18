@@ -4,12 +4,12 @@ import { settings } from '../../../../settings';
 import { DiseaseMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
 
-type TResource = Basic;
-const TMapper = DiseaseMapper;
-interface GetArgs {
+export type TResource = Basic;
+export const TMapper = DiseaseMapper;
+export interface GetArgs {
   _id?: string;
 }
-type GetResponseGroups = 'byCode';
+export type GetResponseGroups = 'byCode';
 const resourceName = 'TargetDisease' as const;
 const resourcePath = '/Basic' as const;
 

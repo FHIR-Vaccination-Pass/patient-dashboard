@@ -4,13 +4,13 @@ import { settings } from '../../../../settings';
 import { PractitionerMapper } from '../../../models';
 import { GetResponse } from './utils';
 
-type TResource = Practitioner;
-const TMapper = PractitionerMapper;
-interface GetArgs {
+export type TResource = Practitioner;
+export const TMapper = PractitionerMapper;
+export interface GetArgs {
   _id?: string;
   name?: string;
 }
-type GetResponseGroups = never;
+export type GetResponseGroups = never;
 const resourceName = 'Practitioner' as const;
 const resourcePath = '/Practitioner' as const;
 

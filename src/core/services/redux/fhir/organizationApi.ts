@@ -4,13 +4,13 @@ import { settings } from '../../../../settings';
 import { OrganizationMapper } from '../../../models';
 import { GetResponse } from './utils';
 
-type TResource = Organization;
-const TMapper = OrganizationMapper;
-interface GetArgs {
+export type TResource = Organization;
+export const TMapper = OrganizationMapper;
+export interface GetArgs {
   _id?: string;
   name?: string;
 }
-type GetResponseGroups = never;
+export type GetResponseGroups = never;
 const resourceName = 'Organization' as const;
 const resourcePath = '/Organization' as const;
 
