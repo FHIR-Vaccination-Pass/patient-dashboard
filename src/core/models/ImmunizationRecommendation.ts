@@ -22,6 +22,7 @@ export interface ImmunizationRecommendation {
   date: Date;
   forecastStatus: CodeableConcept;
   vaccineCode: CodeableConcept;
+  targetDisease: CodeableConcept;
   recommendedStartDate: Date;
   status: ImmunizationRecommendationStatus;
   isDeactivated: boolean;
@@ -103,6 +104,22 @@ export class ImmunizationRecommendationMapper
       coding: {
         code: vaccineCodeCoding.code!,
         system: vaccineCodeCoding.system!,
+      },
+    };
+  }
+
+  get targetDisease(): CodeableConcept {
+    const targetDiseaseCoding = fhirpath.evaluate(
+      this._raw,
+      `recommendation.targetDisease.coding.where(system = 'http://hl7.org/fhir/sid/icd-10')`,
+      undefined,
+      fhirpath_r4_model
+    )[0] as FHIRCoding;
+
+    return {
+      coding: {
+        code: targetDiseaseCoding.code!,
+        system: targetDiseaseCoding.system!,
       },
     };
   }

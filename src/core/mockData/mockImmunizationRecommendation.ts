@@ -18,6 +18,12 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
           system: 'SNOMEDCTMedicationCodes',
         },
       },
+      targetDisease: {
+        coding: {
+          code: 'comirnaty',
+          system: 'https://localhost:3000/url/to/typings',
+        },
+      },
       recommendedStartDate: new Date(),
       status: 'complete',
       isDeactivated: false,
@@ -43,6 +49,12 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
         coding: {
           code: '2.16.840.1.113883.4.642.3.375',
           system: 'SNOMEDCTMedicationCodes',
+        },
+      },
+      targetDisease: {
+        coding: {
+          code: 'comirnaty',
+          system: 'https://localhost:3000/url/to/typings',
         },
       },
       recommendedStartDate: new Date(),
@@ -72,6 +84,12 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
           system: 'SNOMEDCTMedicationCodes',
         },
       },
+      targetDisease: {
+        coding: {
+          code: 'comirnaty',
+          system: 'https://localhost:3000/url/to/typings',
+        },
+      },
       recommendedStartDate: new Date(),
       status: 'complete',
       isDeactivated: false,
@@ -96,6 +114,12 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
       vaccineCode: {
         coding: {
           code: 'dukoral',
+          system: 'https://localhost:3000/url/to/typings',
+        },
+      },
+      targetDisease: {
+        coding: {
+          code: 'comirnaty',
           system: 'https://localhost:3000/url/to/typings',
         },
       },
