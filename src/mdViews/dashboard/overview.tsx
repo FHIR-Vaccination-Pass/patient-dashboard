@@ -11,12 +11,13 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
-import { Patient } from '../../core/models/Patient';
+import { Patient, PatientMapper } from '../../core/models/Patient';
 import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import { AggregatedImmunizationStatus } from '../../core/models/AggregatedImmunizationStatus';
 import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 import { ResourceMapper } from '../../core/services/resourceMapper/ResourceMapper';
 import { Link } from 'react-router-dom';
+import { patientApi } from '../../core/services/redux/fhir';
 
 function calculateStatusForAllPatients(
   patientIds: string[],
@@ -42,10 +43,18 @@ function calculateStatusForAllPatients(
 
 export function MDOverview() {
   const mapper = useMapper();
-  const patients = mapper.getAllPatients();
+  const { data: patients } = patientApi.endpoints.get.useQuery({});
+
+  if (patients === undefined) {
+    return <></>;
+  }
+  const usersMapped = patients.ids.map((irId) =>
+    PatientMapper.fromResource(patients!.entities[irId])
+  );
+
   const patientStatusMap: Map<string, AggregatedImmunizationStatus> =
     calculateStatusForAllPatients(
-      patients.map((patient) => patient.id),
+      usersMapped.map((patient: PatientMapper) => patient.id),
       mapper
     );
   return (
@@ -61,7 +70,7 @@ export function MDOverview() {
             </Tr>
           </Thead>
           <Tbody>
-            {patients.map((patient: Patient) => (
+            {usersMapped.map((patient: Patient) => (
               <Tr>
                 <Td>
                   <Link to={`patient/${patient.id}`}>
