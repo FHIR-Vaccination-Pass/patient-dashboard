@@ -17,16 +17,14 @@ export const RecommendationsWidget: FC = ({}) => {
   const { immunizationRecommendations } = useImmunizationRecommendations({
     patient: patientId,
   });
-
-  const { data: medicationsData, idToMedication } = useMedications({});
+  const { data: medicationsData, medications, idToMedication } = useMedications({});
   const {
+    idToOrganization,
     vaccinationSchemes,
     idToVaccinationScheme,
     vaccinationDoses,
     idToVaccinationDose,
-  } = useMedicationInfo(
-    medicationsData?.ids.map((id: string) => idToMedication(id)!)
-  );
+  } = useMedicationInfo(medications);
 
   const standardVaccinationSchemes = vaccinationSchemes?.byType['standard'];
 
