@@ -93,5 +93,12 @@ export const patientApi = createApi({
       providesTags: (result) =>
         result ? [{ type: resourceName, id: result.id }] : [],
     }),
+    put: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: `${resourcePath}/${resource.id}`,
+        method: 'PUT',
+        body: resource,
+      }),
+    }),
   }),
 });

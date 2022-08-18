@@ -11,6 +11,8 @@ import {
   Patient as FHIRPatient,
 } from 'fhir/r4';
 import { settings } from '../../settings';
+import dayjs from 'dayjs';
+import { cloneDeep } from 'lodash';
 
 export interface Patient {
   id: string;
@@ -26,19 +28,10 @@ export interface Patient {
 
 export class PatientMapper implements Patient {
   private _raw: FHIRPatient;
-  name: HumanName;
   address: Address;
 
   constructor(resource: FHIRPatient) {
     this._raw = resource;
-
-    const officialHumanName = fhirpath.evaluate(
-      this._raw,
-      `name.where(use = 'official')`,
-      undefined,
-      fhirpath_r4_model
-    )[0] as FHIRHumanName;
-    this.name = HumanNameMapper.fromResource(officialHumanName);
 
     const homeAddress = fhirpath.evaluate(
       this._raw,
@@ -81,12 +74,67 @@ export class PatientMapper implements Patient {
     return this._raw.active!;
   }
 
+  set active(active: boolean) {
+    this._raw.active = active;
+  }
+
+  withActive(active: boolean): PatientMapper {
+    const newPatient = cloneDeep(this);
+    newPatient.active = active;
+    return newPatient;
+  }
+
+  get _officialHumanName(): FHIRHumanName {
+    return fhirpath.evaluate(
+      this._raw,
+      `name.where(use = 'official')`,
+      undefined,
+      fhirpath_r4_model
+    )[0] as FHIRHumanName;
+  }
+
+  get name(): HumanNameMapper {
+    return HumanNameMapper.fromResource(this._officialHumanName);
+  }
+
+  set name(name: HumanNameMapper) {
+    this._raw.name = this._raw.name?.map((hm) =>
+      hm === this._officialHumanName ? name.toResource() : hm
+    );
+  }
+
+  withName(name: HumanNameMapper): PatientMapper {
+    const newPatient = cloneDeep(this);
+    newPatient.name = name;
+    return newPatient;
+  }
+
   get gender(): Gender {
     return this._raw.gender!;
   }
 
+  set gender(gender: Gender) {
+    this._raw.gender = gender;
+  }
+
+  withGender(gender: Gender): PatientMapper {
+    const newPatient = cloneDeep(this);
+    newPatient.gender = gender;
+    return newPatient;
+  }
+
   get birthDate(): Date {
     return new Date(this._raw.birthDate!);
+  }
+
+  set birthDate(date: Date) {
+    this._raw.birthDate = dayjs(date).format('YYYY-MM-DD');
+  }
+
+  withBirthDate(date: Date): PatientMapper {
+    const newPatient = cloneDeep(this);
+    newPatient.birthDate = date;
+    return newPatient;
   }
 
   get deceased(): Date | boolean {
@@ -95,25 +143,63 @@ export class PatientMapper implements Patient {
       : this._raw.deceasedBoolean!;
   }
 
-  get isPregnant(): boolean {
-    const isPregnantExtension = fhirpath.evaluate(
+  set deceased(deceased: Date | boolean) {
+    if (typeof deceased === 'boolean') {
+      this._raw.deceasedBoolean = deceased;
+    } else {
+      this._raw.deceasedDateTime = dayjs(deceased).format('YYYY-MM-DD');
+    }
+  }
+
+  withDeceased(deceased: Date | boolean): PatientMapper {
+    const newPatient = cloneDeep(this);
+    newPatient.deceased = deceased;
+    return newPatient;
+  }
+
+  get _isPregnantExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._raw,
       `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-patient-is-pregnant-extension')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
-
-    return isPregnantExtension.valueBoolean!;
   }
 
-  get keycloakUsername(): string {
-    const keycloakUsernameExtension = fhirpath.evaluate(
+  get isPregnant(): boolean {
+    return this._isPregnantExtension.valueBoolean!;
+  }
+
+  set isPregnant(isPregnant: boolean) {
+    this._isPregnantExtension.valueBoolean = isPregnant;
+  }
+
+  withIsPregnant(isPregnant: boolean): PatientMapper {
+    const newPatient = cloneDeep(this);
+    newPatient.isPregnant = isPregnant;
+    return newPatient;
+  }
+
+  get _keycloakUsernameExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._raw,
       `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-patient-keycloak-username-extension')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
+  }
 
-    return keycloakUsernameExtension.valueString!;
+  get keycloakUsername(): string {
+    return this._keycloakUsernameExtension.valueString!;
+  }
+
+  set keycloakUsername(keycloakUsername: string) {
+    this._keycloakUsernameExtension.valueString = keycloakUsername;
+  }
+
+  withKeycloakUsername(keycloakUsername: string): PatientMapper {
+    const newPatient = cloneDeep(this);
+    newPatient.keycloakUsername = keycloakUsername;
+    return newPatient;
   }
 }

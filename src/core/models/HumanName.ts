@@ -1,4 +1,5 @@
 import { HumanName as FHIRHumanName } from 'fhir/r4';
+import { cloneDeep } from 'lodash';
 
 export interface HumanName {
   family: string;
@@ -33,7 +34,27 @@ export class HumanNameMapper implements HumanName {
     return this._raw.family!;
   }
 
+  set family(family: string) {
+    this._raw.family = family;
+  }
+
+  withFamily(family: string): HumanNameMapper {
+    const newHumanName = cloneDeep(this);
+    newHumanName.family = family;
+    return newHumanName;
+  }
+
   get given(): string[] {
     return this._raw.given!;
+  }
+
+  set given(given: string[]) {
+    this._raw.given = given;
+  }
+
+  withGiven(given: string[]): HumanNameMapper {
+    const newHumanName = cloneDeep(this);
+    newHumanName.given = given;
+    return newHumanName;
   }
 }

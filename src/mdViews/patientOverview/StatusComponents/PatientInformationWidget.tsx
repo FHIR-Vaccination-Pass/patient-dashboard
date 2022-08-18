@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import {
   Text,
   Flex,
@@ -23,10 +23,8 @@ import { ICountry, IState } from 'country-state-city/dist/lib/interface';
 import { cloneDeep } from 'lodash';
 import { patientApi } from '../../../core/services/redux/fhir/patientApi';
 
-export const PatientInformationWidget: FC = ({}) => {
+export const PatientInformationWidget: FC = () => {
   const params = useParams();
-  const [editMode, setEditMode] = useBoolean(false);
-  const [initialized, setInitialized] = useBoolean(false);
 
   const allCountries = Country.getAllCountries();
   const allCountryNames = allCountries.map(
@@ -36,91 +34,69 @@ export const PatientInformationWidget: FC = ({}) => {
   const { data: patientRaw } = patientApi.endpoints.getById.useQuery(
     params['patientId']!
   );
+  const [putPatient] = patientApi.endpoints.put.useMutation();
   const patient = PatientMapper.fromResource(patientRaw);
 
-  const oldPatient = cloneDeep(patient);
-  const updatedPatient = cloneDeep(patient);
+  const [updatedPatient, setUpdatedPatient] = useState<
+    PatientMapper | undefined
+  >(undefined);
+
+  const toggleEditMode = useCallback(() => {
+    if (updatedPatient === undefined) {
+      setUpdatedPatient(cloneDeep(patient));
+    } else {
+      setUpdatedPatient(undefined);
+    }
+  }, [patient, updatedPatient]);
 
   // Input field states
-  const [givenName, setGivenName] = useState<string>('');
-  const [surname, setSurname] = useState<string>('');
-  const [birthday, setBirthday] = useState<Date | undefined>(undefined);
-  const [gender, setGender] = useState<Gender>('unknown');
+
   const [country, setCountry] = useState<ICountry | undefined>(undefined);
   const [state, setState] = useState<string>('');
   const [stateOptions, setStateOptions] = useState<IState[]>([]); // getStatesOfCountry(country.isoCode)
 
-  useEffect(() => {
-    if (patient && !initialized) {
-      setGivenName(patient.name.given.join(' '));
-      setSurname(patient.name.family);
-      setBirthday(patient.birthDate!);
-      setGender(patient?.gender);
-      const initialCountry = allCountries.find((potentialCountry) => {
-        return patient.address.countryCode === potentialCountry.isoCode;
-      });
-      setCountry(initialCountry);
-      setState(patient?.address.state);
+  // useEffect(() => {
+  //   if (patient) {
+  //     const initialCountry = allCountries.find((potentialCountry) => {
+  //       return patient.address.countryCode === potentialCountry.isoCode;
+  //     });
+  //     setCountry(initialCountry);
+  //     setState(patient?.address.state);
+  //
+  //     setStateOptions(getStatesOfCountry(initialCountry!.isoCode!)); // getStatesOfCountry(country.isoCode)
+  //   }
+  // }, [patient]);
 
-      setStateOptions(getStatesOfCountry(initialCountry!.isoCode!)); // getStatesOfCountry(country.isoCode)
-      setInitialized.on();
+  // function editCountry(newCountryName: string) {
+  //   const newCountry: ICountry = allCountries.find(
+  //     (potentialCountry) =>
+  //       potentialCountry.name.toLowerCase() === newCountryName
+  //   )!;
+  //   const statesOfCountry = getStatesOfCountry(newCountry.isoCode);
+  //
+  //   const newPatient = cloneDeep(updatedPatient!);
+  //
+  //   setCountry(newCountry);
+  //   setState(statesOfCountry[0].name);
+  //
+  //   setStateOptions(statesOfCountry);
+  // }
+
+  function savePatientInformation() {
+    if (updatedPatient !== undefined) {
+      console.log(
+        `Saving the following patient on the FHIR server: ${
+          updatedPatient.name.given[0]
+        } ${
+          updatedPatient.name.family
+        } ${updatedPatient?.birthDate.toISOString()} ${updatedPatient?.gender}`
+      );
+      putPatient(updatedPatient.toResource());
     }
-  }, [patient]);
+  }
 
   if (patient === undefined) {
     return <></>;
-  }
-
-  function editBirthday(newBirthday: string) {
-    const [day, month, year] = newBirthday.split('/');
-    const date = `${year}-${month}-${day}`;
-    setBirthday(new Date(date));
-  }
-
-  function editCountry(newCountryName: string) {
-    const newCountry: ICountry = allCountries.find(
-      (potentialCountry) =>
-        potentialCountry.name.toLowerCase() === newCountryName
-    )!;
-    setCountry(newCountry);
-    const statesOfCountry = getStatesOfCountry(newCountry.isoCode);
-    setState(statesOfCountry[0].name);
-    setStateOptions(statesOfCountry);
-  }
-
-  function CancelEditing() {
-    setGivenName(oldPatient!.name.given.join(' '));
-    setSurname(oldPatient!.name.family);
-    setBirthday(oldPatient!.birthDate);
-    setGender(oldPatient!.gender);
-    const oldCountry = allCountries.find((potentialCountry) => {
-      return oldPatient!.address.countryCode === potentialCountry.isoCode;
-    });
-    setCountry(oldCountry);
-    setState(oldPatient!.address.state);
-
-    setStateOptions(getStatesOfCountry(oldCountry!.isoCode)); // getStatesOfCountry(country.isoCode)
-  }
-
-  function savePatientInformation() {
-    // Save patient to server
-    // updatedPatient!.name.given = givenName.split(' ');
-    // updatedPatient!.name.family = surname;
-    // updatedPatient!.birthDate = birthday!; Birthday Read-Only!
-    // updatedPatient!.gender = gender; Gender Read-Only!
-    // updatedPatient!.address.country = country!.name;
-    // updatedPatient!.address.countryCode = country!.isoCode;
-    // updatedPatient!.address.state = state;
-    // updatedPatient!.address.stateCode = stateOptions.find(
-    //   (stateOption) => stateOption.name === state
-    // )!.isoCode;
-    console.log(
-      `Saving the following patient on the FHIR server: ${givenName} ${surname} ${birthday} ${gender} ${
-        country?.name
-      } ${country?.isoCode} ${state} ${
-        stateOptions.find((stateOption) => stateOption.name === state)!.isoCode
-      }`
-    );
   }
 
   return (
@@ -139,9 +115,17 @@ export const PatientInformationWidget: FC = ({}) => {
             <FormLabel color={'gray.600'}>Given name</FormLabel>
             <Editable
               variant='flushed'
-              isPreviewFocusable={editMode}
-              defaultValue={givenName}
-              value={givenName}
+              isPreviewFocusable={updatedPatient !== undefined}
+              defaultValue={
+                updatedPatient
+                  ? updatedPatient.name.given[0]
+                  : patient.name.given[0]
+              }
+              value={
+                updatedPatient
+                  ? updatedPatient.name.given[0]
+                  : patient.name.given[0]
+              }
               p={'5px 10px'}
               borderBottom={'1px'}
               borderColor={'gray.200'}
@@ -150,7 +134,11 @@ export const PatientInformationWidget: FC = ({}) => {
               mb={'20px'}
               pl={'5px'}
               onChange={(value) => {
-                setGivenName(value);
+                setUpdatedPatient(
+                  updatedPatient!.withName(
+                    updatedPatient!.name.withGiven([value])
+                  )
+                );
               }}
             >
               <EditablePreview />
@@ -163,7 +151,11 @@ export const PatientInformationWidget: FC = ({}) => {
             <Editable
               variant='flushed'
               isPreviewFocusable={false}
-              value={birthday?.toLocaleDateString()}
+              value={
+                updatedPatient
+                  ? updatedPatient.birthDate.toLocaleDateString()
+                  : patient.birthDate.toLocaleString()
+              }
               p={'5px 10px'}
               borderBottom={'1px'}
               borderColor={'gray.200'}
@@ -172,7 +164,10 @@ export const PatientInformationWidget: FC = ({}) => {
               mb={'20px'}
               pl={'5px'}
               onChange={(value) => {
-                editBirthday(value);
+                const [day, month, year] = value.split('/');
+                const birthDate = new Date(`${year}-${month}-${day}`);
+
+                setUpdatedPatient(updatedPatient!.withBirthDate(birthDate));
               }}
             >
               <EditablePreview />
@@ -188,9 +183,9 @@ export const PatientInformationWidget: FC = ({}) => {
                 label: country?.name,
               }}
               options={convertArrayToOptionArray(allCountryNames)}
-              isDisabled={!editMode}
+              isDisabled={updatedPatient === undefined}
               onChange={(newValue) => {
-                editCountry(newValue!.value!);
+                // editCountry(newValue!.value!);
               }}
             />
           </FormControl>
@@ -200,8 +195,12 @@ export const PatientInformationWidget: FC = ({}) => {
             <FormLabel color={'gray.600'}>Surname</FormLabel>
             <Editable
               variant='flushed'
-              isPreviewFocusable={editMode}
-              value={surname}
+              isPreviewFocusable={updatedPatient !== undefined}
+              value={
+                updatedPatient
+                  ? updatedPatient.name.family
+                  : patient.name.family
+              }
               p={'5px 10px'}
               borderBottom={'1px'}
               borderColor={'gray.200'}
@@ -210,7 +209,11 @@ export const PatientInformationWidget: FC = ({}) => {
               mb={'20px'}
               pl={'5px'}
               onChange={(value) => {
-                setSurname(value);
+                setUpdatedPatient(
+                  updatedPatient!.withName(
+                    updatedPatient!.name.withFamily(value)
+                  )
+                );
               }}
             >
               <EditablePreview />
@@ -222,8 +225,12 @@ export const PatientInformationWidget: FC = ({}) => {
             <FormLabel color={'gray.600'}>Gender</FormLabel>
             <Select
               value={{
-                value: gender.toString(),
-                label: gender.toString(),
+                value: (updatedPatient
+                  ? updatedPatient.gender
+                  : patient.gender) as string,
+                label: (updatedPatient
+                  ? updatedPatient.gender
+                  : patient.gender) as string,
               }}
               options={[
                 { value: 'male', label: 'Male' },
@@ -233,7 +240,9 @@ export const PatientInformationWidget: FC = ({}) => {
               ]}
               isDisabled={true}
               onChange={(newValue) => {
-                setGender(newValue!.value! as Gender);
+                setUpdatedPatient(
+                  updatedPatient!.withGender(newValue!.value as Gender)
+                );
               }}
             />
           </FormControl>
@@ -245,7 +254,7 @@ export const PatientInformationWidget: FC = ({}) => {
                 value: state,
                 label: state,
               }}
-              isDisabled={!editMode}
+              isDisabled={updatedPatient === undefined}
               options={convertArrayToOptionArray(
                 stateOptions.map((stateOption) => stateOption.name)
               )}
@@ -258,7 +267,7 @@ export const PatientInformationWidget: FC = ({}) => {
       </Flex>
       <Box>
         <Divider orientation='horizontal' mt={'5px'} />
-        {!editMode && (
+        {updatedPatient === undefined && (
           <Flex
             h={'40px'}
             alignItems={'center'}
@@ -267,7 +276,7 @@ export const PatientInformationWidget: FC = ({}) => {
             cursor={'pointer'}
             borderBottomRadius={'10px'}
             justifyContent={'center'}
-            onClick={() => setEditMode.on()}
+            onClick={toggleEditMode}
           >
             <FaWrench color={'black'} />
             <Text ml={'10px'} justifyContent={'flex-start'} color={'gray.600'}>
@@ -275,7 +284,7 @@ export const PatientInformationWidget: FC = ({}) => {
             </Text>
           </Flex>
         )}
-        {editMode && (
+        {updatedPatient !== undefined && (
           <Flex
             h={'40px'}
             alignItems={'center'}
@@ -286,7 +295,7 @@ export const PatientInformationWidget: FC = ({}) => {
             justifyContent={'space-between'}
             onClick={() => {
               savePatientInformation();
-              setEditMode.off();
+              toggleEditMode();
             }}
           >
             <Box />
@@ -296,14 +305,7 @@ export const PatientInformationWidget: FC = ({}) => {
                 Save Changes
               </Text>
             </Flex>
-            <CloseIcon
-              color={'white'}
-              mr={'15px'}
-              onClick={() => {
-                CancelEditing();
-                setEditMode.off();
-              }}
-            />
+            <CloseIcon color={'white'} mr={'15px'} onClick={toggleEditMode} />
           </Flex>
         )}
       </Box>
