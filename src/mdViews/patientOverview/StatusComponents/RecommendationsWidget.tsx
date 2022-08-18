@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import {
+  Badge,
   Button,
   Divider,
   Flex,
@@ -26,28 +27,36 @@ import {
 } from '../../../core/services/redux/fhir';
 import { DefaultStatus } from '../../../components/dashboard/immunizationStatus/immunizationCardConfigurations';
 import { calcAggregateImmunizationStatus } from '../../../components/dashboard/immunizationStatus/immunizationStatusCard';
+import {
+  useImmunizationRecommendations,
+  useMedicationInfo,
+  useMedications,
+  usePatients,
+  usePopulationRecommendations,
+  useTargetDiseases,
+} from '../../../hooks';
 
 export const RecommendationsWidget: FC = ({}) => {
   const params = useParams();
-  const mapper = useMapper();
-  const patient: Patient | undefined = mapper.getPatientById(
-    params['patientId'] || ''
-  );
+  const patientId = params['patientId'];
 
-  const { data: recommendations } =
-    immunizationRecommendationApi.endpoints.get.useQuery({});
-  if (recommendations === undefined) {
-    return <></>;
-  }
-  const recommendationsMapped = recommendations.ids.map((recommendationId) =>
-    DiseaseMapper.fromResource(recommendations.entities[recommendationId])
-  );
-
-  let map: Map<string, Disease | undefined> = new Map();
-
-  recommendationsMapped.map((recommendation: ImmunizationRecommendation) => {
-    map.set(recommendation.id, getDiseaseForRecommendation(recommendation));
+  const { data: targetDiseases, idToTargetDisease } = useTargetDiseases({});
+  const { immunizationRecommendations } = useImmunizationRecommendations({
+    patient: patientId,
   });
+
+  const { data: medicationsData, idToMedication } = useMedications({});
+  const {
+    idToOrganization,
+    vaccinationSchemes,
+    idToVaccinationScheme,
+    vaccinationDoses,
+    idToVaccinationDose,
+  } = useMedicationInfo(
+    medicationsData?.ids.map((id: string) => idToMedication(id)!)
+  );
+
+  const standardVaccinationSchemes = vaccinationSchemes?.byType['standard'];
 
   return (
     <Flex
@@ -55,60 +64,76 @@ export const RecommendationsWidget: FC = ({}) => {
       boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
       borderRadius={'15px'}
       flexDir='column'
-      justifyContent='space-between'
-      h={'95%'}
+      justifyContent='start'
+      h={'100%'}
       w={'100%'}
+      overflowY={'scroll'}
     >
-      {diseasesMapped.map((disease: Disease) => (
-        <Stack>
-          <Flex
-            justifyContent={'space-between'}
-            w={'100%'}
-            alignItems={'center'}
-            p={6}
-          >
-            <Text>{disease.name}</Text>
-            <Flex w={'50%'} justifyContent={'end'}>
-              <Icon
-                as={map.get(disease.id)?.icon}
-                color={map.get(disease.id)?.iconColor}
-                w={8}
-                h={8}
-                m={'5px'}
-                mr={6}
-              />
-              <Link
-                to={`/md/dashboard/patient/${patient?.id}/diseases/${disease.id}`}
-              >
-                <Button colorScheme='blue' w={'5vw'}>
-                  Open
-                </Button>
-              </Link>
-            </Flex>
-          </Flex>
-          <Divider />
-        </Stack>
-      ))}
+      {immunizationRecommendations?.map(
+        (recommendation: ImmunizationRecommendation) => {
+          const diseases = targetDiseases?.byCode[
+            recommendation.targetDisease.coding.code
+          ]?.ids.map((irId) => idToTargetDisease(irId)!);
+          return diseases?.map((disease) => {
+            const med =
+              recommendation &&
+              idToMedication(
+                medicationsData?.byCode[recommendation.vaccineCode.coding.code]
+                  ?.ids[0]
+              );
+            const vs =
+              med &&
+              idToVaccinationScheme(
+                standardVaccinationSchemes?.byMedication[med?.id]?.ids[0]
+              );
+            const allDoses =
+              vs &&
+              vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
+                idToVaccinationDose
+              );
+            const dose = idToVaccinationDose(recommendation?.vaccinationDoseId);
+
+            return (
+              <Stack>
+                <Flex
+                  justifyContent={'space-between'}
+                  w={'100%'}
+                  alignItems={'center'}
+                  p={2}
+                  pl={6}
+                  pr={6}
+                >
+                  <Text> {disease.name} </Text>
+                  <Flex w={'50%'} justifyContent={'end'} alignItems={'center'}>
+                    {recommendation && med && vs && allDoses && dose && (
+                      <Badge
+                        colorScheme={'gray'}
+                        variant='solid'
+                        w={'100%'}
+                        textAlign={'center'}
+                        mr={3}
+                      >
+                        Dose:{' '}
+                        {'numberInScheme' in dose!
+                          ? `${dose.numberInScheme} / ${allDoses!}`
+                          : 'Booster'}
+                      </Badge>
+                    )}
+                    <Link
+                      to={`/md/dashboard/patient/${patientId}/diseases/${disease.code.coding.code}`}
+                    >
+                      <Button colorScheme='blue' w={'5vw'}>
+                        Open
+                      </Button>
+                    </Link>
+                  </Flex>
+                </Flex>
+                <Divider />
+              </Stack>
+            );
+          });
+        }
+      )}
     </Flex>
   );
 };
-
-function getDiseaseForRecommendation(
-  recommendation: ImmunizationRecommendation
-): Disease | undefined {
-  const { data: populationRecommendation } =
-    populationRecommendationApi.endpoints.getById.useQuery(
-      recommendation.populationRecommendationId
-    );
-  if (populationRecommendation === undefined) {
-    return undefined;
-  }
-
-  const populationRecommendationMapped =
-    PopulationRecommendationMapper.fromResource(populationRecommendation);
-
-  const { data: disease } = targetDiseaseApi.endpoints.getById.useQuery(
-    populationRecommendationMapped?.id
-  );
-  return DiseaseMapper.fromResource(disease);
-}
