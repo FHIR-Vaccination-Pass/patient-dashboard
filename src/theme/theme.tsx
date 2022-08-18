@@ -1,6 +1,7 @@
 import { extendTheme } from '@chakra-ui/react';
 import { IconType } from 'react-icons';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { ImmunizationRecommendationStatus } from '../core/models/ImmunizationRecommendation';
 
 // Example Colors need to be adjusted to fit the chosen theme e.g. the AviMedical CI theme
 const colors = {
@@ -32,47 +33,32 @@ const colors = {
 
 export const theme = extendTheme({ colors });
 
-export type VaccinationStatus =
-  | 'complete'
-  | 'immune'
-  | 'due'
-  | 'overdue'
-  | 'contraindicated';
-
 export function getColorByStatus(
-  status: VaccinationStatus | undefined,
+  status: ImmunizationRecommendationStatus | undefined,
   defaultColor: string
 ): string {
   switch (status) {
     case 'complete':
       return 'green';
-    case 'immune':
-      return 'green';
     case 'due':
       return 'orange';
     case 'overdue':
       return 'red';
-    case 'contraindicated':
-      return 'gray';
     default:
       return defaultColor;
   }
 }
 
 export function getIconByStatus(
-  status: VaccinationStatus | undefined
+  status: ImmunizationRecommendationStatus | undefined
 ): IconType | undefined {
   switch (status) {
     case 'complete':
-      return FaCheckCircle;
-    case 'immune':
       return FaCheckCircle;
     case 'due':
       return FaExclamationTriangle;
     case 'overdue':
       return FaExclamationTriangle;
-    case 'contraindicated':
-      return undefined;
     default:
       return undefined;
   }
