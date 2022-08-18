@@ -3,6 +3,7 @@ import { Bundle, ImmunizationRecommendation } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { ImmunizationRecommendationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
 
 export type TResource = ImmunizationRecommendation;
 export const TMapper = ImmunizationRecommendationMapper;
@@ -21,7 +22,7 @@ export type GetResponseGroups =
   | 'byPatient'
   | 'byPopulationRecommendation'
   | 'byVaccinationDose';
-const resourceName = 'ImmunizationRecommendation' as const;
+const resourceName: ResourceName = 'ImmunizationRecommendation';
 const resourcePath = '/ImmunizationRecommendation' as const;
 
 export const immunizationRecommendationApi = createApi({
