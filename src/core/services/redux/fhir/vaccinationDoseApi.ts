@@ -3,6 +3,7 @@ import { Basic, Bundle } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { VaccinationDoseMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
 
 export type TResource = Basic;
 export const TMapper = VaccinationDoseMapper;
@@ -14,7 +15,7 @@ export type GetResponseGroups =
   | 'byType'
   | 'byIsProtected'
   | 'byVaccinationScheme';
-const resourceName = 'VaccinationDose' as const;
+const resourceName: ResourceName = 'Basic';
 const resourcePath = '/Basic' as const;
 
 export const vaccinationDoseApi = createApi({
@@ -33,7 +34,7 @@ export const vaccinationDoseApi = createApi({
       query: () => ({
         url: resourcePath,
         params: {
-          code: resourceName,
+          code: 'VaccinationDose',
           _profile: `${settings.fhir.profileBaseUrl}/vp-vaccination-dose`,
         },
       }),

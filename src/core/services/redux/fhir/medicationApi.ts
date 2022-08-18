@@ -3,6 +3,7 @@ import { Bundle, Medication } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { MedicationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
 
 export type TResource = Medication;
 export const TMapper = MedicationMapper;
@@ -17,7 +18,7 @@ export type GetResponseGroups =
   | 'byForm'
   | 'byManufacturer'
   | 'byTargetDisease';
-const resourceName = 'Medication' as const;
+const resourceName: ResourceName = 'Medication';
 const resourcePath = '/Medication' as const;
 
 export const medicationApi = createApi({
