@@ -11,18 +11,17 @@ import {
   Divider,
   Box,
 } from '@chakra-ui/react';
-import { useMapper } from '../../../core/services/resourceMapper/ResourceMapperContext';
 import { useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { convertArrayToOptionArray } from '../../settings/vaccineInformationCard';
 import { Country } from 'country-state-city';
 import { getStatesOfCountry } from 'country-state-city/dist/lib/state';
-import { Gender } from '../../../core/models';
+import { Gender, PatientMapper } from '../../../core/models';
 import { CloseIcon } from '@chakra-ui/icons';
 import { FaWrench } from 'react-icons/fa';
 import { ICountry, IState } from 'country-state-city/dist/lib/interface';
-import { usePatients } from '../../../hooks';
 import { cloneDeep } from 'lodash';
+import { patientApi } from '../../../core/services/redux/fhir/patientApi';
 
 export const PatientInformationWidget: FC = ({}) => {
   const params = useParams();
@@ -34,8 +33,10 @@ export const PatientInformationWidget: FC = ({}) => {
     (potentialCountry) => potentialCountry.name
   );
 
-  const { patients } = usePatients({ _id: params['patientId']! });
-  const patient = patients?.at(0);
+  const { data: patientRaw } = patientApi.endpoints.getById.useQuery(
+    params['patientId']!
+  );
+  const patient = PatientMapper.fromResource(patientRaw);
 
   const oldPatient = cloneDeep(patient);
   const updatedPatient = cloneDeep(patient);

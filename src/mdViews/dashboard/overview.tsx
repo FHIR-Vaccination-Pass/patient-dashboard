@@ -17,7 +17,7 @@ import { AggregatedImmunizationStatus } from '../../core/models/AggregatedImmuni
 import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 import { ResourceMapper } from '../../core/services/resourceMapper/ResourceMapper';
 import { Link } from 'react-router-dom';
-import { patientApi } from '../../core/services/redux/fhir';
+import { usePatients } from '../../hooks/usePatients';
 
 function calculateStatusForAllPatients(
   patientIds: string[],
@@ -43,20 +43,14 @@ function calculateStatusForAllPatients(
 
 export function MDOverview() {
   const mapper = useMapper();
-  const { data: patients } = patientApi.endpoints.get.useQuery({});
+  const { data: patientsData, patients } = usePatients({});
 
-  if (patients === undefined) {
+  if (patientsData === undefined || patients === undefined) {
     return <></>;
   }
-  const usersMapped = patients.ids.map((irId) =>
-    PatientMapper.fromResource(patients!.entities[irId])
-  );
 
   const patientStatusMap: Map<string, AggregatedImmunizationStatus> =
-    calculateStatusForAllPatients(
-      usersMapped.map((patient: PatientMapper) => patient.id),
-      mapper
-    );
+    calculateStatusForAllPatients(patientsData.ids, mapper);
   return (
     <Box>
       <TableContainer>
@@ -70,7 +64,7 @@ export function MDOverview() {
             </Tr>
           </Thead>
           <Tbody>
-            {usersMapped.map((patient: Patient) => (
+            {patients.map((patient: Patient) => (
               <Tr>
                 <Td>
                   <Link to={`patient/${patient.id}`}>
