@@ -3,10 +3,11 @@ import { Bundle, Patient } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { PatientMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
 
-type TResource = Patient;
-const TMapper = PatientMapper;
-interface GetArgs {
+export type TResource = Patient;
+export const TMapper = PatientMapper;
+export interface GetArgs {
   _id?: string;
   active?: string;
   name?: string;
@@ -15,13 +16,13 @@ interface GetArgs {
   deceased?: string;
   address?: string;
 }
-type GetResponseGroups =
+export type GetResponseGroups =
   | 'byActive'
   | 'byGender'
   | 'byDeceased'
   | 'byIsPregnant'
   | 'byKeycloakUsername';
-const resourceName = 'Patient' as const;
+const resourceName: ResourceName = 'Patient';
 const resourcePath = '/Patient' as const;
 
 export const patientApi = createApi({

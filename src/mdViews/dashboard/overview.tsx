@@ -11,12 +11,13 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { ImmunizationRecommendation } from '../../core/models/ImmunizationRecommendation';
-import { Patient } from '../../core/models/Patient';
+import { Patient, PatientMapper } from '../../core/models/Patient';
 import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import { AggregatedImmunizationStatus } from '../../core/models/AggregatedImmunizationStatus';
 import { calcAggregateImmunizationStatus } from '../../components/dashboard/immunizationStatus/immunizationStatusCard';
 import { ResourceMapper } from '../../core/services/resourceMapper/ResourceMapper';
 import { Link } from 'react-router-dom';
+import { usePatients } from '../../hooks/usePatients';
 
 function calculateStatusForAllPatients(
   patientIds: string[],
@@ -42,12 +43,14 @@ function calculateStatusForAllPatients(
 
 export function MDOverview() {
   const mapper = useMapper();
-  const patients = mapper.getAllPatients();
+  const { data: patientsData, patients } = usePatients({});
+
+  if (patientsData === undefined || patients === undefined) {
+    return <></>;
+  }
+
   const patientStatusMap: Map<string, AggregatedImmunizationStatus> =
-    calculateStatusForAllPatients(
-      patients.map((patient) => patient.id),
-      mapper
-    );
+    calculateStatusForAllPatients(patientsData.ids, mapper);
   return (
     <Box>
       <TableContainer>

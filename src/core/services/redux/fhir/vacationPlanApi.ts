@@ -3,15 +3,16 @@ import { Basic, Bundle } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { VacationPlanMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
 
-type TResource = Basic;
-const TMapper = VacationPlanMapper;
-interface GetArgs {
+export type TResource = Basic;
+export const TMapper = VacationPlanMapper;
+export interface GetArgs {
   _id?: string;
   subject?: string;
 }
-type GetResponseGroups = 'byCountry' | 'byState' | 'byPatient';
-const resourceName = 'VacationPlan' as const;
+export type GetResponseGroups = 'byCountry' | 'byState' | 'byPatient';
+const resourceName: ResourceName = 'Basic';
 const resourcePath = '/Basic' as const;
 
 export const vacationPlanApi = createApi({
@@ -30,7 +31,7 @@ export const vacationPlanApi = createApi({
       query: () => ({
         url: resourcePath,
         params: {
-          code: resourceName,
+          code: 'VacationPlan',
           _profile: `${settings.fhir.profileBaseUrl}/vp-vacation-plan`,
         },
       }),

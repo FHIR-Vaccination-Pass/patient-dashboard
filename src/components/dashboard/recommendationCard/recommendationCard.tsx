@@ -10,15 +10,9 @@ import {
 import React, { FC } from 'react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
-import {
-  getColorByStatus,
-  getIconByStatus,
-  VaccinationStatus,
-} from '../../../theme/theme';
-import { ImmunizationRecommendation } from '../../../core/models/ImmunizationRecommendation';
-import { Disease } from '../../../core/models/Disease';
-import { useMapper } from '../../../core/services/resourceMapper/ResourceMapperContext';
-import { ResourceMapper } from '../../../core/services/resourceMapper/ResourceMapper';
+import { getColorByStatus, getIconByStatus } from '../../../theme/theme';
+import { ImmunizationRecommendation } from '../../../core/models';
+import { useTargetDiseases } from '../../../hooks';
 
 interface RecommendationCardProps extends BoxProps {
   recommendation: ImmunizationRecommendation;
@@ -33,16 +27,14 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
     // the key within the theme, in this case `theme.colors`
     'colors',
     // the subkey(s), resolving to `theme.colors.red.100`
-    [
-      getColorByStatus(
-        recommendation.forecastStatus.coding.code as VaccinationStatus,
-        'gray'
-      ) + '.300',
-    ]
+    [getColorByStatus(recommendation.status, 'gray') + '.300']
     // a single fallback or fallback array matching the length of the previous arg
   );
-  const mapper: ResourceMapper = useMapper();
-  const disease: Disease | undefined = mapper.getDiseaseById(diseaseId);
+  const { data: targetDiseasesData, idToTargetDisease } = useTargetDiseases({});
+
+  const disease = idToTargetDisease(
+    targetDiseasesData?.byCode[diseaseId]?.ids[0]
+  );
   return (
     <Link to={`/patient/dashboard/wiki/${disease?.code.coding.code}`}>
       <Flex
@@ -58,34 +50,20 @@ export const RecommendationCard: FC<RecommendationCardProps> = ({
               Due:
               <Badge
                 fontSize={'sm'}
-                colorScheme={getColorByStatus(
-                  recommendation.forecastStatus.coding
-                    .code as VaccinationStatus,
-                  'gray'
-                )}
+                colorScheme={getColorByStatus(recommendation.status, 'gray')}
                 ml={5}
               >
                 {recommendation.date.toDateString()}
               </Badge>
             </Text>
           </Box>
-          {getIconByStatus(
-            recommendation.forecastStatus.coding.code as VaccinationStatus
-          ) !== undefined && (
+          {getIconByStatus(recommendation.status) !== undefined && (
             <Icon
               mt={'auto'}
               mb={'auto'}
               ml='3'
-              as={getIconByStatus(
-                recommendation.forecastStatus.coding.code as VaccinationStatus
-              )}
-              color={
-                getColorByStatus(
-                  recommendation.forecastStatus.coding
-                    .code as VaccinationStatus,
-                  'gray'
-                ) + '.400'
-              }
+              as={getIconByStatus(recommendation.status)}
+              color={getColorByStatus(recommendation.status, 'gray') + '.400'}
               w={6}
               h={6}
             />

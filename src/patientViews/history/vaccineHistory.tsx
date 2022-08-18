@@ -13,10 +13,16 @@ import {
 } from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
 import React from 'react';
-import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import { Link } from 'react-router-dom';
-import { VaccinationDoseSingle } from '../../core/models/VaccinationDose';
 import { resolvePractitionerName } from '../../core/services/util/resolveHumanName';
+import {
+  useImmunizations,
+  useMedications,
+  usePractitioners,
+  useTargetDiseases,
+  useVaccinationDoses,
+} from '../../hooks';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 export function VaccineHistory() {
   const [color] = useToken(
@@ -51,14 +57,41 @@ export function VaccineHistory() {
     fontSize: '11pt',
   };
 
-  const mapper = useMapper();
+  const { immunizations } = useImmunizations({});
+  const { data: medicationsData, idToMedication } = useMedications(
+    immunizations
+      ? {
+          code: immunizations
+            .map((imm) => imm.vaccineCode.coding.code)
+            .join(','),
+        }
+      : skipToken
+  );
+  const { data: vaccinationDosesData, idToVaccinationDose } =
+    useVaccinationDoses({});
+  const { data: targetDiseaseData, idToTargetDisease } = useTargetDiseases({});
+  const { idToPractitioner } = usePractitioners({});
+
   return (
     <Box h={'full'}>
       <VerticalTimeline lineColor={`${color}`}>
-        {mapper.getAllImmunizations().map((immunization) => {
-          return mapper
-            .getMedicationByVaccineCode(immunization.vaccineCode)
-            ?.targetDiseaseIds.map((diseaseId) => (
+        {immunizations?.map((imm) => {
+          const med = idToMedication(
+            medicationsData?.byCode[imm.vaccineCode.coding.code]?.ids[0]
+          );
+          const pract = idToPractitioner(imm.performerId);
+          const dose = idToVaccinationDose(imm?.vaccinationDoseId);
+          const numberOfDoses =
+            dose &&
+            vaccinationDosesData?.byVaccinationScheme[dose.vaccinationSchemeId]
+              ?.ids.length;
+
+          return med?.targetDiseaseIds.map((diseaseId) => {
+            const targetDisease = idToTargetDisease(
+              targetDiseaseData?.byCode[diseaseId]?.ids[0]
+            );
+
+            return (
               <VerticalTimelineElement
                 iconStyle={timelineElementIconStyles}
                 contentStyle={timelineElementStyles}
@@ -66,8 +99,7 @@ export function VaccineHistory() {
               >
                 <Link
                   to={
-                    '/patient/dashboard/wiki/' +
-                    mapper.getDiseaseById(diseaseId)?.code.coding.code
+                    '/patient/dashboard/wiki/' + targetDisease?.code.coding.code
                   }
                 >
                   <Stack>
@@ -78,7 +110,7 @@ export function VaccineHistory() {
                       pr={'16px'}
                     >
                       <Text style={headline} m={'0px !important'}>
-                        {mapper.getDiseaseById(diseaseId)?.name}
+                        {targetDisease?.name}
                       </Text>
                       <Badge
                         w={'50%'}
@@ -86,7 +118,7 @@ export function VaccineHistory() {
                         colorScheme='green'
                         variant='subtle'
                       >
-                        {immunization.occurrenceTime.toDateString()}
+                        {imm.occurrenceTime.toDateString()}
                       </Badge>
                     </Flex>
                     <Divider></Divider>
@@ -109,11 +141,7 @@ export function VaccineHistory() {
                         colorScheme='purple'
                         variant='subtle'
                       >
-                        {
-                          mapper.getMedicationByVaccineCode(
-                            immunization.vaccineCode
-                          )?.tradeName
-                        }
+                        {med.tradeName}
                       </Badge>
                     </Flex>
                     <Flex
@@ -135,10 +163,7 @@ export function VaccineHistory() {
                         colorScheme='purple'
                         variant='subtle'
                       >
-                        {resolvePractitionerName(
-                          mapper.getPractitionerById(immunization.performerId)
-                            ?.name
-                        )}
+                        {resolvePractitionerName(pract?.name)}
                       </Badge>
                     </Flex>
                     <Flex
@@ -160,7 +185,7 @@ export function VaccineHistory() {
                         colorScheme='purple'
                         variant='subtle'
                       >
-                        {immunization.lotNumber}
+                        {imm.lotNumber}
                       </Badge>
                     </Flex>
                     <Flex
@@ -182,25 +207,16 @@ export function VaccineHistory() {
                         colorScheme='orange'
                         variant='subtle'
                       >
-                        {
-                          (
-                            mapper.getVaccinationDoseById(
-                              immunization.vaccinationDoseId
-                            ) as VaccinationDoseSingle
-                          ).numberInScheme
-                        }{' '}
-                        /{' '}
-                        {mapper.getNumberOfDosesByMedicationId(
-                          mapper.getMedicationByVaccineCode(
-                            immunization.vaccineCode
-                          )?.id
-                        )}
+                        {dose && 'numberInScheme' in dose
+                          ? `${dose.numberInScheme} / ${numberOfDoses}`
+                          : 'Booster'}
                       </Badge>
                     </Flex>
                   </Stack>
                 </Link>
               </VerticalTimelineElement>
-            ));
+            );
+          });
         })}
       </VerticalTimeline>
     </Box>

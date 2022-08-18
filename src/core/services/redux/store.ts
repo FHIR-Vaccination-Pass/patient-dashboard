@@ -15,6 +15,7 @@ import {
   vaccinationDoseApi,
   vaccinationSchemeApi,
 } from './fhir';
+import './fhir/notificationWebsocket';
 
 export const store = configureStore({
   reducer: {
@@ -38,7 +39,7 @@ export const store = configureStore({
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
+    getDefaultMiddleware({ serializableCheck: false }).concat(
       activeVaccinationSchemeApi.middleware,
       immunizationApi.middleware,
       immunizationRecommendationApi.middleware,

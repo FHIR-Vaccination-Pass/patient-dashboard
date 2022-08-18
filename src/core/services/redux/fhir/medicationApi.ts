@@ -3,21 +3,22 @@ import { Bundle, Medication } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { MedicationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
 
-type TResource = Medication;
-const TMapper = MedicationMapper;
-interface GetArgs {
+export type TResource = Medication;
+export const TMapper = MedicationMapper;
+export interface GetArgs {
   _id?: string;
   code?: string;
   manufacturer?: string;
   form?: string;
 }
-type GetResponseGroups =
+export type GetResponseGroups =
   | 'byCode'
   | 'byForm'
   | 'byManufacturer'
   | 'byTargetDisease';
-const resourceName = 'Medication' as const;
+const resourceName: ResourceName = 'Medication';
 const resourcePath = '/Medication' as const;
 
 export const medicationApi = createApi({

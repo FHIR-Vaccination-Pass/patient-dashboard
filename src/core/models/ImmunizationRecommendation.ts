@@ -9,6 +9,13 @@ import {
 import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
+import dayjs from 'dayjs';
+
+export type ImmunizationRecommendationStatus =
+  | 'complete'
+  | 'future'
+  | 'due'
+  | 'overdue';
 
 export interface ImmunizationRecommendation {
   id: string;
@@ -16,6 +23,7 @@ export interface ImmunizationRecommendation {
   forecastStatus: CodeableConcept;
   vaccineCode: CodeableConcept;
   recommendedStartDate: Date;
+  status: ImmunizationRecommendationStatus;
   isDeactivated: boolean;
   supportingImmunizationIds: string[];
   fulfillingImmunizationIds: string[];
@@ -108,6 +116,22 @@ export class ImmunizationRecommendationMapper
     )[0] as FHIRImmunizationRecommendationRecommendationDateCriterion;
 
     return new Date(earliestDateToGiveDateCriterion.value);
+  }
+
+  get status(): ImmunizationRecommendationStatus {
+    const now = dayjs();
+    const recommendedStartDate = dayjs(this.recommendedStartDate);
+
+    if (this.fulfillingImmunizationIds.length > 0) {
+      return 'complete';
+    }
+    if (recommendedStartDate.isBefore(now)) {
+      return 'overdue';
+    }
+    if (recommendedStartDate.isBefore(now.add(30, 'day'))) {
+      return 'due';
+    }
+    return 'future';
   }
 
   get isDeactivated(): boolean {
