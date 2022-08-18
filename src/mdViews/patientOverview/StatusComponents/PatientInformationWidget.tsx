@@ -114,17 +114,12 @@ export const PatientInformationWidget: FC = ({}) => {
     // updatedPatient!.address.stateCode = stateOptions.find(
     //   (stateOption) => stateOption.name === state
     // )!.isoCode;
-    console.log('Saving the following patient on the FHIR server:');
-    // console.log(updatedPatient);
-    console.log(givenName.split(' '));
-    console.log(surname);
-    console.log(birthday!);
-    console.log(gender);
-    console.log(country!.name);
-    console.log(country!.isoCode);
-    console.log(state);
     console.log(
-      stateOptions.find((stateOption) => stateOption.name === state)!.isoCode
+      `Saving the following patient on the FHIR server: ${givenName} ${surname} ${birthday} ${gender} ${
+        country?.name
+      } ${country?.isoCode} ${state} ${
+        stateOptions.find((stateOption) => stateOption.name === state)!.isoCode
+      }`
     );
   }
 
