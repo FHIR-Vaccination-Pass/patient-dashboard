@@ -3,6 +3,7 @@ import { Bundle, Organization } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { OrganizationMapper } from '../../../models';
 import { GetResponse } from './utils';
+import { ResourceName } from './types';
 
 export type TResource = Organization;
 export const TMapper = OrganizationMapper;
@@ -11,7 +12,7 @@ export interface GetArgs {
   name?: string;
 }
 export type GetResponseGroups = never;
-const resourceName = 'Organization' as const;
+const resourceName: ResourceName = 'Organization';
 const resourcePath = '/Organization' as const;
 
 export const organizationApi = createApi({

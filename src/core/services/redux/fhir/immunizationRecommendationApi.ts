@@ -3,6 +3,7 @@ import { Bundle, ImmunizationRecommendation } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { ImmunizationRecommendationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
 
 export type TResource = ImmunizationRecommendation;
 export const TMapper = ImmunizationRecommendationMapper;
@@ -15,13 +16,14 @@ export interface GetArgs {
 export type GetResponseGroups =
   | 'byForecastStatus'
   | 'byVaccineCode'
+  | 'byTargetDisease'
   | 'byIsDeactivated'
   | 'bySupportingImmunization'
   | 'byFulfillingImmunization'
   | 'byPatient'
   | 'byPopulationRecommendation'
   | 'byVaccinationDose';
-const resourceName = 'ImmunizationRecommendation' as const;
+const resourceName: ResourceName = 'ImmunizationRecommendation';
 const resourcePath = '/ImmunizationRecommendation' as const;
 
 export const immunizationRecommendationApi = createApi({
@@ -53,6 +55,7 @@ export const immunizationRecommendationApi = createApi({
 
           byForecastStatus: {},
           byVaccineCode: {},
+          byTargetDisease: {},
           byIsDeactivated: {},
           bySupportingImmunization: {},
           byFulfillingImmunization: {},
@@ -66,6 +69,7 @@ export const immunizationRecommendationApi = createApi({
             id,
             forecastStatus,
             vaccineCode,
+            targetDisease,
             isDeactivated,
             supportingImmunizationIds,
             fulfillingImmunizationIds,
@@ -80,6 +84,7 @@ export const immunizationRecommendationApi = createApi({
           storeIdRecursive(response, id, [
             ['byForecastStatus', forecastStatus.coding.code],
             ['byVaccineCode', vaccineCode.coding.code],
+            ['byTargetDisease', targetDisease.coding.code],
             ['byIsDeactivated', String(isDeactivated)],
             ...supportingImmunizationIds.map(
               (sId): ['bySupportingImmunization', string] => [

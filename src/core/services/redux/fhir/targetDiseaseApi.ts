@@ -3,6 +3,7 @@ import { Basic, Bundle } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { DiseaseMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
 
 export type TResource = Basic;
 export const TMapper = DiseaseMapper;
@@ -10,7 +11,7 @@ export interface GetArgs {
   _id?: string;
 }
 export type GetResponseGroups = 'byCode';
-const resourceName = 'TargetDisease' as const;
+const resourceName: ResourceName = 'Basic';
 const resourcePath = '/Basic' as const;
 
 export const targetDiseaseApi = createApi({
@@ -29,7 +30,7 @@ export const targetDiseaseApi = createApi({
       query: () => ({
         url: resourcePath,
         params: {
-          code: resourceName,
+          code: 'TargetDisease',
           _profile: `${settings.fhir.profileBaseUrl}/vp-target-disease`,
         },
       }),

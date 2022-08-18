@@ -18,7 +18,14 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
           system: 'SNOMEDCTMedicationCodes',
         },
       },
+      targetDisease: {
+        coding: {
+          code: 'comirnaty',
+          system: 'https://localhost:3000/url/to/typings',
+        },
+      },
       recommendedStartDate: new Date(),
+      status: 'complete',
       isDeactivated: false,
       supportingImmunizationIds: [],
       fulfillingImmunizationIds: [],
@@ -44,7 +51,14 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
           system: 'SNOMEDCTMedicationCodes',
         },
       },
+      targetDisease: {
+        coding: {
+          code: 'comirnaty',
+          system: 'https://localhost:3000/url/to/typings',
+        },
+      },
       recommendedStartDate: new Date(),
+      status: 'complete',
       isDeactivated: false,
       supportingImmunizationIds: [],
       fulfillingImmunizationIds: [],
@@ -70,7 +84,14 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
           system: 'SNOMEDCTMedicationCodes',
         },
       },
+      targetDisease: {
+        coding: {
+          code: 'comirnaty',
+          system: 'https://localhost:3000/url/to/typings',
+        },
+      },
       recommendedStartDate: new Date(),
+      status: 'complete',
       isDeactivated: false,
       supportingImmunizationIds: [],
       fulfillingImmunizationIds: [],
@@ -96,7 +117,14 @@ export const MockRecommendations = new Map<string, ImmunizationRecommendation>([
           system: 'https://localhost:3000/url/to/typings',
         },
       },
+      targetDisease: {
+        coding: {
+          code: 'comirnaty',
+          system: 'https://localhost:3000/url/to/typings',
+        },
+      },
       recommendedStartDate: new Date(),
+      status: 'complete',
       isDeactivated: false,
       supportingImmunizationIds: [],
       fulfillingImmunizationIds: [],

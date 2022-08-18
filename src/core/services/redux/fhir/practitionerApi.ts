@@ -3,6 +3,7 @@ import { Bundle, Practitioner } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { PractitionerMapper } from '../../../models';
 import { GetResponse } from './utils';
+import { ResourceName } from './types';
 
 export type TResource = Practitioner;
 export const TMapper = PractitionerMapper;
@@ -11,7 +12,7 @@ export interface GetArgs {
   name?: string;
 }
 export type GetResponseGroups = never;
-const resourceName = 'Practitioner' as const;
+const resourceName: ResourceName = 'Practitioner';
 const resourcePath = '/Practitioner' as const;
 
 export const practitionerApi = createApi({

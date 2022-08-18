@@ -1,50 +1,22 @@
 import React, { FC } from 'react';
-import {
-  Badge,
-  Flex,
-  useColorModeValue,
-  Text,
-  Divider,
-  Button,
-  Icon,
-  Stack,
-} from '@chakra-ui/react';
-import { useMapper } from '../../../core/services/resourceMapper/ResourceMapperContext';
-import {
-  AggregatedImmunizationStatus,
-  Disease,
-  DiseaseMapper,
-  ImmunizationRecommendationMapper,
-  Patient,
-} from '../../../core/models';
-import {
-  immunizationRecommendationApi,
-  targetDiseaseApi,
-} from '../../../core/services/redux/fhir';
+import { Flex, Text, Divider, Button, Icon, Stack } from '@chakra-ui/react';
+import { Disease } from '../../../core/models';
 import { calcAggregateImmunizationStatus } from '../../../components/dashboard/immunizationStatus/immunizationStatusCard';
-import { DefaultStatus } from '../../../components/dashboard/immunizationStatus/immunizationCardConfigurations';
 import { Link, useParams } from 'react-router-dom';
+import {
+  useImmunizationRecommendations,
+  useTargetDiseases,
+} from '../../../hooks';
 
-export const ImportantDiseaseWidget: FC = ({}) => {
+export const ImportantDiseaseWidget: FC = () => {
   const params = useParams();
-  const mapper = useMapper();
-  const patient: Patient | undefined = mapper.getPatientById(
-    params['patientId'] || ''
-  );
+  const patientId = params['patientId']!;
 
-  const { data: diseases } = targetDiseaseApi.endpoints.get.useQuery({});
-  if (diseases === undefined) {
-    return <></>;
-  }
-  const diseasesMapped = diseases.ids.map((diseaseId) =>
-    DiseaseMapper.fromResource(diseases.entities[diseaseId])
-  );
-
-  let map: Map<string, AggregatedImmunizationStatus> = new Map();
-
-  diseasesMapped.map((disease) => {
-    map.set(disease.id, getAggregateStatus(disease));
-  });
+  const { targetDiseases } = useTargetDiseases({});
+  const {
+    data: immunizationRecommendationsData,
+    idToImmunizationRecommendation,
+  } = useImmunizationRecommendations({ patient: patientId });
 
   return (
     <Flex
@@ -56,54 +28,43 @@ export const ImportantDiseaseWidget: FC = ({}) => {
       h={'95%'}
       w={'100%'}
     >
-      {diseasesMapped.map((disease: Disease) => (
-        <Stack>
-          <Flex
-            justifyContent={'space-between'}
-            w={'100%'}
-            alignItems={'center'}
-            p={6}
-          >
-            <Text>{disease.name}</Text>
-            <Flex w={'50%'} justifyContent={'end'}>
-              <Icon
-                as={map.get(disease.id)?.icon}
-                color={map.get(disease.id)?.iconColor}
-                w={8}
-                h={8}
-                m={'5px'}
-                mr={6}
-              />
-              <Link
-                to={`/md/dashboard/patient/${patient?.id}/diseases/${disease.id}`}
-              >
-                <Button colorScheme='blue' w={'5vw'}>
-                  Open
-                </Button>
-              </Link>
+      {targetDiseases?.map((disease: Disease) => {
+        const immRecs = immunizationRecommendationsData?.byTargetDisease[
+          disease.code.coding.code
+        ]?.ids.map((irId) => idToImmunizationRecommendation(irId)!);
+        const status = calcAggregateImmunizationStatus(immRecs ?? []);
+
+        return (
+          <Stack>
+            <Flex
+              justifyContent={'space-between'}
+              w={'100%'}
+              alignItems={'center'}
+              p={6}
+            >
+              <Text>{disease.name}</Text>
+              <Flex w={'50%'} justifyContent={'end'}>
+                <Icon
+                  as={status.icon}
+                  color={status.iconColor}
+                  w={8}
+                  h={8}
+                  m={'5px'}
+                  mr={6}
+                />
+                <Link
+                  to={`/md/dashboard/patient/${patientId}/diseases/${disease.id}`}
+                >
+                  <Button colorScheme='blue' w={'5vw'}>
+                    Open
+                  </Button>
+                </Link>
+              </Flex>
             </Flex>
-          </Flex>
-          <Divider />
-        </Stack>
-      ))}
+            <Divider />
+          </Stack>
+        );
+      })}
     </Flex>
   );
 };
-
-function getAggregateStatus(disease: Disease): AggregatedImmunizationStatus {
-  const { data: immunizationRecommendations } =
-    immunizationRecommendationApi.endpoints.get.useQuery({
-      'target-disease': disease.code.coding.code,
-    });
-  if (immunizationRecommendations === undefined) {
-    return DefaultStatus;
-  }
-
-  const immunizationRecommendationsMapped = immunizationRecommendations.ids.map(
-    (irId) =>
-      ImmunizationRecommendationMapper.fromResource(
-        immunizationRecommendations.entities[irId]
-      )
-  );
-  return calcAggregateImmunizationStatus(immunizationRecommendationsMapped);
-}
