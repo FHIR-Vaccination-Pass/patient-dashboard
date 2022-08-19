@@ -15,7 +15,6 @@ import {
   useImmunizationRecommendations,
   useTargetDiseases,
 } from '../../../hooks';
-import { FaWrench } from 'react-icons/fa';
 
 export const ImportantDiseaseWidget: FC = () => {
   const params = useParams();
@@ -50,25 +49,27 @@ export const ImportantDiseaseWidget: FC = () => {
                 justifyContent={'space-between'}
                 w={'100%'}
                 alignItems={'center'}
-                p={2}
+                p={4}
                 pl={6}
                 pr={6}
               >
-                <Text>{disease.name}</Text>
-                <Flex w={'50%'} justifyContent={'end'}>
+                <Text color={status.iconColor}>{disease.name}</Text>
+                <Flex w={'50%'} justifyContent={'end'} alignItems={'center'}>
                   <Icon
                     as={status.icon}
                     color={status.iconColor}
-                    w={8}
-                    h={8}
+                    w={'20px'}
+                    h={'20px'}
                     m={'5px'}
-                    mr={6}
                   />
+                  <Text mr={4} color={status.iconColor}>
+                    {status.status}
+                  </Text>
                   <Link
                     to={`/md/dashboard/patient/${patientId}/diseases/${disease.id}`}
                   >
-                    <Button colorScheme='blue' w={'5vw'}>
-                      Open
+                    <Button colorScheme='blue' variant={'ghost'}>
+                      Details
                     </Button>
                   </Link>
                 </Flex>
@@ -78,23 +79,25 @@ export const ImportantDiseaseWidget: FC = () => {
           );
         })}
       </Box>
-      <Divider orientation='horizontal' />
-      <Flex
-        h={'40px'}
-        alignItems={'center'}
-        bg={'white'}
-        textColor={'green.600'}
-        cursor={'pointer'}
-        borderBottomRadius={'10px'}
-        justifyContent={'center'}
-        m={1}
-      >
-        <Link to={`/md/dashboard/patient/${patientId}/diseases/`}>
-          <Text justifyContent={'flex-start'} color={'gray.600'}>
-            Open Disease Record
-          </Text>
-        </Link>
-      </Flex>
+      <Box>
+        <Divider orientation='horizontal' />
+        <Flex
+          h={'40px'}
+          alignItems={'center'}
+          bg={'white'}
+          textColor={'green.600'}
+          cursor={'pointer'}
+          borderBottomRadius={'10px'}
+          justifyContent={'center'}
+          m={1}
+        >
+          <Link to={`/md/dashboard/patient/${patientId}/diseases/`}>
+            <Text justifyContent={'flex-start'} color={'gray.600'}>
+              Open Disease Record
+            </Text>
+          </Link>
+        </Flex>
+      </Box>
     </Flex>
   );
 };
