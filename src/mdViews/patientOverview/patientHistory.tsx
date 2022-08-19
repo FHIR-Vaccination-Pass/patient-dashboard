@@ -43,6 +43,7 @@ export function PatientHistory() {
             .map(idToMedication)
             .map((m) => m!.code.coding.code)
             .join(','),
+          patient: patientId,
         }
       : skipToken
   );
