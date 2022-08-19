@@ -55,94 +55,109 @@ export const RecentHistoryWidget: FC = ({}) => {
       boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
       borderRadius={'15px'}
       flexDir='column'
-      justifyContent='start'
+      justifyContent='space-between'
       h={'100%'}
       w={'100%'}
     >
       <Box overflowY={'scroll'}>
         {immunizations ? (
-          immunizations.ids.map((iId: string) => {
-            const imm = idToImmunization(iId);
-            const med =
-              imm &&
-              idToMedication(
-                medicationsData?.byCode[imm.vaccineCode.coding.code]?.ids[0]
-              );
-            const vs =
-              med &&
-              idToVaccinationScheme(
-                standardVaccinationSchemes?.byMedication[med.id]?.ids[0]
-              );
-            const allDoses =
-              vs &&
-              vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
-                idToVaccinationDose
-              );
-            const dose = idToVaccinationDose(imm?.vaccinationDoseId);
-            return (
-              <Stack>
-                <Flex
-                  justifyContent={'space-between'}
-                  w={'100%'}
-                  alignItems={'center'}
-                  p={2}
-                  pl={6}
-                  pr={6}
-                >
-                  <Text> {med?.tradeName} </Text>
-                  <Flex w={'50%'} justifyContent={'end'} alignItems={'center'}>
-                    {med && vs && allDoses && dose && (
-                      <>
-                        <Badge
-                          colorScheme={'gray'}
-                          variant='solid'
-                          w={'100%'}
-                          textAlign={'center'}
-                          mr={3}
-                        >
-                          Dose:{' '}
-                          {'numberInScheme' in dose!
-                            ? `${dose.numberInScheme} / ${allDoses!.length}`
-                            : 'Booster'}
-                        </Badge>
-                        <Badge
-                          colorScheme={'blue'}
-                          variant='solid'
-                          w={'100%'}
-                          textAlign={'center'}
-                          mr={3}
-                        >
-                          {imm?.occurrenceTime.toLocaleDateString()}
-                        </Badge>
-                      </>
-                    )}
+          immunizations.ids
+            .slice()
+            .sort(
+              (a, b) =>
+                (idToImmunization(b)?.occurrenceTime?.getTime()?.valueOf() ??
+                  0) -
+                (idToImmunization(a)?.occurrenceTime?.getTime()?.valueOf() ?? 0)
+            )
+            .map((iId: string) => {
+              const imm = idToImmunization(iId);
+              const med =
+                imm &&
+                idToMedication(
+                  medicationsData?.byCode[imm.vaccineCode.coding.code]?.ids[0]
+                );
+              const vs =
+                med &&
+                idToVaccinationScheme(
+                  standardVaccinationSchemes?.byMedication[med.id]?.ids[0]
+                );
+              const allDoses =
+                vs &&
+                vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
+                  idToVaccinationDose
+                );
+              const dose = idToVaccinationDose(imm?.vaccinationDoseId);
+              return (
+                <Stack>
+                  <Flex
+                    justifyContent={'space-between'}
+                    w={'100%'}
+                    alignItems={'center'}
+                    p={4}
+                    pl={6}
+                    pr={6}
+                  >
+                    <Text w={'10vw'}> {med?.tradeName} </Text>
+                    <Divider orientation={'vertical'} h={'40px'} />
+                    <Flex
+                      w={'50%'}
+                      justifyContent={'end'}
+                      alignItems={'center'}
+                    >
+                      {med && vs && allDoses && dose && (
+                        <>
+                          <Badge
+                            colorScheme={'orange'}
+                            variant='subtle'
+                            w={'200px'}
+                            textAlign={'center'}
+                            mr={3}
+                          >
+                            Dose:{' '}
+                            {'numberInScheme' in dose!
+                              ? `${dose.numberInScheme} / ${allDoses!.length}`
+                              : 'Booster'}
+                          </Badge>
+                          <Badge
+                            colorScheme={'blue'}
+                            variant='subtle'
+                            w={'100px'}
+                            textAlign={'center'}
+                            mr={3}
+                          >
+                            {imm?.occurrenceTime.toLocaleDateString()}
+                          </Badge>
+                        </>
+                      )}
+                    </Flex>
                   </Flex>
-                </Flex>
-                <Divider />
-              </Stack>
-            );
-          })
+                  <Divider />
+                </Stack>
+              );
+            })
         ) : (
           <> </>
         )}
       </Box>
-      <Divider orientation='horizontal' />
-      <Flex
-        h={'40px'}
-        alignItems={'center'}
-        bg={'white'}
-        textColor={'green.600'}
-        cursor={'pointer'}
-        borderBottomRadius={'10px'}
-        justifyContent={'center'}
-        m={1}
-      >
-        <Link to={`/md/dashboard/patient/${patientId}/history/`}>
-          <Text justifyContent={'flex-start'} color={'gray.600'}>
-            Open Vaccination History
-          </Text>
-        </Link>
-      </Flex>
+      <Box>
+        <Divider orientation='horizontal' />
+        <Flex
+          h={'40px'}
+          alignItems={'center'}
+          bg={'white'}
+          textColor={'green.600'}
+          cursor={'pointer'}
+          borderBottomRadius={'10px'}
+          justifyContent={'center'}
+          m={1}
+        >
+          <Link to={`/md/dashboard/patient/${patientId}/history/`}>
+            <Text justifyContent={'flex-start'} color={'gray.600'}>
+              Open Vaccination History
+            </Text>
+          </Link>
+        </Flex>
+      </Box>
     </Flex>
   );
 };
