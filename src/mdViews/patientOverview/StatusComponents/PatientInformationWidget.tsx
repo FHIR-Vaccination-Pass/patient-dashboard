@@ -1,33 +1,30 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   Flex,
   FormLabel,
   FormControl,
-  Editable,
-  EditablePreview,
-  EditableInput,
   Button,
   ButtonGroup,
+  Input,
 } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import Select, { SingleValue } from 'react-select';
-import { convertArrayToOptionArray } from '../../settings/vaccineInformationCard';
-import { Country } from 'country-state-city';
-import { getStatesOfCountry } from 'country-state-city/dist/lib/state';
+import { Country, State } from 'country-state-city';
 import { Gender, PatientMapper } from '../../../core/models';
 import { CloseIcon } from '@chakra-ui/icons';
 import { FaWrench } from 'react-icons/fa';
-import { ICountry, IState } from 'country-state-city/dist/lib/interface';
 import { cloneDeep } from 'lodash';
 import { patientApi } from '../../../core/services/redux/fhir';
 
 export const PatientInformationWidget: FC = () => {
   const params = useParams();
-
-  const allCountries = Country.getAllCountries();
-  const allCountryNames = allCountries.map(
-    (potentialCountry) => potentialCountry.name
-  );
 
   const { data: patientRaw, isFetching: getIsFetching } =
     patientApi.endpoints.getById.useQuery(params['patientId']!);
@@ -67,13 +64,7 @@ export const PatientInformationWidget: FC = () => {
     updatedPatient,
   ]);
 
-  // Input field states
-
-  const [country, setCountry] = useState<ICountry | undefined>(undefined);
-  const [state, setState] = useState<string>('');
-  const [stateOptions, setStateOptions] = useState<IState[]>([]); // getStatesOfCountry(country.isoCode)
-
-  const getCurrentResource = (): PatientMapper | undefined => {
+  const currentResource = useMemo((): PatientMapper | undefined => {
     if (editMode) {
       return updatedPatient;
     } else if (getIsFetching || putIsLoading) {
@@ -81,11 +72,14 @@ export const PatientInformationWidget: FC = () => {
     } else {
       return patient;
     }
-  };
+  }, [editMode, getIsFetching, putIsLoading, patient, updatedPatient]);
 
-  const getGivenName = (): string => getCurrentResource()!.name.given[0];
+  const givenName = useMemo(
+    (): string | undefined => currentResource?.name.given[0],
+    [currentResource]
+  );
   const setGivenName = useCallback(
-    (value: string): void => {
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>): void => {
       setUpdatedPatient(
         updatedPatient!.withName(updatedPatient!.name.withGiven([value]))
       );
@@ -93,9 +87,12 @@ export const PatientInformationWidget: FC = () => {
     [updatedPatient]
   );
 
-  const getFamilyName = (): string => getCurrentResource()!.name.family;
+  const familyName = useMemo(
+    (): string | undefined => currentResource?.name.family,
+    [currentResource]
+  );
   const setFamilyName = useCallback(
-    (value: string): void => {
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>): void => {
       setUpdatedPatient(
         updatedPatient!.withName(updatedPatient!.name.withFamily(value))
       );
@@ -103,10 +100,12 @@ export const PatientInformationWidget: FC = () => {
     [updatedPatient]
   );
 
-  const getBirthDate = (): string =>
-    getCurrentResource()!.birthDate.toLocaleDateString();
+  const birthDate = useMemo(
+    () => currentResource?.birthDate.toLocaleDateString(),
+    [currentResource]
+  );
   const setBirthDate = useCallback(
-    (value: string) => {
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
       const [day, month, year] = value.split('/');
       const birthDate = new Date(`${year}-${month}-${day}`);
 
@@ -115,43 +114,107 @@ export const PatientInformationWidget: FC = () => {
     [updatedPatient]
   );
 
-  const getGender = (): SingleValue<{ value: string; label: string }> => {
-    const value = getCurrentResource()!.gender as string;
+  const gender = useMemo(():
+    | SingleValue<{ value: string; label: string }>
+    | undefined => {
+    const value = currentResource?.gender;
+    if (value === undefined) {
+      return undefined;
+    }
+
     const label = value.slice(0, 1).toUpperCase() + value.slice(1);
     return { value, label };
-  };
+  }, [currentResource]);
   const setGender = useCallback(
     (value: SingleValue<{ value: string; label: string }>): void => {
       setUpdatedPatient(updatedPatient!.withGender(value!.value as Gender));
     },
     [updatedPatient]
   );
-  // useEffect(() => {
-  //   if (patient) {
-  //     const initialCountry = allCountries.find((potentialCountry) => {
-  //       return patient.address.countryCode === potentialCountry.isoCode;
-  //     });
-  //     setCountry(initialCountry);
-  //     setState(patient?.address.state);
-  //
-  //     setStateOptions(getStatesOfCountry(initialCountry!.isoCode!)); // getStatesOfCountry(country.isoCode)
-  //   }
-  // }, [patient]);
 
-  // function editCountry(newCountryName: string) {
-  //   const newCountry: ICountry = allCountries.find(
-  //     (potentialCountry) =>
-  //       potentialCountry.name.toLowerCase() === newCountryName
-  //   )!;
-  //   const statesOfCountry = getStatesOfCountry(newCountry.isoCode);
-  //
-  //   const newPatient = cloneDeep(updatedPatient!);
-  //
-  //   setCountry(newCountry);
-  //   setState(statesOfCountry[0].name);
-  //
-  //   setStateOptions(statesOfCountry);
-  // }
+  const country = useMemo(():
+    | SingleValue<{ value: string; label: string }>
+    | undefined => {
+    const value = currentResource?.address.countryCode;
+    if (value === undefined) {
+      return undefined;
+    }
+
+    const label = Country.getCountryByCode(value)!.name;
+    return { value, label };
+  }, [currentResource]);
+  const setCountry = useCallback(
+    (value: SingleValue<{ value: string; label: string }>): void => {
+      let state: string;
+      let stateCode: string;
+
+      // Default to first value in state list if a new country is selected
+      if (updatedPatient!.address.countryCode === value!.value) {
+        state = updatedPatient!.address.state;
+        stateCode = updatedPatient!.address.stateCode;
+      } else {
+        const stateObj = State.getStatesOfCountry(value!.value)![0];
+        state = stateObj.name;
+        stateCode = `${stateObj.countryCode}-${stateObj.isoCode}`;
+      }
+
+      setUpdatedPatient(
+        updatedPatient!.withAddress(
+          updatedPatient!.address
+            .withCountry(value!.label)
+            .withCountryCode(value!.value)
+            .withState(state)
+            .withStateCode(stateCode)
+        )
+      );
+    },
+    [updatedPatient]
+  );
+
+  const state = useMemo(():
+    | SingleValue<{ value: string; label: string }>
+    | undefined => {
+    const value = currentResource?.address.stateCode;
+    if (value === undefined) {
+      return undefined;
+    }
+
+    const [countryCode, stateCode] = value.split('-');
+    const label = State.getStateByCodeAndCountry(stateCode, countryCode)!.name;
+    return { value, label };
+  }, [currentResource]);
+  const setState = useCallback(
+    (value: SingleValue<{ value: string; label: string }>): void => {
+      setUpdatedPatient(
+        updatedPatient!.withAddress(
+          updatedPatient!.address
+            .withState(value!.label)
+            .withStateCode(value!.value)
+        )
+      );
+    },
+    [updatedPatient]
+  );
+
+  const countrySelectOptions = useMemo(
+    () =>
+      Country.getAllCountries().map(({ isoCode, name }) => ({
+        value: isoCode,
+        label: name,
+      })),
+    []
+  );
+  const stateSelectOptions = useMemo(() => {
+    return (
+      currentResource &&
+      State.getStatesOfCountry(currentResource.address.countryCode).map(
+        ({ countryCode, isoCode, name }) => ({
+          value: `${countryCode}-${isoCode}`,
+          label: name,
+        })
+      )
+    );
+  }, [currentResource]);
 
   function savePatientInformation() {
     if (updatedPatient !== undefined) {
@@ -193,11 +256,9 @@ export const PatientInformationWidget: FC = () => {
           width={formControlWidth}
         >
           <FormLabel color={'gray.600'}>Given name</FormLabel>
-          <Editable
+          <Input
             variant='flushed'
-            isPreviewFocusable={editMode}
-            defaultValue={getGivenName()}
-            value={getGivenName()}
+            value={givenName}
             p={'5px 10px'}
             borderBottom={'1px'}
             borderColor={'gray.200'}
@@ -206,10 +267,7 @@ export const PatientInformationWidget: FC = () => {
             mb={'20px'}
             pl={'5px'}
             onChange={setGivenName}
-          >
-            <EditablePreview w={'100%'} />
-            <EditableInput />
-          </Editable>
+          />
         </FormControl>
         <FormControl
           pt={paddingY}
@@ -219,10 +277,9 @@ export const PatientInformationWidget: FC = () => {
           width={formControlWidth}
         >
           <FormLabel color={'gray.600'}>Surname</FormLabel>
-          <Editable
+          <Input
             variant='flushed'
-            isPreviewFocusable={editMode}
-            value={getFamilyName()}
+            value={familyName}
             p={'5px 10px'}
             borderBottom={'1px'}
             borderColor={'gray.200'}
@@ -231,10 +288,7 @@ export const PatientInformationWidget: FC = () => {
             mb={'20px'}
             pl={'5px'}
             onChange={setFamilyName}
-          >
-            <EditablePreview w={'100%'} />
-            <EditableInput />
-          </Editable>
+          />
         </FormControl>
         <FormControl
           pt={paddingY}
@@ -244,10 +298,9 @@ export const PatientInformationWidget: FC = () => {
           width={formControlWidth}
         >
           <FormLabel color={'gray.600'}>Birthday</FormLabel>
-          <Editable
+          <Input
             variant='flushed'
-            isPreviewFocusable={false}
-            value={getBirthDate()}
+            value={birthDate}
             p={'5px 10px'}
             borderBottom={'1px'}
             borderColor={'gray.200'}
@@ -256,10 +309,7 @@ export const PatientInformationWidget: FC = () => {
             mb={'20px'}
             pl={'5px'}
             onChange={setBirthDate}
-          >
-            <EditablePreview />
-            <EditableInput />
-          </Editable>
+          />
         </FormControl>
         <FormControl
           pt={paddingY}
@@ -270,7 +320,7 @@ export const PatientInformationWidget: FC = () => {
         >
           <FormLabel color={'gray.600'}>Gender</FormLabel>
           <Select
-            value={getGender()}
+            value={gender}
             options={[
               { value: 'male', label: 'Male' },
               { value: 'female', label: 'Female' },
@@ -290,15 +340,10 @@ export const PatientInformationWidget: FC = () => {
         >
           <FormLabel color={'gray.600'}>Country</FormLabel>
           <Select
-            value={{
-              value: country?.name.toLowerCase(),
-              label: country?.name,
-            }}
-            options={convertArrayToOptionArray(allCountryNames)}
+            value={country}
+            options={countrySelectOptions}
             isDisabled={!editMode}
-            onChange={(newValue) => {
-              // editCountry(newValue!.value!);
-            }}
+            onChange={setCountry}
           />
         </FormControl>
         <FormControl
@@ -310,17 +355,10 @@ export const PatientInformationWidget: FC = () => {
         >
           <FormLabel color={'gray.600'}>State</FormLabel>
           <Select
-            value={{
-              value: state,
-              label: state,
-            }}
+            value={state}
             isDisabled={!editMode}
-            options={convertArrayToOptionArray(
-              stateOptions.map((stateOption) => stateOption.name)
-            )}
-            onChange={(newValue) => {
-              setState(newValue!.label!);
-            }}
+            options={stateSelectOptions}
+            onChange={setState}
           />
         </FormControl>
       </Flex>
