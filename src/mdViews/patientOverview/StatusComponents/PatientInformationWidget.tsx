@@ -1,16 +1,13 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import {
-  Text,
   Flex,
-  useBoolean,
   FormLabel,
   FormControl,
   Editable,
   EditablePreview,
   EditableInput,
-  Divider,
-  Box,
-  Spinner,
+  Button,
+  ButtonGroup,
 } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import Select, { SingleValue } from 'react-select';
@@ -173,6 +170,10 @@ export const PatientInformationWidget: FC = () => {
     return <></>;
   }
 
+  const paddingY = '12px';
+  const paddingX = '16px';
+  const formControlWidth = '50%';
+
   return (
     <Flex
       bg={'white'}
@@ -183,176 +184,175 @@ export const PatientInformationWidget: FC = () => {
       h={'100%'}
       w={'100%'}
     >
-      <Flex flexDirection={'row'}>
-        <Flex m={'0px 60px'} flexDirection={'column'} w={'40%'}>
-          <FormControl mt={4}>
-            <FormLabel color={'gray.600'}>Given name</FormLabel>
-            <Editable
-              variant='flushed'
-              isPreviewFocusable={editMode}
-              defaultValue={getGivenName()}
-              value={getGivenName()}
-              p={'5px 10px'}
-              borderBottom={'1px'}
-              borderColor={'gray.200'}
-              borderRadius={'5px'}
-              color={'gray.500'}
-              mb={'20px'}
-              pl={'5px'}
-              onChange={setGivenName}
-            >
-              <EditablePreview />
-              <EditableInput />
-            </Editable>
-          </FormControl>
-
-          <FormControl mt={4}>
-            <FormLabel color={'gray.600'}>Birthday</FormLabel>
-            <Editable
-              variant='flushed'
-              isPreviewFocusable={false}
-              value={getBirthDate()}
-              p={'5px 10px'}
-              borderBottom={'1px'}
-              borderColor={'gray.200'}
-              borderRadius={'5px'}
-              color={'gray.500'}
-              mb={'20px'}
-              pl={'5px'}
-              onChange={setBirthDate}
-            >
-              <EditablePreview />
-              <EditableInput />
-            </Editable>
-          </FormControl>
-
-          <FormControl mt={4}>
-            <FormLabel color={'gray.600'}>Country</FormLabel>
-            <Select
-              value={{
-                value: country?.name.toLowerCase(),
-                label: country?.name,
-              }}
-              options={convertArrayToOptionArray(allCountryNames)}
-              isDisabled={!editMode}
-              onChange={(newValue) => {
-                // editCountry(newValue!.value!);
-              }}
-            />
-          </FormControl>
-        </Flex>
-        <Flex ml={'20px'} flexDirection={'column'} w={'40%'}>
-          <FormControl mt={4}>
-            <FormLabel color={'gray.600'}>Surname</FormLabel>
-            <Editable
-              variant='flushed'
-              isPreviewFocusable={editMode}
-              value={getFamilyName()}
-              p={'5px 10px'}
-              borderBottom={'1px'}
-              borderColor={'gray.200'}
-              borderRadius={'5px'}
-              color={'gray.500'}
-              mb={'20px'}
-              pl={'5px'}
-              onChange={setFamilyName}
-            >
-              <EditablePreview />
-              <EditableInput />
-            </Editable>
-          </FormControl>
-
-          <FormControl mt={4} mb={'23px'}>
-            <FormLabel color={'gray.600'}>Gender</FormLabel>
-            <Select
-              value={getGender()}
-              options={[
-                { value: 'male', label: 'Male' },
-                { value: 'female', label: 'Female' },
-                { value: 'other', label: 'Other' },
-                { value: 'unknown', label: 'Unknown' },
-              ]}
-              isDisabled={!editMode}
-              onChange={setGender}
-            />
-          </FormControl>
-
-          <FormControl mt={4}>
-            <FormLabel color={'gray.600'}>State</FormLabel>
-            <Select
-              value={{
-                value: state,
-                label: state,
-              }}
-              isDisabled={!editMode}
-              options={convertArrayToOptionArray(
-                stateOptions.map((stateOption) => stateOption.name)
-              )}
-              onChange={(newValue) => {
-                setState(newValue!.label!);
-              }}
-            />
-          </FormControl>
-        </Flex>
-      </Flex>
-      <Box>
-        <Divider orientation='horizontal' mt={'5px'} />
-        {!editMode && (
-          <Flex
-            h={'40px'}
-            alignItems={'center'}
-            bg={'white'}
-            textColor={'green.600'}
-            cursor={'pointer'}
-            borderBottomRadius={'10px'}
-            justifyContent={'center'}
-            onClick={toggleEditMode}
+      <Flex flexDirection={'row'} flexWrap={'wrap'} p={'12px'}>
+        <FormControl
+          pt={paddingY}
+          pb={paddingY}
+          pl={paddingX}
+          pr={paddingX}
+          width={formControlWidth}
+        >
+          <FormLabel color={'gray.600'}>Given name</FormLabel>
+          <Editable
+            variant='flushed'
+            isPreviewFocusable={editMode}
+            defaultValue={getGivenName()}
+            value={getGivenName()}
+            p={'5px 10px'}
+            borderBottom={'1px'}
+            borderColor={'gray.200'}
+            borderRadius={'5px'}
+            color={'gray.500'}
+            mb={'20px'}
+            pl={'5px'}
+            onChange={setGivenName}
           >
-            <FaWrench color={'black'} />
-            <Text ml={'10px'} justifyContent={'flex-start'} color={'gray.600'}>
-              Edit Profile
-            </Text>
-          </Flex>
-        )}
-        {editMode && (
-          <Flex
-            h={'40px'}
-            alignItems={'center'}
-            bg={'green.400'}
-            textColor={'green.600'}
-            cursor={'pointer'}
-            borderBottomRadius={'10px'}
-            justifyContent={'space-between'}
+            <EditablePreview w={'100%'} />
+            <EditableInput />
+          </Editable>
+        </FormControl>
+        <FormControl
+          pt={paddingY}
+          pb={paddingY}
+          pl={paddingX}
+          pr={paddingX}
+          width={formControlWidth}
+        >
+          <FormLabel color={'gray.600'}>Surname</FormLabel>
+          <Editable
+            variant='flushed'
+            isPreviewFocusable={editMode}
+            value={getFamilyName()}
+            p={'5px 10px'}
+            borderBottom={'1px'}
+            borderColor={'gray.200'}
+            borderRadius={'5px'}
+            color={'gray.500'}
+            mb={'20px'}
+            pl={'5px'}
+            onChange={setFamilyName}
+          >
+            <EditablePreview w={'100%'} />
+            <EditableInput />
+          </Editable>
+        </FormControl>
+        <FormControl
+          pt={paddingY}
+          pb={paddingY}
+          pl={paddingX}
+          pr={paddingX}
+          width={formControlWidth}
+        >
+          <FormLabel color={'gray.600'}>Birthday</FormLabel>
+          <Editable
+            variant='flushed'
+            isPreviewFocusable={false}
+            value={getBirthDate()}
+            p={'5px 10px'}
+            borderBottom={'1px'}
+            borderColor={'gray.200'}
+            borderRadius={'5px'}
+            color={'gray.500'}
+            mb={'20px'}
+            pl={'5px'}
+            onChange={setBirthDate}
+          >
+            <EditablePreview />
+            <EditableInput />
+          </Editable>
+        </FormControl>
+        <FormControl
+          pt={paddingY}
+          pb={paddingY}
+          pl={paddingX}
+          pr={paddingX}
+          width={formControlWidth}
+        >
+          <FormLabel color={'gray.600'}>Gender</FormLabel>
+          <Select
+            value={getGender()}
+            options={[
+              { value: 'male', label: 'Male' },
+              { value: 'female', label: 'Female' },
+              { value: 'other', label: 'Other' },
+              { value: 'unknown', label: 'Unknown' },
+            ]}
+            isDisabled={!editMode}
+            onChange={setGender}
+          />
+        </FormControl>
+        <FormControl
+          pt={paddingY}
+          pb={paddingY}
+          pl={paddingX}
+          pr={paddingX}
+          width={formControlWidth}
+        >
+          <FormLabel color={'gray.600'}>Country</FormLabel>
+          <Select
+            value={{
+              value: country?.name.toLowerCase(),
+              label: country?.name,
+            }}
+            options={convertArrayToOptionArray(allCountryNames)}
+            isDisabled={!editMode}
+            onChange={(newValue) => {
+              // editCountry(newValue!.value!);
+            }}
+          />
+        </FormControl>
+        <FormControl
+          pt={paddingY}
+          pb={paddingY}
+          pl={paddingX}
+          pr={paddingX}
+          width={formControlWidth}
+        >
+          <FormLabel color={'gray.600'}>State</FormLabel>
+          <Select
+            value={{
+              value: state,
+              label: state,
+            }}
+            isDisabled={!editMode}
+            options={convertArrayToOptionArray(
+              stateOptions.map((stateOption) => stateOption.name)
+            )}
+            onChange={(newValue) => {
+              setState(newValue!.label!);
+            }}
+          />
+        </FormControl>
+      </Flex>
+      {editMode ? (
+        <ButtonGroup isAttached={true} w={'100%'}>
+          <Button
+            isLoading={getIsFetching || putIsLoading}
+            colorScheme={'green'}
+            leftIcon={<FaWrench color={'white'} />}
+            flexGrow={1}
             onClick={() => {
-              if (getIsFetching || putIsLoading) {
-                return;
-              }
-
               savePatientInformation();
               toggleEditMode();
             }}
           >
-            <Box />
-            <Flex flexDirection={'row'} alignItems={'center'} ml={'15px'}>
-              {getIsFetching || putIsLoading ? (
-                <Spinner />
-              ) : (
-                <>
-                  <FaWrench color={'white'} />
-                  <Text
-                    ml={'10px'}
-                    justifyContent={'flex-start'}
-                    color={'white'}
-                  >
-                    Save Changes
-                  </Text>
-                </>
-              )}
-            </Flex>
-            <CloseIcon color={'white'} mr={'15px'} onClick={toggleEditMode} />
-          </Flex>
-        )}
-      </Box>
+            Save Changes
+          </Button>
+          <Button
+            colorScheme={'gray'}
+            onClick={toggleEditMode}
+            leftIcon={<CloseIcon color={'darkgray'} />}
+          />
+        </ButtonGroup>
+      ) : (
+        <Button
+          w={'100%'}
+          onClick={toggleEditMode}
+          leftIcon={<FaWrench color={'black'} />}
+        >
+          Edit Profile
+        </Button>
+      )}
     </Flex>
   );
 };
