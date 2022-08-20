@@ -6,13 +6,10 @@ import {
   useImmunizationRecommendations,
   useMedicationInfo,
   useMedications,
-  usePatients,
-  usePopulationRecommendations,
   useTargetDiseases,
 } from '../../../hooks';
-import { InfoIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 
-export const RecommendationsWidget: FC = ({}) => {
+export const RecommendationsWidget: FC = () => {
   const params = useParams();
   const patientId = params['patientId'];
 
@@ -20,19 +17,13 @@ export const RecommendationsWidget: FC = ({}) => {
   const { immunizationRecommendations } = useImmunizationRecommendations({
     patient: patientId,
   });
-
-  const { data: medicationsData, idToMedication } = useMedications({});
   const {
-    idToOrganization,
-    vaccinationSchemes,
-    idToVaccinationScheme,
-    vaccinationDoses,
-    idToVaccinationDose,
-  } = useMedicationInfo(
-    medicationsData?.ids.map((id: string) => idToMedication(id)!)
-  );
-
-  const standardVaccinationSchemes = vaccinationSchemes?.byType['standard'];
+    data: medicationsData,
+    medications,
+    idToMedication,
+  } = useMedications({});
+  const { idToVaccinationScheme, vaccinationDoses, idToVaccinationDose } =
+    useMedicationInfo(medications);
 
   return (
     <Flex
@@ -52,58 +43,56 @@ export const RecommendationsWidget: FC = ({}) => {
           const timeB = b?.recommendedStartDate.getTime()?.valueOf() ?? 0;
           return timeA > timeB ? timeA : timeB;
         })
-        .map((recommendation: ImmunizationRecommendation) => {
-          const diseases = targetDiseases?.byCode[
-            recommendation.targetDisease.coding.code
-          ]?.ids.map((irId) => idToTargetDisease(irId)!);
-          return diseases?.map((disease) => {
-            const med =
-              recommendation &&
-              idToMedication(
-                medicationsData?.byCode[recommendation.vaccineCode.coding.code]
-                  ?.ids[0]
-              );
-            const vs =
-              med &&
-              idToVaccinationScheme(
-                standardVaccinationSchemes?.byMedication[med?.id]?.ids[0]
-              );
-            const allDoses =
-              vs &&
-              vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
-                idToVaccinationDose
-              );
-            const dose = idToVaccinationDose(recommendation?.vaccinationDoseId);
+        .map((immRec: ImmunizationRecommendation) => {
+          const td = idToTargetDisease(
+            targetDiseases?.byCode[immRec.targetDisease.coding.code]?.ids[0]
+          );
+          const med =
+            immRec &&
+            idToMedication(
+              medicationsData?.byCode[immRec.vaccineCode.coding.code]?.ids[0]
+            );
+          const dose = idToVaccinationDose(immRec?.vaccinationDoseId);
+          const vs = dose && idToVaccinationScheme(dose?.vaccinationSchemeId);
+          const allDoses =
+            vs &&
+            vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
+              idToVaccinationDose
+            );
 
-            return (
+          return (
+            immRec &&
+            med &&
+            vs &&
+            allDoses &&
+            dose &&
+            td && (
               <Stack>
                 <Flex
                   justifyContent={'space-between'}
                   w={'100%'}
                   alignItems={'center'}
-                  p={4}
+                  p={2}
                   pl={6}
                   pr={6}
                 >
-                  <Text w={'10vw'}> {disease.name} </Text>
+                  <Text w={'10vw'}> {td.name} </Text>
                   <Divider orientation={'vertical'} h={'40px'} />
                   <Flex w={'50%'} justifyContent={'end'} alignItems={'center'}>
-                    {recommendation && med && vs && allDoses && dose && (
-                      <Badge
-                        colorScheme={'orange'}
-                        variant='subtle'
-                        w={'200px'}
-                        textAlign={'center'}
-                        mr={3}
-                      >
-                        Dose:{' '}
-                        {'numberInScheme' in dose!
-                          ? `${dose.numberInScheme} / ${allDoses!.length}`
-                          : 'Booster'}
-                      </Badge>
-                    )}
+                    <Badge
+                      colorScheme={'orange'}
+                      variant='subtle'
+                      w={'200px'}
+                      textAlign={'center'}
+                      mr={3}
+                    >
+                      Dose:{' '}
+                      {'numberInScheme' in dose
+                        ? `${dose.numberInScheme} / ${allDoses.length}`
+                        : 'Booster'}
+                    </Badge>
                     <Link
-                      to={`/md/dashboard/patient/${patientId}/diseases/${disease.code.coding.code}`}
+                      to={`/md/dashboard/patient/${patientId}/diseases/${td.code.coding.code}`}
                     >
                       <Button colorScheme='blue' variant={'ghost'}>
                         Details
@@ -113,8 +102,8 @@ export const RecommendationsWidget: FC = ({}) => {
                 </Flex>
                 <Divider />
               </Stack>
-            );
-          });
+            )
+          );
         })}
     </Flex>
   );
