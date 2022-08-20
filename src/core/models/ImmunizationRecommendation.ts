@@ -9,13 +9,22 @@ import {
 import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
+import dayjs from 'dayjs';
+
+export type ImmunizationRecommendationStatus =
+  | 'complete'
+  | 'future'
+  | 'due'
+  | 'overdue';
 
 export interface ImmunizationRecommendation {
   id: string;
   date: Date;
   forecastStatus: CodeableConcept;
   vaccineCode: CodeableConcept;
+  targetDisease: CodeableConcept;
   recommendedStartDate: Date;
+  status: ImmunizationRecommendationStatus;
   isDeactivated: boolean;
   supportingImmunizationIds: string[];
   fulfillingImmunizationIds: string[];
@@ -99,6 +108,22 @@ export class ImmunizationRecommendationMapper
     };
   }
 
+  get targetDisease(): CodeableConcept {
+    const targetDiseaseCoding = fhirpath.evaluate(
+      this._raw,
+      `recommendation.targetDisease.coding.where(system = 'http://hl7.org/fhir/sid/icd-10')`,
+      undefined,
+      fhirpath_r4_model
+    )[0] as FHIRCoding;
+
+    return {
+      coding: {
+        code: targetDiseaseCoding.code!,
+        system: targetDiseaseCoding.system!,
+      },
+    };
+  }
+
   get recommendedStartDate(): Date {
     const earliestDateToGiveDateCriterion = fhirpath.evaluate(
       this._raw,
@@ -108,6 +133,22 @@ export class ImmunizationRecommendationMapper
     )[0] as FHIRImmunizationRecommendationRecommendationDateCriterion;
 
     return new Date(earliestDateToGiveDateCriterion.value);
+  }
+
+  get status(): ImmunizationRecommendationStatus {
+    const now = dayjs();
+    const recommendedStartDate = dayjs(this.recommendedStartDate);
+
+    if (this.fulfillingImmunizationIds.length > 0) {
+      return 'complete';
+    }
+    if (recommendedStartDate.isBefore(now)) {
+      return 'overdue';
+    }
+    if (recommendedStartDate.isBefore(now.add(30, 'day'))) {
+      return 'due';
+    }
+    return 'future';
   }
 
   get isDeactivated(): boolean {

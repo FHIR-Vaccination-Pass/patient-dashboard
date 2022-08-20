@@ -3,21 +3,23 @@ import { Bundle, Medication } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { MedicationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
+import { addOwnUpdate } from './notificationWebsocket';
 
-type TResource = Medication;
-const TMapper = MedicationMapper;
-interface GetArgs {
+export type TResource = Medication;
+export const TMapper = MedicationMapper;
+export interface GetArgs {
   _id?: string;
   code?: string;
   manufacturer?: string;
   form?: string;
 }
-type GetResponseGroups =
+export type GetResponseGroups =
   | 'byCode'
   | 'byForm'
   | 'byManufacturer'
   | 'byTargetDisease';
-const resourceName = 'Medication' as const;
+const resourceName: ResourceName = 'Medication';
 const resourcePath = '/Medication' as const;
 
 export const medicationApi = createApi({
@@ -91,6 +93,19 @@ export const medicationApi = createApi({
       query: (id) => ({ url: `${resourcePath}/${id}` }),
       providesTags: (result) =>
         result ? [{ type: resourceName, id: result.id }] : [],
+    }),
+    put: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: `${resourcePath}/${resource.id}`,
+        method: 'PUT',
+        body: resource,
+      }),
+      invalidatesTags: (_result, _error, resource) => [
+        { type: resourceName, id: resource.id },
+      ],
+      onQueryStarted: (resource) => {
+        addOwnUpdate({ type: resourceName, id: resource.id });
+      },
     }),
   }),
 });

@@ -3,10 +3,12 @@ import { Bundle, Immunization } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { ImmunizationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
+import { addOwnUpdate } from './notificationWebsocket';
 
-type TResource = Immunization;
-const TMapper = ImmunizationMapper;
-interface GetArgs {
+export type TResource = Immunization;
+export const TMapper = ImmunizationMapper;
+export interface GetArgs {
   _id?: string;
   status?: string;
   'vaccine-code'?: string;
@@ -15,14 +17,14 @@ interface GetArgs {
   'lot-number'?: string;
   performer?: string;
 }
-type GetResponseGroups =
+export type GetResponseGroups =
   | 'byStatus'
   | 'byVaccineCode'
   | 'byLotNumber'
   | 'byPatient'
   | 'byPerformer'
   | 'byVaccinationDose';
-const resourceName = 'Immunization' as const;
+const resourceName: ResourceName = 'Immunization';
 const resourcePath = '/Immunization' as const;
 
 export const immunizationApi = createApi({
@@ -101,6 +103,19 @@ export const immunizationApi = createApi({
       query: (id) => ({ url: `${resourcePath}/${id}` }),
       providesTags: (result) =>
         result ? [{ type: resourceName, id: result.id }] : [],
+    }),
+    put: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: `${resourcePath}/${resource.id}`,
+        method: 'PUT',
+        body: resource,
+      }),
+      invalidatesTags: (_result, _error, resource) => [
+        { type: resourceName, id: resource.id },
+      ],
+      onQueryStarted: (resource) => {
+        addOwnUpdate({ type: resourceName, id: resource.id });
+      },
     }),
   }),
 });

@@ -3,15 +3,17 @@ import { Bundle, Practitioner } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { PractitionerMapper } from '../../../models';
 import { GetResponse } from './utils';
+import { ResourceName } from './types';
+import { addOwnUpdate } from './notificationWebsocket';
 
-type TResource = Practitioner;
-const TMapper = PractitionerMapper;
-interface GetArgs {
+export type TResource = Practitioner;
+export const TMapper = PractitionerMapper;
+export interface GetArgs {
   _id?: string;
   name?: string;
 }
-type GetResponseGroups = never;
-const resourceName = 'Practitioner' as const;
+export type GetResponseGroups = never;
+const resourceName: ResourceName = 'Practitioner';
 const resourcePath = '/Practitioner' as const;
 
 export const practitionerApi = createApi({
@@ -66,6 +68,19 @@ export const practitionerApi = createApi({
       query: (id) => ({ url: `${resourcePath}/${id}` }),
       providesTags: (result) =>
         result ? [{ type: resourceName, id: result.id }] : [],
+    }),
+    put: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: `${resourcePath}/${resource.id}`,
+        method: 'PUT',
+        body: resource,
+      }),
+      invalidatesTags: (_result, _error, resource) => [
+        { type: resourceName, id: resource.id },
+      ],
+      onQueryStarted: (resource) => {
+        addOwnUpdate({ type: resourceName, id: resource.id });
+      },
     }),
   }),
 });

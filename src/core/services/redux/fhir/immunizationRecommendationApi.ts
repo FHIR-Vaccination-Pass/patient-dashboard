@@ -3,25 +3,28 @@ import { Bundle, ImmunizationRecommendation } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { ImmunizationRecommendationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
+import { addOwnUpdate } from './notificationWebsocket';
 
-type TResource = ImmunizationRecommendation;
-const TMapper = ImmunizationRecommendationMapper;
-interface GetArgs {
+export type TResource = ImmunizationRecommendation;
+export const TMapper = ImmunizationRecommendationMapper;
+export interface GetArgs {
   _id?: string;
   patient?: string;
   'vaccine-type'?: string;
   'target-disease'?: string;
 }
-type GetResponseGroups =
+export type GetResponseGroups =
   | 'byForecastStatus'
   | 'byVaccineCode'
+  | 'byTargetDisease'
   | 'byIsDeactivated'
   | 'bySupportingImmunization'
   | 'byFulfillingImmunization'
   | 'byPatient'
   | 'byPopulationRecommendation'
   | 'byVaccinationDose';
-const resourceName = 'ImmunizationRecommendation' as const;
+const resourceName: ResourceName = 'ImmunizationRecommendation';
 const resourcePath = '/ImmunizationRecommendation' as const;
 
 export const immunizationRecommendationApi = createApi({
@@ -53,6 +56,7 @@ export const immunizationRecommendationApi = createApi({
 
           byForecastStatus: {},
           byVaccineCode: {},
+          byTargetDisease: {},
           byIsDeactivated: {},
           bySupportingImmunization: {},
           byFulfillingImmunization: {},
@@ -66,6 +70,7 @@ export const immunizationRecommendationApi = createApi({
             id,
             forecastStatus,
             vaccineCode,
+            targetDisease,
             isDeactivated,
             supportingImmunizationIds,
             fulfillingImmunizationIds,
@@ -80,6 +85,7 @@ export const immunizationRecommendationApi = createApi({
           storeIdRecursive(response, id, [
             ['byForecastStatus', forecastStatus.coding.code],
             ['byVaccineCode', vaccineCode.coding.code],
+            ['byTargetDisease', targetDisease.coding.code],
             ['byIsDeactivated', String(isDeactivated)],
             ...supportingImmunizationIds.map(
               (sId): ['bySupportingImmunization', string] => [
@@ -116,6 +122,19 @@ export const immunizationRecommendationApi = createApi({
       query: (id) => ({ url: `${resourcePath}/${id}` }),
       providesTags: (result) =>
         result ? [{ type: resourceName, id: result.id }] : [],
+    }),
+    put: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: `${resourcePath}/${resource.id}`,
+        method: 'PUT',
+        body: resource,
+      }),
+      invalidatesTags: (_result, _error, resource) => [
+        { type: resourceName, id: resource.id },
+      ],
+      onQueryStarted: (resource) => {
+        addOwnUpdate({ type: resourceName, id: resource.id });
+      },
     }),
   }),
 });

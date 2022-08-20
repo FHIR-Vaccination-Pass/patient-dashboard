@@ -21,13 +21,15 @@ import {
   FaUserInjured,
 } from 'react-icons/fa';
 import { NavItem } from '../../components/dashboard/appShell/navitem';
-import { Link, useLocation, useParams } from 'react-router-dom';
-import { Patient } from '../../core/models/Patient';
+import { Link, useParams } from 'react-router-dom';
+import { PatientMapper } from '../../core/models/Patient';
 import { resolvePatientName } from '../../core/services/util/resolveHumanName';
-import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
+import { patientApi } from '../../core/services/redux/fhir';
 
 interface SidebarProps extends BoxProps {
   onClose: () => void;
+  navSize: string;
+  changeNavSize: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface LinkItemProps {
@@ -47,15 +49,17 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Vacation Plans', icon: FaPlane, link: 'vacations' },
 ];
 
-export const PatientSidebar = ({ onClose, ...rest }: SidebarProps) => {
-  const location = useLocation();
-  const mapper = useMapper();
-
+export const PatientSidebar = ({
+  onClose,
+  navSize,
+  changeNavSize,
+  ...rest
+}: SidebarProps) => {
   const params = useParams();
-  const patient: Patient | undefined = mapper.getPatientById(
-    params['patientId'] || ''
+  const { data: patientRaw } = patientApi.endpoints.getById.useQuery(
+    params['patientId']!
   );
-  const [navSize, changeNavSize] = useState('large');
+  const patient = PatientMapper.fromResource(patientRaw);
   return (
     <Flex
       bg={useColorModeValue('white', 'gray.900')}
@@ -79,7 +83,11 @@ export const PatientSidebar = ({ onClose, ...rest }: SidebarProps) => {
         <Link to={`/md/dashboard/patient/${patient?.id}`}>
           <Flex m={1} align='center' p={navSize === 'small' ? '2px' : '5px'}>
             <Avatar></Avatar>
-            <Text ml={2} display={navSize === 'small' ? 'none' : 'block'}>
+            <Text
+              ml={2}
+              display={navSize === 'small' ? 'none' : 'block'}
+              color={'gray.700'}
+            >
               {resolvePatientName(patient?.name)}
             </Text>
           </Flex>

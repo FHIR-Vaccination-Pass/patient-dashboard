@@ -4,6 +4,7 @@ export const settings = {
   },
   fhir: {
     baseUrl: process.env.REACT_APP_FHIR_BASE_URL!,
+    websocketUrl: process.env.REACT_APP_FHIR_WEBSOCKET_URL!,
     profileBaseUrl: process.env.REACT_APP_FHIR_PROFILE_BASE_URL!,
   },
   keycloak: {

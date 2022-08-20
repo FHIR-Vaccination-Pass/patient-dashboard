@@ -3,15 +3,17 @@ import { Basic, Bundle } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { GetResponse, storeIdRecursive } from './utils';
 import { ActiveVaccinationSchemeMapper } from '../../../models';
+import { ResourceName } from './types';
+import { addOwnUpdate } from './notificationWebsocket';
 
-type TResource = Basic;
-const TMapper = ActiveVaccinationSchemeMapper;
-interface GetArgs {
+export type TResource = Basic;
+export const TMapper = ActiveVaccinationSchemeMapper;
+export interface GetArgs {
   _id?: string;
   subject?: string;
 }
-type GetResponseGroups = 'byVaccinationScheme' | 'byPatient';
-const resourceName = 'ActiveVaccinationScheme' as const;
+export type GetResponseGroups = 'byVaccinationScheme' | 'byPatient';
+const resourceName: ResourceName = 'Basic';
 const resourcePath = '/Basic' as const;
 
 export const activeVaccinationSchemeApi = createApi({
@@ -30,7 +32,7 @@ export const activeVaccinationSchemeApi = createApi({
       query: () => ({
         url: resourcePath,
         params: {
-          code: resourceName,
+          code: 'ActiveVaccinationScheme',
           _profile: `${settings.fhir.profileBaseUrl}/vp-active-vaccination-scheme`,
         },
       }),
@@ -75,6 +77,19 @@ export const activeVaccinationSchemeApi = createApi({
       query: (id) => ({ url: `${resourcePath}/${id}` }),
       providesTags: (result) =>
         result ? [{ type: resourceName, id: result.id }] : [],
+    }),
+    put: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: `${resourcePath}/${resource.id}`,
+        method: 'PUT',
+        body: resource,
+      }),
+      invalidatesTags: (_result, _error, resource) => [
+        { type: resourceName, id: resource.id },
+      ],
+      onQueryStarted: (resource) => {
+        addOwnUpdate({ type: resourceName, id: resource.id });
+      },
     }),
   }),
 });

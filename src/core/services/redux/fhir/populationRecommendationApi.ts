@@ -3,14 +3,16 @@ import { Basic, Bundle } from 'fhir/r4';
 import { settings } from '../../../../settings';
 import { PopulationRecommendationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
+import { ResourceName } from './types';
+import { addOwnUpdate } from './notificationWebsocket';
 
-type TResource = Basic;
-const TMapper = PopulationRecommendationMapper;
-interface GetArgs {
+export type TResource = Basic;
+export const TMapper = PopulationRecommendationMapper;
+export interface GetArgs {
   _id?: string;
 }
-type GetResponseGroups = 'byCountry' | 'byState' | 'byDisease';
-const resourceName = 'PopulationRecommendation' as const;
+export type GetResponseGroups = 'byCountry' | 'byState' | 'byDisease';
+const resourceName: ResourceName = 'Basic';
 const resourcePath = '/Basic' as const;
 
 export const populationRecommendationApi = createApi({
@@ -29,7 +31,7 @@ export const populationRecommendationApi = createApi({
       query: () => ({
         url: resourcePath,
         params: {
-          code: resourceName,
+          code: 'PopulationRecommendation',
           _profile: `${settings.fhir.profileBaseUrl}/vp-population-recommendation`,
         },
       }),
@@ -81,6 +83,19 @@ export const populationRecommendationApi = createApi({
       query: (id) => ({ url: `${resourcePath}/${id}` }),
       providesTags: (result) =>
         result ? [{ type: resourceName, id: result.id }] : [],
+    }),
+    put: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: `${resourcePath}/${resource.id}`,
+        method: 'PUT',
+        body: resource,
+      }),
+      invalidatesTags: (_result, _error, resource) => [
+        { type: resourceName, id: resource.id },
+      ],
+      onQueryStarted: (resource) => {
+        addOwnUpdate({ type: resourceName, id: resource.id });
+      },
     }),
   }),
 });
