@@ -9,7 +9,7 @@ import {
   useTargetDiseases,
 } from '../../../hooks';
 
-export const RecommendationsWidget: FC = ({}) => {
+export const RecommendationsWidget: FC = () => {
   const params = useParams();
   const patientId = params['patientId'];
 
@@ -17,16 +17,13 @@ export const RecommendationsWidget: FC = ({}) => {
   const { immunizationRecommendations } = useImmunizationRecommendations({
     patient: patientId,
   });
-  const { data: medicationsData, medications, idToMedication } = useMedications({});
   const {
-    idToOrganization,
-    vaccinationSchemes,
-    idToVaccinationScheme,
-    vaccinationDoses,
-    idToVaccinationDose,
-  } = useMedicationInfo(medications);
-
-  const standardVaccinationSchemes = vaccinationSchemes?.byType['standard'];
+    data: medicationsData,
+    medications,
+    idToMedication,
+  } = useMedications({});
+  const { idToVaccinationScheme, vaccinationDoses, idToVaccinationDose } =
+    useMedicationInfo(medications);
 
   return (
     <Flex
@@ -40,26 +37,30 @@ export const RecommendationsWidget: FC = ({}) => {
       overflowY={'scroll'}
     >
       {immunizationRecommendations?.map(
-        (recommendation: ImmunizationRecommendation) => {
-          const diseases = targetDiseases?.byCode[
-            recommendation.targetDisease.coding.code
-          ]?.ids.map((irId) => idToTargetDisease(irId)!);
-          return diseases?.map((disease) => {
-            const med =
-              recommendation &&
-              idToMedication(
-                medicationsData?.byCode[recommendation.vaccineCode.coding.code]
-                  ?.ids[0]
-              );
-            const dose = idToVaccinationDose(recommendation?.vaccinationDoseId);
-            const vs = dose && idToVaccinationScheme(dose?.vaccinationSchemeId);
-            const allDoses =
-              vs &&
-              vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
-                idToVaccinationDose
-              );
+        (immRec: ImmunizationRecommendation) => {
+          const td = idToTargetDisease(
+            targetDiseases?.byCode[immRec.targetDisease.coding.code]?.ids[0]
+          );
+          const med =
+            immRec &&
+            idToMedication(
+              medicationsData?.byCode[immRec.vaccineCode.coding.code]?.ids[0]
+            );
+          const dose = idToVaccinationDose(immRec?.vaccinationDoseId);
+          const vs = dose && idToVaccinationScheme(dose?.vaccinationSchemeId);
+          const allDoses =
+            vs &&
+            vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
+              idToVaccinationDose
+            );
 
-            return (
+          return (
+            immRec &&
+            med &&
+            vs &&
+            allDoses &&
+            dose &&
+            td && (
               <Stack>
                 <Flex
                   justifyContent={'space-between'}
@@ -69,24 +70,22 @@ export const RecommendationsWidget: FC = ({}) => {
                   pl={6}
                   pr={6}
                 >
-                  <Text> {disease.name} </Text>
+                  <Text> {td.name} </Text>
                   <Flex w={'50%'} justifyContent={'end'} alignItems={'center'}>
-                    {recommendation && med && vs && allDoses && dose && (
-                      <Badge
-                        colorScheme={'gray'}
-                        variant='solid'
-                        w={'100%'}
-                        textAlign={'center'}
-                        mr={3}
-                      >
-                        Dose:{' '}
-                        {'numberInScheme' in dose!
-                          ? `${dose.numberInScheme} / ${allDoses!}`
-                          : 'Booster'}
-                      </Badge>
-                    )}
+                    <Badge
+                      colorScheme={'gray'}
+                      variant='solid'
+                      w={'100%'}
+                      textAlign={'center'}
+                      mr={3}
+                    >
+                      Dose:{' '}
+                      {'numberInScheme' in dose
+                        ? `${dose.numberInScheme} / ${allDoses}`
+                        : 'Booster'}
+                    </Badge>
                     <Link
-                      to={`/md/dashboard/patient/${patientId}/diseases/${disease.code.coding.code}`}
+                      to={`/md/dashboard/patient/${patientId}/diseases/${td.code.coding.code}`}
                     >
                       <Button colorScheme='blue' w={'5vw'}>
                         Open
@@ -96,8 +95,8 @@ export const RecommendationsWidget: FC = ({}) => {
                 </Flex>
                 <Divider />
               </Stack>
-            );
-          });
+            )
+          );
         }
       )}
     </Flex>
