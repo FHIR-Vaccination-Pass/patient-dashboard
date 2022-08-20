@@ -1,5 +1,8 @@
 import { Api } from '@reduxjs/toolkit/query';
-import { TagDescription } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
+import {
+  FullTagDescription,
+  TagDescription,
+} from '@reduxjs/toolkit/dist/query/endpointDefinitions';
 
 import { settings } from '../../../../settings';
 import { ResourceName } from './types';
@@ -26,25 +29,12 @@ interface FHIRNotificationEvent {
   tenantId: string;
 }
 
-const resourceNameToApis: Record<
+let __resourceNameToApis: Record<
   ResourceName,
   Api<any, any, any, ResourceName, any>[]
-> = {
-  Basic: [
-    activeVaccinationSchemeApi,
-    populationRecommendationApi,
-    targetDiseaseApi,
-    vacationPlanApi,
-    vaccinationDoseApi,
-    vaccinationSchemeApi,
-  ],
-  Immunization: [immunizationApi],
-  ImmunizationRecommendation: [immunizationRecommendationApi],
-  Medication: [medicationApi],
-  Organization: [organizationApi],
-  Patient: [patientApi],
-  Practitioner: [practitionerApi],
-};
+>;
+let __ownUpdates: Set<string>;
+let __socket: WebSocket;
 
 const messageHandler = (ev: MessageEvent<string>): void => {
   const notificationEvent = JSON.parse(ev.data) as FHIRNotificationEvent;
@@ -56,7 +46,12 @@ const messageHandler = (ev: MessageEvent<string>): void => {
     `FHIRNotificationEvent: ${notificationEvent.operationType} ${resourceName}/${resourceId}`
   );
 
-  for (const api of resourceNameToApis[resourceName]) {
+  if (__ownUpdates.delete(`${resourceName}/${resourceId}`)) {
+    console.log(`FHIRNotificationEvent: is own update`);
+    return;
+  }
+
+  for (const api of __resourceNameToApis[resourceName]) {
     const tags: TagDescription<ResourceName>[] =
       notificationEvent.operationType === 'create'
         ? [
@@ -69,5 +64,28 @@ const messageHandler = (ev: MessageEvent<string>): void => {
   }
 };
 
-const socket = new WebSocket(settings.fhir.websocketUrl);
-socket.addEventListener('message', messageHandler);
+export const addOwnUpdate = (tag: FullTagDescription<ResourceName>): void => {
+  __ownUpdates.add(`${tag.type}/${tag.id}`);
+};
+
+export const initNotificationWebsocket = (): void => {
+  __resourceNameToApis = {
+    Basic: [
+      activeVaccinationSchemeApi,
+      populationRecommendationApi,
+      targetDiseaseApi,
+      vacationPlanApi,
+      vaccinationDoseApi,
+      vaccinationSchemeApi,
+    ],
+    Immunization: [immunizationApi],
+    ImmunizationRecommendation: [immunizationRecommendationApi],
+    Medication: [medicationApi],
+    Organization: [organizationApi],
+    Patient: [patientApi],
+    Practitioner: [practitionerApi],
+  };
+  __ownUpdates = new Set<string>();
+  __socket = new WebSocket(settings.fhir.websocketUrl);
+  __socket.addEventListener('message', messageHandler);
+};

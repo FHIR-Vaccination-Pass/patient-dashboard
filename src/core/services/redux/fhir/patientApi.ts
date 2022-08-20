@@ -4,9 +4,11 @@ import { settings } from '../../../../settings';
 import { PatientMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
 import { ResourceName } from './types';
+import { addOwnUpdate } from './notificationWebsocket';
 
 export type TResource = Patient;
 export const TMapper = PatientMapper;
+
 export interface GetArgs {
   _id?: string;
   active?: string;
@@ -16,6 +18,7 @@ export interface GetArgs {
   deceased?: string;
   address?: string;
 }
+
 export type GetResponseGroups =
   | 'byActive'
   | 'byGender'
@@ -99,6 +102,12 @@ export const patientApi = createApi({
         method: 'PUT',
         body: resource,
       }),
+      invalidatesTags: (_result, _error, resource) => [
+        { type: resourceName, id: resource.id },
+      ],
+      onQueryStarted: (resource) => {
+        addOwnUpdate({ type: resourceName, id: resource.id });
+      },
     }),
   }),
 });
