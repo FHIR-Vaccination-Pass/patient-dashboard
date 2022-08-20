@@ -263,6 +263,10 @@ export class MockReferenceResolver implements ResourceMapper {
     return Array.from(this._diseaseDict.values());
   }
 
+  getAllOrganizations(): Organization[] {
+    return Array.from(this._organizationDict.values());
+  }
+
   getAllVaccinationSchemes(): VaccinationScheme[] {
     return Array.from(this._vaccinationSchemeDict.values());
   }
@@ -349,6 +353,20 @@ export class MockReferenceResolver implements ResourceMapper {
     // Save medication to server
     console.log('Saving the following vaccination scheme on the FHIR server:');
     console.log(vaccinationScheme);
+    return undefined;
+  }
+
+  saveDisease(disease: Disease): Disease | undefined {
+    // Save disease to DB
+    console.log('Saving the following disease on the FHIR server:');
+    console.log(disease);
+    return undefined;
+  }
+
+  saveMedication(medication: Medication): Medication | undefined {
+    // Save disease to DB
+    console.log('Saving the following medication on the FHIR server:');
+    console.log(medication);
     return undefined;
   }
 }

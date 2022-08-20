@@ -8,8 +8,8 @@ import {
   BoxProps,
   Button,
   Editable,
-  EditableInput,
   EditablePreview,
+  EditableTextarea,
   Flex,
   HStack,
   NumberDecrementStepper,
@@ -35,26 +35,13 @@ import Select, { OnChangeValue } from 'react-select';
 import { SmallCloseIcon } from '@chakra-ui/icons';
 import { AddVaccinationDoseModal } from './addVaccinationDoseModal';
 import { AddVaccinationSchemeModal } from './addVaccinationSchemeModal';
+import {
+  convertArrayToOptionArray,
+  OptionType,
+} from '../../core/services/util/convertArrayToOptionArray';
 
 interface VaccineInformationCardProps extends BoxProps {
   selectedMedication: Medication;
-}
-
-export type OptionType = {
-  value: string;
-  label: string;
-};
-
-// Convert to option array for Select component
-export function convertArrayToOptionArray(list: string[]): OptionType[] {
-  const result: OptionType[] = [];
-  list.forEach((listElement) => {
-    result.push({
-      value: listElement.toLowerCase(),
-      label: listElement,
-    });
-  });
-  return result;
 }
 
 export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
@@ -144,7 +131,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             }}
           >
             <EditablePreview />
-            <EditableInput />
+            <EditableTextarea />
           </Editable>
         </Flex>
 
@@ -165,7 +152,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             }}
           >
             <EditablePreview />
-            <EditableInput />
+            <EditableTextarea />
           </Editable>
         </Flex>
 
@@ -186,7 +173,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             }}
           >
             <EditablePreview />
-            <EditableInput />
+            <EditableTextarea />
           </Editable>
         </Flex>
       </HStack>
