@@ -121,6 +121,7 @@ export function PatientHistory() {
               return med?.targetDiseaseIds.map((diseaseId) => {
                 return (
                   <VerticalTimelineElement
+                    key={`${iId}/${diseaseId}`}
                     iconStyle={timelineElementIconStyles}
                     contentStyle={timelineElementStyles}
                     contentArrowStyle={{ display: 'none' }}

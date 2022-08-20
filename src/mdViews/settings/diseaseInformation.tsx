@@ -38,6 +38,7 @@ export default function DiseaseInformation() {
         <Flex flexDirection={'column'} overflowY={'scroll'}>
           {diseases.map((disease, i) => (
             <Flex
+              key={disease.id}
               h={'60px'}
               alignItems={'center'}
               justifyContent={'flex-start'}

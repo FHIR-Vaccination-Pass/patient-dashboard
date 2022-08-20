@@ -63,7 +63,7 @@ export const RecentHistoryWidget: FC = () => {
               ]?.ids.map(idToVaccinationDose);
 
             return (
-              <Stack>
+              <Stack key={imm.id}>
                 <Flex
                   justifyContent={'space-between'}
                   w={'100%'}

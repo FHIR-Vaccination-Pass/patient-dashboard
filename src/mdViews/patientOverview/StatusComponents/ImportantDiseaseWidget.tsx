@@ -44,7 +44,7 @@ export const ImportantDiseaseWidget: FC = () => {
           const status = calcAggregateImmunizationStatus(immRecs ?? []);
 
           return (
-            <Stack>
+            <Stack key={disease.id}>
               <Flex
                 justifyContent={'space-between'}
                 w={'100%'}

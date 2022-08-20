@@ -95,6 +95,7 @@ export const DashboardHeader: FC<DashboardProps> = () => {
         >
           {LinkItems.map((navLink) => (
             <NavItem
+              key={navLink.link}
               title={navLink.name}
               icon={navLink.icon}
               navSize={'large'}

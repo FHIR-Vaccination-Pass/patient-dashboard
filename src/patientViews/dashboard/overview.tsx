@@ -27,6 +27,7 @@ export function Overview() {
 
               return med?.targetDiseaseIds.map((diseaseId: string) => (
                 <RecommendationCard
+                  key={`${immRec.id}/${diseaseId}`}
                   recommendation={immRec}
                   diseaseId={diseaseId}
                 />

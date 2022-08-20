@@ -67,7 +67,7 @@ export const RecommendationsWidget: FC = () => {
             allDoses &&
             dose &&
             td && (
-              <Stack>
+              <Stack key={immRec.id}>
                 <Flex
                   justifyContent={'space-between'}
                   w={'100%'}

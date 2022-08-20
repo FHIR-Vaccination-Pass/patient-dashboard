@@ -211,7 +211,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
 
       <Accordion defaultIndex={[]} allowMultiple mb={'30px'}>
         {vaccinationSchemes.map((scheme) => (
-          <AccordionItem>
+          <AccordionItem key={scheme.id}>
             <h2>
               <AccordionButton>
                 <Box flex='1' textAlign='left'>
@@ -294,7 +294,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
                   </Thead>
                   <Tbody>
                     {dosesMap.get(scheme.id)?.map((dose) => (
-                      <Tr>
+                      <Tr key={dose.id}>
                         <Td>
                           {dose.numberInScheme}/
                           {dosesMap.get(scheme.id)?.length}

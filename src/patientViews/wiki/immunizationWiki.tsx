@@ -111,7 +111,7 @@ export function ImmunizationWiki() {
         pr={5}
       >
         {targetDiseasesMapped?.map((targetDisease) => (
-          <WikiInformationCard disease={targetDisease} />
+          <WikiInformationCard key={targetDisease.id} disease={targetDisease} />
         ))}
       </Box>
     </Box>

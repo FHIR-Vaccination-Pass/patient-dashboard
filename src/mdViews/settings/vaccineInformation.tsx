@@ -40,6 +40,7 @@ export default function VaccineInformation() {
         <Flex flexDirection={'column'} overflowY={'scroll'}>
           {medications.map((medication, i) => (
             <Flex
+              key={medication.id}
               h={'60px'}
               alignItems={'center'}
               justifyContent={'flex-start'}

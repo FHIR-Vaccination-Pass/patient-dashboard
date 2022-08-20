@@ -141,7 +141,12 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
             ml={'0px'}
           >
             {populationRecommendation?.locations.map((location) => (
-              <ListItem color={'gray.500'}>{location.country}</ListItem>
+              <ListItem
+                key={`${location.country}/${location.state}`}
+                color={'gray.500'}
+              >
+                {location.country}
+              </ListItem>
             ))}
           </UnorderedList>
         </Flex>
