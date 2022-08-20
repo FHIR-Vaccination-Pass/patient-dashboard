@@ -4,6 +4,7 @@ import { settings } from '../../../../settings';
 import { VaccinationSchemeMapper } from '../../../models';
 import { storeIdRecursive, GetResponse } from './utils';
 import { ResourceName } from './types';
+import { addOwnUpdate } from './notificationWebsocket';
 
 export type TResource = Basic;
 export const TMapper = VaccinationSchemeMapper;
@@ -83,6 +84,19 @@ export const vaccinationSchemeApi = createApi({
       query: (id) => ({ url: `${resourcePath}/${id}` }),
       providesTags: (result) =>
         result ? [{ type: resourceName, id: result.id }] : [],
+    }),
+    put: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: `${resourcePath}/${resource.id}`,
+        method: 'PUT',
+        body: resource,
+      }),
+      invalidatesTags: (_result, _error, resource) => [
+        { type: resourceName, id: resource.id },
+      ],
+      onQueryStarted: (resource) => {
+        addOwnUpdate({ type: resourceName, id: resource.id });
+      },
     }),
   }),
 });
