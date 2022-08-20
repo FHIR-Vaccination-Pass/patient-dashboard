@@ -5,7 +5,6 @@ export const QuickActions: FC = ({}) => {
   return (
     <Flex
       bg={useColorModeValue('white', 'gray.900')}
-      boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
       flexDir='row-reverse'
       justifyContent='space-between'
       h={'100%'}
