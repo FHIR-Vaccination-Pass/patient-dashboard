@@ -10,9 +10,10 @@ import {
   EditableInput,
   Divider,
   Box,
+  Spinner,
 } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 import { convertArrayToOptionArray } from '../../settings/vaccineInformationCard';
 import { Country } from 'country-state-city';
 import { getStatesOfCountry } from 'country-state-city/dist/lib/state';
@@ -21,7 +22,7 @@ import { CloseIcon } from '@chakra-ui/icons';
 import { FaWrench } from 'react-icons/fa';
 import { ICountry, IState } from 'country-state-city/dist/lib/interface';
 import { cloneDeep } from 'lodash';
-import { patientApi } from '../../../core/services/redux/fhir/patientApi';
+import { patientApi } from '../../../core/services/redux/fhir';
 
 export const PatientInformationWidget: FC = () => {
   const params = useParams();
@@ -31,23 +32,43 @@ export const PatientInformationWidget: FC = () => {
     (potentialCountry) => potentialCountry.name
   );
 
-  const { data: patientRaw } = patientApi.endpoints.getById.useQuery(
-    params['patientId']!
-  );
-  const [putPatient] = patientApi.endpoints.put.useMutation();
+  const { data: patientRaw, isFetching: getIsFetching } =
+    patientApi.endpoints.getById.useQuery(params['patientId']!);
+  const [putPatient, { isLoading: putIsLoading }] =
+    patientApi.endpoints.put.useMutation();
   const patient = PatientMapper.fromResource(patientRaw);
 
   const [updatedPatient, setUpdatedPatient] = useState<
     PatientMapper | undefined
-  >(undefined);
+  >(patient && cloneDeep(patient));
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [toggleEditModeRequested, setToggleEditModeRequested] = useState(false);
 
   const toggleEditMode = useCallback(() => {
-    if (updatedPatient === undefined) {
-      setUpdatedPatient(cloneDeep(patient));
-    } else {
-      setUpdatedPatient(undefined);
+    setToggleEditModeRequested(!toggleEditModeRequested);
+  }, [toggleEditModeRequested]);
+
+  useEffect(() => {
+    if (!toggleEditModeRequested || getIsFetching || putIsLoading) {
+      return;
     }
-  }, [patient, updatedPatient]);
+
+    if (editMode) {
+      setEditMode(false);
+    } else {
+      setUpdatedPatient(cloneDeep(patient));
+      setEditMode(true);
+    }
+
+    setToggleEditModeRequested(false);
+  }, [
+    editMode,
+    toggleEditModeRequested,
+    getIsFetching,
+    putIsLoading,
+    patient,
+    updatedPatient,
+  ]);
 
   // Input field states
 
@@ -55,6 +76,59 @@ export const PatientInformationWidget: FC = () => {
   const [state, setState] = useState<string>('');
   const [stateOptions, setStateOptions] = useState<IState[]>([]); // getStatesOfCountry(country.isoCode)
 
+  const getCurrentResource = (): PatientMapper | undefined => {
+    if (editMode) {
+      return updatedPatient;
+    } else if (getIsFetching || putIsLoading) {
+      return updatedPatient;
+    } else {
+      return patient;
+    }
+  };
+
+  const getGivenName = (): string => getCurrentResource()!.name.given[0];
+  const setGivenName = useCallback(
+    (value: string): void => {
+      setUpdatedPatient(
+        updatedPatient!.withName(updatedPatient!.name.withGiven([value]))
+      );
+    },
+    [updatedPatient]
+  );
+
+  const getFamilyName = (): string => getCurrentResource()!.name.family;
+  const setFamilyName = useCallback(
+    (value: string): void => {
+      setUpdatedPatient(
+        updatedPatient!.withName(updatedPatient!.name.withFamily(value))
+      );
+    },
+    [updatedPatient]
+  );
+
+  const getBirthDate = (): string =>
+    getCurrentResource()!.birthDate.toLocaleDateString();
+  const setBirthDate = useCallback(
+    (value: string) => {
+      const [day, month, year] = value.split('/');
+      const birthDate = new Date(`${year}-${month}-${day}`);
+
+      setUpdatedPatient(updatedPatient!.withBirthDate(birthDate));
+    },
+    [updatedPatient]
+  );
+
+  const getGender = (): SingleValue<{ value: string; label: string }> => {
+    const value = getCurrentResource()!.gender as string;
+    const label = value.slice(0, 1).toUpperCase() + value.slice(1);
+    return { value, label };
+  };
+  const setGender = useCallback(
+    (value: SingleValue<{ value: string; label: string }>): void => {
+      setUpdatedPatient(updatedPatient!.withGender(value!.value as Gender));
+    },
+    [updatedPatient]
+  );
   // useEffect(() => {
   //   if (patient) {
   //     const initialCountry = allCountries.find((potentialCountry) => {
@@ -115,17 +189,9 @@ export const PatientInformationWidget: FC = () => {
             <FormLabel color={'gray.600'}>Given name</FormLabel>
             <Editable
               variant='flushed'
-              isPreviewFocusable={updatedPatient !== undefined}
-              defaultValue={
-                updatedPatient
-                  ? updatedPatient.name.given[0]
-                  : patient.name.given[0]
-              }
-              value={
-                updatedPatient
-                  ? updatedPatient.name.given[0]
-                  : patient.name.given[0]
-              }
+              isPreviewFocusable={editMode}
+              defaultValue={getGivenName()}
+              value={getGivenName()}
               p={'5px 10px'}
               borderBottom={'1px'}
               borderColor={'gray.200'}
@@ -133,13 +199,7 @@ export const PatientInformationWidget: FC = () => {
               color={'gray.500'}
               mb={'20px'}
               pl={'5px'}
-              onChange={(value) => {
-                setUpdatedPatient(
-                  updatedPatient!.withName(
-                    updatedPatient!.name.withGiven([value])
-                  )
-                );
-              }}
+              onChange={setGivenName}
             >
               <EditablePreview />
               <EditableInput />
@@ -151,11 +211,7 @@ export const PatientInformationWidget: FC = () => {
             <Editable
               variant='flushed'
               isPreviewFocusable={false}
-              value={
-                updatedPatient
-                  ? updatedPatient.birthDate.toLocaleDateString()
-                  : patient.birthDate.toLocaleString()
-              }
+              value={getBirthDate()}
               p={'5px 10px'}
               borderBottom={'1px'}
               borderColor={'gray.200'}
@@ -163,12 +219,7 @@ export const PatientInformationWidget: FC = () => {
               color={'gray.500'}
               mb={'20px'}
               pl={'5px'}
-              onChange={(value) => {
-                const [day, month, year] = value.split('/');
-                const birthDate = new Date(`${year}-${month}-${day}`);
-
-                setUpdatedPatient(updatedPatient!.withBirthDate(birthDate));
-              }}
+              onChange={setBirthDate}
             >
               <EditablePreview />
               <EditableInput />
@@ -183,7 +234,7 @@ export const PatientInformationWidget: FC = () => {
                 label: country?.name,
               }}
               options={convertArrayToOptionArray(allCountryNames)}
-              isDisabled={updatedPatient === undefined}
+              isDisabled={!editMode}
               onChange={(newValue) => {
                 // editCountry(newValue!.value!);
               }}
@@ -195,12 +246,8 @@ export const PatientInformationWidget: FC = () => {
             <FormLabel color={'gray.600'}>Surname</FormLabel>
             <Editable
               variant='flushed'
-              isPreviewFocusable={updatedPatient !== undefined}
-              value={
-                updatedPatient
-                  ? updatedPatient.name.family
-                  : patient.name.family
-              }
+              isPreviewFocusable={editMode}
+              value={getFamilyName()}
               p={'5px 10px'}
               borderBottom={'1px'}
               borderColor={'gray.200'}
@@ -208,13 +255,7 @@ export const PatientInformationWidget: FC = () => {
               color={'gray.500'}
               mb={'20px'}
               pl={'5px'}
-              onChange={(value) => {
-                setUpdatedPatient(
-                  updatedPatient!.withName(
-                    updatedPatient!.name.withFamily(value)
-                  )
-                );
-              }}
+              onChange={setFamilyName}
             >
               <EditablePreview />
               <EditableInput />
@@ -224,26 +265,15 @@ export const PatientInformationWidget: FC = () => {
           <FormControl mt={4} mb={'23px'}>
             <FormLabel color={'gray.600'}>Gender</FormLabel>
             <Select
-              value={{
-                value: (updatedPatient
-                  ? updatedPatient.gender
-                  : patient.gender) as string,
-                label: (updatedPatient
-                  ? updatedPatient.gender
-                  : patient.gender) as string,
-              }}
+              value={getGender()}
               options={[
                 { value: 'male', label: 'Male' },
                 { value: 'female', label: 'Female' },
                 { value: 'other', label: 'Other' },
                 { value: 'unknown', label: 'Unknown' },
               ]}
-              isDisabled={true}
-              onChange={(newValue) => {
-                setUpdatedPatient(
-                  updatedPatient!.withGender(newValue!.value as Gender)
-                );
-              }}
+              isDisabled={!editMode}
+              onChange={setGender}
             />
           </FormControl>
 
@@ -254,7 +284,7 @@ export const PatientInformationWidget: FC = () => {
                 value: state,
                 label: state,
               }}
-              isDisabled={updatedPatient === undefined}
+              isDisabled={!editMode}
               options={convertArrayToOptionArray(
                 stateOptions.map((stateOption) => stateOption.name)
               )}
@@ -267,7 +297,7 @@ export const PatientInformationWidget: FC = () => {
       </Flex>
       <Box>
         <Divider orientation='horizontal' mt={'5px'} />
-        {updatedPatient === undefined && (
+        {!editMode && (
           <Flex
             h={'40px'}
             alignItems={'center'}
@@ -284,7 +314,7 @@ export const PatientInformationWidget: FC = () => {
             </Text>
           </Flex>
         )}
-        {updatedPatient !== undefined && (
+        {editMode && (
           <Flex
             h={'40px'}
             alignItems={'center'}
@@ -294,16 +324,30 @@ export const PatientInformationWidget: FC = () => {
             borderBottomRadius={'10px'}
             justifyContent={'space-between'}
             onClick={() => {
+              if (getIsFetching || putIsLoading) {
+                return;
+              }
+
               savePatientInformation();
               toggleEditMode();
             }}
           >
             <Box />
             <Flex flexDirection={'row'} alignItems={'center'} ml={'15px'}>
-              <FaWrench color={'white'} />
-              <Text ml={'10px'} justifyContent={'flex-start'} color={'white'}>
-                Save Changes
-              </Text>
+              {getIsFetching || putIsLoading ? (
+                <Spinner />
+              ) : (
+                <>
+                  <FaWrench color={'white'} />
+                  <Text
+                    ml={'10px'}
+                    justifyContent={'flex-start'}
+                    color={'white'}
+                  >
+                    Save Changes
+                  </Text>
+                </>
+              )}
             </Flex>
             <CloseIcon color={'white'} mr={'15px'} onClick={toggleEditMode} />
           </Flex>
