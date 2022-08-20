@@ -129,12 +129,12 @@ export const PatientInformationWidget: FC = ({}) => {
       boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
       borderRadius={'15px'}
       flexDir='column'
-      justifyContent='space-between'
       h={'100%'}
       w={'100%'}
+      justifyContent='space-between'
     >
-      <Flex flexDirection={'row'}>
-        <Flex m={'0px 60px'} flexDirection={'column'} w={'40%'}>
+      <Flex flexDirection={'row'} justifyContent='space-evenly'>
+        <Flex p={2} flexDirection={'column'} w={'40%'}>
           <FormControl mt={4}>
             <FormLabel color={'gray.600'}>Given name</FormLabel>
             <Editable
@@ -195,7 +195,7 @@ export const PatientInformationWidget: FC = ({}) => {
             />
           </FormControl>
         </Flex>
-        <Flex ml={'20px'} flexDirection={'column'} w={'40%'}>
+        <Flex p={2} flexDirection={'column'} w={'40%'}>
           <FormControl mt={4}>
             <FormLabel color={'gray.600'}>Surname</FormLabel>
             <Editable

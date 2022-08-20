@@ -28,6 +28,8 @@ import { patientApi } from '../../core/services/redux/fhir';
 
 interface SidebarProps extends BoxProps {
   onClose: () => void;
+  navSize: string;
+  changeNavSize: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface LinkItemProps {
@@ -47,13 +49,17 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Vacation Plans', icon: FaPlane, link: 'vacations' },
 ];
 
-export const PatientSidebar = ({ onClose, ...rest }: SidebarProps) => {
+export const PatientSidebar = ({
+  onClose,
+  navSize,
+  changeNavSize,
+  ...rest
+}: SidebarProps) => {
   const params = useParams();
   const { data: patientRaw } = patientApi.endpoints.getById.useQuery(
     params['patientId']!
   );
   const patient = PatientMapper.fromResource(patientRaw);
-  const [navSize, changeNavSize] = useState('large');
   return (
     <Flex
       bg={useColorModeValue('white', 'gray.900')}
