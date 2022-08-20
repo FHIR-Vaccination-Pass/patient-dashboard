@@ -28,18 +28,9 @@ export interface Patient {
 
 export class PatientMapper implements Patient {
   private _raw: FHIRPatient;
-  address: Address;
 
   constructor(resource: FHIRPatient) {
     this._raw = resource;
-
-    const homeAddress = fhirpath.evaluate(
-      this._raw,
-      `address.where(use = 'home')`,
-      undefined,
-      fhirpath_r4_model
-    )[0] as FHIRAddress;
-    this.address = AddressMapper.fromResource(homeAddress);
   }
 
   static fromResource<T extends FHIRPatient | undefined>(
@@ -154,6 +145,31 @@ export class PatientMapper implements Patient {
   withDeceased(deceased: Date | boolean): PatientMapper {
     const newPatient = cloneDeep(this);
     newPatient.deceased = deceased;
+    return newPatient;
+  }
+
+  get _homeAddress(): FHIRAddress {
+    return fhirpath.evaluate(
+      this._raw,
+      `address.where(use = 'home')`,
+      undefined,
+      fhirpath_r4_model
+    )[0] as FHIRAddress;
+  }
+
+  get address(): AddressMapper {
+    return AddressMapper.fromResource(this._homeAddress);
+  }
+
+  set address(address: AddressMapper) {
+    this._raw.address = this._raw.address?.map((a) =>
+      a === this._homeAddress ? address.toResource() : a
+    );
+  }
+
+  withAddress(address: AddressMapper): PatientMapper {
+    const newPatient = cloneDeep(this);
+    newPatient.address = address;
     return newPatient;
   }
 
