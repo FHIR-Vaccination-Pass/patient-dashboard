@@ -12,37 +12,34 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
-import React from 'react';
-import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
-import { Disease } from '../../core/models/Disease';
+import React, { useState } from 'react';
+import {
+  Disease,
+  DiseaseMapper,
+  PopulationRecommendationMapper,
+} from '../../core/models';
+import {
+  populationRecommendationApi,
+  targetDiseaseApi,
+} from '../../core/services/redux/fhir';
 
 interface ModalProps extends BoxProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-/*
-  id: string;
-  code: CodeableConcept;
-  name: string;
-  description: string;
-  populationRecommendationId: string;
-  // Medication ids
-  vaccineIds: string[];
- */
-
 export const AddDiseaseModal = ({ isOpen, onClose }: ModalProps) => {
-  const mapper = useMapper();
-  const disease = {
-    name: undefined,
+  const [postTd] = targetDiseaseApi.endpoints.post.useMutation();
+  const [postPr] = populationRecommendationApi.endpoints.post.useMutation();
+  const [disease, setDisease] = useState<Disease>({
+    id: '',
+    name: '',
     code: {
-      coding: { code: undefined, system: 'http://hl7.org/fhir/sid/icd-10' },
+      coding: { code: '', system: 'http://hl7.org/fhir/sid/icd-10' },
     },
-    description: undefined,
-    populationRecommendationId: undefined,
-    vaccineIds: [],
-  } as unknown as Disease;
-  const initialRef = React.useRef(null);
+    description: '',
+  });
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -53,29 +50,36 @@ export const AddDiseaseModal = ({ isOpen, onClose }: ModalProps) => {
           <FormControl>
             <FormLabel>Name</FormLabel>
             <Input
-              ref={initialRef}
-              placeholder=''
-              onChange={(value) => (disease.name = value.target.value)}
+              value={disease.name}
+              onChange={({ target: { value } }) => {
+                setDisease({ ...disease, name: value });
+              }}
             />
           </FormControl>
 
           <FormControl mt={4}>
             <FormLabel>Code</FormLabel>
             <Input
-              ref={initialRef}
-              placeholder=''
-              onChange={(value) =>
-                (disease.code.coding.code = value.target.value)
-              }
+              value={disease.code.coding.code}
+              onChange={({ target: { value } }) => {
+                setDisease({
+                  ...disease,
+                  code: {
+                    ...disease.code,
+                    coding: { ...disease.code.coding, code: value },
+                  },
+                });
+              }}
             />
           </FormControl>
 
           <FormControl mt={4}>
             <FormLabel>Description</FormLabel>
             <Input
-              ref={initialRef}
-              placeholder=''
-              onChange={(value) => (disease.description = value.target.value)}
+              value={disease.description}
+              onChange={({ target: { value } }) => {
+                setDisease({ ...disease, description: value });
+              }}
             />
           </FormControl>
         </ModalBody>
@@ -85,7 +89,14 @@ export const AddDiseaseModal = ({ isOpen, onClose }: ModalProps) => {
             colorScheme='blue'
             mr={3}
             onClick={() => {
-              mapper.saveDisease(disease);
+              postTd(DiseaseMapper.fromModel(disease).toResource());
+              postPr(
+                PopulationRecommendationMapper.fromModel({
+                  id: '',
+                  diseaseId: disease.code.coding.code,
+                  locations: [],
+                }).toResource()
+              );
               onClose();
             }}
           >

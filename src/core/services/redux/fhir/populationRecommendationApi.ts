@@ -97,5 +97,16 @@ export const populationRecommendationApi = createApi({
         addOwnUpdate({ type: resourceName, id: resource.id });
       },
     }),
+    post: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: resourcePath,
+        method: 'POST',
+        body: resource,
+      }),
+      invalidatesTags: () => [{ type: resourceName, id: 'LIST' }],
+      onQueryStarted: () => {
+        addOwnUpdate({ type: resourceName, id: 'LIST' });
+      },
+    }),
   }),
 });

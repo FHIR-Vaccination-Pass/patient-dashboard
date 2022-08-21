@@ -29,6 +29,23 @@ export class LocationMapper implements Location {
     return new LocationMapper(resource);
   }
 
+  static fromModel({ country, state }: Location): LocationMapper {
+    const newLocation = new LocationMapper({
+      url: `${settings.fhir.profileBaseUrl}/vp-location-extension`,
+      extension: [
+        {
+          url: `${settings.fhir.profileBaseUrl}/vp-country-code-extension`,
+          valueCodeableConcept: {
+            coding: [{ system: 'urn:iso:std:iso:3166', code: country }],
+          },
+        },
+      ],
+    });
+    newLocation.state = state;
+
+    return newLocation;
+  }
+
   toResource(): FHIRExtension {
     return this._raw;
   }

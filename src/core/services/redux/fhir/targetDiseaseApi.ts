@@ -8,9 +8,11 @@ import { addOwnUpdate } from './notificationWebsocket';
 
 export type TResource = Basic;
 export const TMapper = DiseaseMapper;
+
 export interface GetArgs {
   _id?: string;
 }
+
 export type GetResponseGroups = 'byCode';
 const resourceName: ResourceName = 'Basic';
 const resourcePath = '/Basic' as const;
@@ -83,6 +85,17 @@ export const targetDiseaseApi = createApi({
       ],
       onQueryStarted: (resource) => {
         addOwnUpdate({ type: resourceName, id: resource.id });
+      },
+    }),
+    post: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: resourcePath,
+        method: 'POST',
+        body: resource,
+      }),
+      invalidatesTags: () => [{ type: resourceName, id: 'LIST' }],
+      onQueryStarted: () => {
+        addOwnUpdate({ type: resourceName, id: 'LIST' });
       },
     }),
   }),

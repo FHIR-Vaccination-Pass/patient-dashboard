@@ -55,6 +55,45 @@ export class PopulationRecommendationMapper
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
+  static fromModel({
+    ageStart,
+    ageEnd,
+    locations,
+    diseaseId,
+  }: PopulationRecommendation): PopulationRecommendationMapper {
+    const newPopulationRecommendation = new PopulationRecommendationMapper({
+      resourceType: 'Basic',
+      meta: {
+        profile: [
+          `${settings.fhir.profileBaseUrl}/vp-population-recommendation`,
+        ],
+      },
+      code: { coding: [{ code: 'PopulationRecommendation' }] },
+      extension: [
+        {
+          url: `${settings.fhir.profileBaseUrl}/vp-population-recommendation-extension`,
+          extension: [
+            {
+              url: 'targetDisease',
+              valueCodeableConcept: {
+                coding: [
+                  { system: 'http://hl7.org/fhir/sid/icd-10', code: diseaseId },
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    });
+    newPopulationRecommendation.ageStart = ageStart;
+    newPopulationRecommendation.ageEnd = ageEnd;
+    newPopulationRecommendation.locations = locations.map(
+      LocationMapper.fromModel
+    );
+
+    return newPopulationRecommendation;
+  }
+
   toResource(): FHIRBasic {
     return this._raw;
   }
