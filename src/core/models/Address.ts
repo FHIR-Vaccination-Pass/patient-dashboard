@@ -53,6 +53,7 @@ export class AddressMapper {
     line,
   }: Address): AddressMapper {
     return new AddressMapper({
+      use: 'home',
       country,
       _country: {
         extension: [

@@ -28,6 +28,7 @@ export class HumanNameMapper implements HumanName {
 
   static fromModel({ family, given }: HumanName): HumanNameMapper {
     return new HumanNameMapper({
+      use: 'official',
       family,
       given,
     });

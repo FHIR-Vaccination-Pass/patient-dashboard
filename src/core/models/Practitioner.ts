@@ -6,6 +6,8 @@ import {
   HumanName as FHIRHumanName,
   Practitioner as FHIRPractitioner,
 } from 'fhir/r4';
+import { cloneDeep } from 'lodash';
+import { settings } from '../../settings';
 
 export interface Practitioner {
   id: string;
@@ -14,18 +16,9 @@ export interface Practitioner {
 
 export class PractitionerMapper {
   private _raw: FHIRPractitioner;
-  name: HumanName;
 
   constructor(resource: FHIRPractitioner) {
     this._raw = resource;
-
-    const officialHumanName = fhirpath.evaluate(
-      this._raw,
-      `name.where(use = 'official')`,
-      undefined,
-      fhirpath_r4_model
-    )[0] as FHIRHumanName;
-    this.name = HumanNameMapper.fromResource(officialHumanName);
   }
 
   static fromResource<T extends FHIRPractitioner | undefined>(
@@ -48,11 +41,44 @@ export class PractitionerMapper {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
+  static fromModel({ name }: Practitioner): PractitionerMapper {
+    return new PractitionerMapper({
+      resourceType: 'Practitioner',
+      meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-practitioner`] },
+      name: [HumanNameMapper.fromModel(name).toResource()],
+    });
+  }
+
   toResource(): FHIRPractitioner {
     return this._raw;
   }
 
   get id(): string {
     return this._raw.id!;
+  }
+
+  get _officialHumanName(): FHIRHumanName {
+    return fhirpath.evaluate(
+      this._raw,
+      `name.where(use = 'official')`,
+      undefined,
+      fhirpath_r4_model
+    )[0] as FHIRHumanName;
+  }
+
+  get name(): HumanNameMapper {
+    return HumanNameMapper.fromResource(this._officialHumanName);
+  }
+
+  set name(name: HumanNameMapper) {
+    this._raw.name = this._raw.name!.map((hm) =>
+      hm === this._officialHumanName ? name.toResource() : hm
+    );
+  }
+
+  withName(name: HumanNameMapper): PractitionerMapper {
+    const newPractitioner = cloneDeep(this);
+    newPractitioner.name = name;
+    return newPractitioner;
   }
 }
