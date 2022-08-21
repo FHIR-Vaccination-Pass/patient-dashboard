@@ -52,6 +52,37 @@ export class ImmunizationMapper implements Immunization {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
+  static fromModel({
+    status,
+    vaccineCode,
+    occurrenceTime,
+    lotNumber,
+    patientId,
+    performerId,
+    vaccinationDoseId,
+  }: Immunization): ImmunizationMapper {
+    return new ImmunizationMapper({
+      resourceType: 'Immunization',
+      meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-immunization`] },
+      status,
+      vaccineCode: {
+        coding: [
+          { system: vaccineCode.coding.system, code: vaccineCode.coding.code },
+        ],
+      },
+      occurrenceDateTime: dayjs(occurrenceTime).format('YYYY-MM-DD'),
+      lotNumber,
+      patient: { reference: `Patient/${patientId}` },
+      performer: [{ actor: { reference: `Practitioner/${performerId}` } }],
+      extension: [
+        {
+          url: `${settings.fhir.profileBaseUrl}/vp-administered-vaccination-dose`,
+          valueReference: { reference: `Basic/${vaccinationDoseId}` },
+        },
+      ],
+    });
+  }
+
   toResource(): FHIRImmunization {
     return this._raw;
   }
