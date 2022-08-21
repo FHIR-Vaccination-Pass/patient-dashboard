@@ -16,8 +16,15 @@ import {
   useBoolean,
   useColorModeValue,
 } from '@chakra-ui/react';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import VaccinationPass from '../../../assets/VaccinationPassV2.png';
 import { useKeycloak } from '@react-keycloak/web';
 import { KeycloakProfile } from 'keycloak-js';
@@ -28,10 +35,7 @@ import {
   FaUserCircle,
 } from 'react-icons/fa';
 import { usePatients } from '../../../hooks';
-import { OptionType } from '../../../mdViews/settings/vaccineInformationCard';
 import Select from 'react-select';
-import { PatientMapper } from '../../../core/models';
-import { SearchIcon } from '@chakra-ui/icons';
 
 export const DashboardHeader: FC = () => {
   const { keycloak } = useKeycloak();
@@ -47,37 +51,23 @@ export const DashboardHeader: FC = () => {
     keycloak.logout();
   }, [keycloak, setLogoutLoading]);
 
+  const params = useParams();
+  const navigate = useNavigate();
   const { patients } = usePatients({});
-  const patientOptions = convertPatientArrayToOptionArray(patients || []);
-  const [patientSearch, setPatientSearch] = useState<string>('');
-
-  function validateInput(): boolean {
-    return patients
-      ? patients.find(
-          (pat) =>
-            pat.name.given.join(' ') + ' ' + pat.name.family === patientSearch
-        ) !== undefined
-      : false;
-  }
-
-  function convertPatientArrayToOptionArray(
-    list: PatientMapper[]
-  ): OptionType[] {
-    const result: OptionType[] = [];
-    list.forEach((listElement) => {
-      result.push({
-        value: listElement.id,
-        label: listElement.name.given.join(' ') + ' ' + listElement.name.family,
-      });
-    });
-    return result;
-  }
-
-  function resolvePatientName() {
-    return patients?.find(
-      (pat) => pat.name.given.join(' ') + ' ' + pat.name.family
-    )?.id;
-  }
+  const patientOptions = useMemo(
+    () =>
+      patients?.map((p) => ({
+        value: p.id,
+        label: `${p.name.given[0]} ${p.name.family}`,
+      })),
+    [patients]
+  );
+  const selectedOption = patientOptions?.find(
+    ({ value }) => value === params['patientId']
+  ) ?? {
+    value: '',
+    label: 'Patient Search',
+  };
 
   return (
     <>
@@ -111,25 +101,12 @@ export const DashboardHeader: FC = () => {
               <Select
                 placeholder={'Patient Search'}
                 options={patientOptions}
-                defaultValue={{
-                  value: 'Patient Search',
-                  label: 'Patient Search',
-                }}
-                value={{ value: patientSearch, label: patientSearch }}
+                value={selectedOption}
                 onChange={(newValue) => {
-                  setPatientSearch(newValue!.label);
+                  navigate(`/md/dashboard/patient/${newValue!.value}`);
                 }}
               />
             </FormControl>
-            <Link to={`/md/dashboard/patient/${resolvePatientName()}`}>
-              <IconButton
-                aria-label='Search user'
-                icon={<SearchIcon />}
-                boxSize={'39px'}
-                isDisabled={!validateInput()}
-                onClick={() => setPatientSearch('')}
-              />
-            </Link>
           </Flex>
           <HStack spacing={5} mr={'15px'}>
             <Link to={'vaccines'}>
