@@ -26,6 +26,13 @@ export class HumanNameMapper implements HumanName {
     return new HumanNameMapper(resource);
   }
 
+  static fromModel({ family, given }: HumanName): HumanNameMapper {
+    return new HumanNameMapper({
+      family,
+      given,
+    });
+  }
+
   toResource(): FHIRHumanName {
     return this._raw;
   }
