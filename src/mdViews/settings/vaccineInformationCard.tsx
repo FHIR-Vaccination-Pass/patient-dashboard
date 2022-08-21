@@ -84,7 +84,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
   function updateTargetDiseases(
     newTargetDiseases: OnChangeValue<OptionType, true>
   ) {
-    currentMedication.targetDiseaseIds = diseases
+    currentMedication.targetDiseaseCodes = diseases
       .filter((disease) =>
         newTargetDiseases
           .map((newTargetDisease) => newTargetDisease.label)
@@ -369,7 +369,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
         defaultValue={convertArrayToOptionArray(
           diseases
             .filter((disease) =>
-              currentMedication.targetDiseaseIds.includes(disease.id)
+              currentMedication.targetDiseaseCodes.includes(disease.id)
             )
             .map((disease) => disease.name)
         )}

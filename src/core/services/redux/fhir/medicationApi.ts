@@ -56,7 +56,7 @@ export const medicationApi = createApi({
         };
 
         for (const resource of resources) {
-          const { id, code, form, manufacturerId, targetDiseaseIds } =
+          const { id, code, form, manufacturerId, targetDiseaseCodes } =
             TMapper.fromResource(resource);
 
           response.ids.push(id);
@@ -66,7 +66,7 @@ export const medicationApi = createApi({
             ['byCode', code.coding.code],
             ['byForm', form.coding.code],
             ['byManufacturer', manufacturerId],
-            ...targetDiseaseIds.map(
+            ...targetDiseaseCodes.map(
               (targetDisease) =>
                 ['byTargetDisease', targetDisease] as [
                   'byTargetDisease',

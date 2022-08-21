@@ -25,7 +25,7 @@ export function Overview() {
                 medicationsData?.byCode[immRec.vaccineCode.coding.code]?.ids[0]
               );
 
-              return med?.targetDiseaseIds.map((diseaseId: string) => (
+              return med?.targetDiseaseCodes.map((diseaseId: string) => (
                 <RecommendationCard
                   key={`${immRec.id}/${diseaseId}`}
                   recommendation={immRec}

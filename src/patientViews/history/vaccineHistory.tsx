@@ -88,7 +88,7 @@ export function VaccineHistory() {
                 dose.vaccinationSchemeId
               ]?.ids.length;
 
-            return med?.targetDiseaseIds.map((diseaseId) => {
+            return med?.targetDiseaseCodes.map((diseaseId) => {
               const targetDisease = idToTargetDisease(
                 targetDiseaseData?.byCode[diseaseId]?.ids[0]
               );
