@@ -3,13 +3,11 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
   HStack,
   Icon,
   IconButton,
   Image,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Menu,
   MenuButton,
   MenuItem,
@@ -27,9 +25,13 @@ import {
   FaBookMedical,
   FaSignOutAlt,
   FaSyringe,
-  FaUser,
   FaUserCircle,
 } from 'react-icons/fa';
+import { usePatients } from '../../../hooks';
+import { OptionType } from '../../../mdViews/settings/vaccineInformationCard';
+import Select from 'react-select';
+import { PatientMapper } from '../../../core/models';
+import { SearchIcon } from '@chakra-ui/icons';
 
 export const DashboardHeader: FC = () => {
   const { keycloak } = useKeycloak();
@@ -44,6 +46,38 @@ export const DashboardHeader: FC = () => {
     setLogoutLoading.on();
     keycloak.logout();
   }, [keycloak, setLogoutLoading]);
+
+  const { patients } = usePatients({});
+  const patientOptions = convertPatientArrayToOptionArray(patients || []);
+  const [patientSearch, setPatientSearch] = useState<string>('');
+
+  function validateInput(): boolean {
+    return patients
+      ? patients.find(
+          (pat) =>
+            pat.name.given.join(' ') + ' ' + pat.name.family === patientSearch
+        ) !== undefined
+      : false;
+  }
+
+  function convertPatientArrayToOptionArray(
+    list: PatientMapper[]
+  ): OptionType[] {
+    const result: OptionType[] = [];
+    list.forEach((listElement) => {
+      result.push({
+        value: listElement.id,
+        label: listElement.name.given.join(' ') + ' ' + listElement.name.family,
+      });
+    });
+    return result;
+  }
+
+  function resolvePatientName() {
+    return patients?.find(
+      (pat) => pat.name.given.join(' ') + ' ' + pat.name.family
+    )?.id;
+  }
 
   return (
     <>
@@ -72,18 +106,31 @@ export const DashboardHeader: FC = () => {
             />
           </Link>
 
-          <InputGroup w={'50%'}>
-            <InputLeftElement
-              pointerEvents='none'
-              children={<FaUser color={'gray'} />}
-            />
-            <Input
-              variant='filled'
-              type='user'
-              placeholder='Patient Search'
-              focusBorderColor={'gray.400'}
-            />
-          </InputGroup>
+          <Flex flexDirection={'row'} w={'50%'}>
+            <FormControl mr={'5px'}>
+              <Select
+                placeholder={'Patient Search'}
+                options={patientOptions}
+                defaultValue={{
+                  value: 'Patient Search',
+                  label: 'Patient Search',
+                }}
+                value={{ value: patientSearch, label: patientSearch }}
+                onChange={(newValue) => {
+                  setPatientSearch(newValue!.label);
+                }}
+              />
+            </FormControl>
+            <Link to={`/md/dashboard/patient/${resolvePatientName()}`}>
+              <IconButton
+                aria-label='Search user'
+                icon={<SearchIcon />}
+                boxSize={'39px'}
+                isDisabled={!validateInput()}
+                onClick={() => setPatientSearch('')}
+              />
+            </Link>
+          </Flex>
           <HStack spacing={5} mr={'15px'}>
             <Link to={'vaccines'}>
               <Icon
