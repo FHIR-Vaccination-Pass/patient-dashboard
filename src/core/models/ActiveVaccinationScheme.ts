@@ -2,6 +2,7 @@ import { Basic as FHIRBasic, Extension as FHIRExtension } from 'fhir/r4';
 import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
+import { cloneDeep } from 'lodash';
 
 export interface ActiveVaccinationScheme {
   id: string;
@@ -45,6 +46,35 @@ export class ActiveVaccinationSchemeMapper implements ActiveVaccinationScheme {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
+  static fromModel({
+    changeReason,
+    vaccinationSchemeId,
+    patientId,
+  }: ActiveVaccinationScheme): ActiveVaccinationSchemeMapper {
+    return new ActiveVaccinationSchemeMapper({
+      resourceType: 'Basic',
+      meta: {
+        profile: [
+          `${settings.fhir.profileBaseUrl}/vp-active-vaccination-scheme`,
+        ],
+      },
+      code: { coding: [{ code: 'ActiveVaccinationScheme' }] },
+      subject: { reference: `Patient/${patientId}` },
+      extension: [
+        {
+          url: `${settings.fhir.profileBaseUrl}/vp-active-vaccination-scheme-extension`,
+          extension: [
+            { url: 'changeReason', valueMarkdown: changeReason },
+            {
+              url: 'vaccinationScheme',
+              valueReference: { reference: `Basic/${vaccinationSchemeId}` },
+            },
+          ],
+        },
+      ],
+    });
+  }
+
   toResource(): FHIRBasic {
     return this._raw;
   }
@@ -53,32 +83,68 @@ export class ActiveVaccinationSchemeMapper implements ActiveVaccinationScheme {
     return this._raw.id!;
   }
 
-  get changeReason(): string {
-    const changeReasonExtension = fhirpath.evaluate(
+  get _changeReasonExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._activeVaccinationSchemeExtension,
       `extension.where(url = 'changeReason')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
-
-    return changeReasonExtension.valueMarkdown!;
   }
 
-  get vaccinationSchemeId(): string {
-    const vaccinationSchemeExtension = fhirpath.evaluate(
+  get changeReason(): string {
+    return this._changeReasonExtension.valueMarkdown!;
+  }
+
+  set changeReason(changeReason: string) {
+    this._changeReasonExtension.valueMarkdown = changeReason;
+  }
+
+  withChangeReason(changeReason: string): ActiveVaccinationSchemeMapper {
+    const newActiveVaccinationScheme = cloneDeep(this);
+    newActiveVaccinationScheme.changeReason = changeReason;
+    return newActiveVaccinationScheme;
+  }
+
+  get _vaccinationSchemeExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._activeVaccinationSchemeExtension,
       `extension.where(url = 'vaccinationScheme')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
+  }
 
+  get vaccinationSchemeId(): string {
     const referenceParts =
-      vaccinationSchemeExtension.valueReference!.reference!.split('/');
+      this._vaccinationSchemeExtension.valueReference!.reference!.split('/');
     return referenceParts[referenceParts.length - 1];
+  }
+
+  set vaccinationSchemeId(vaccinationSchemeId: string) {
+    this._vaccinationSchemeExtension.valueReference!.reference = `Basic/${vaccinationSchemeId}`;
+  }
+
+  withVaccinationSchemeId(
+    vaccinationSchemeId: string
+  ): ActiveVaccinationSchemeMapper {
+    const newActiveVaccinationScheme = cloneDeep(this);
+    newActiveVaccinationScheme.vaccinationSchemeId = vaccinationSchemeId;
+    return newActiveVaccinationScheme;
   }
 
   get patientId(): string {
     const referenceParts = this._raw.subject!.reference!.split('/');
     return referenceParts[referenceParts.length - 1];
+  }
+
+  set patientId(patientId: string) {
+    this._raw.subject!.reference = `Patient/${patientId}`;
+  }
+
+  withPatientId(patientId: string): ActiveVaccinationSchemeMapper {
+    const newActiveVaccinationScheme = cloneDeep(this);
+    newActiveVaccinationScheme.patientId = patientId;
+    return newActiveVaccinationScheme;
   }
 }
