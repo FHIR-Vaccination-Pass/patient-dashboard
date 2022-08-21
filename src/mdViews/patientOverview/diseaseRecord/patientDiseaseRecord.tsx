@@ -1,20 +1,9 @@
-import {
-  Box,
-  Divider,
-  Flex,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import _ from 'lodash';
 
 import { useTargetDiseases } from '../../../hooks';
 import React, { useEffect, useState } from 'react';
 import { ImmunizationInformationTab } from './immunizationInformationTab';
-import { ImmunizationConfigurationTab } from './immunizationConfigurationTab';
 
 export function PatientDiseaseRecord() {
   const { targetDiseases } = useTargetDiseases({});
@@ -66,21 +55,11 @@ export function PatientDiseaseRecord() {
         <Divider orientation={'vertical'} />
         <Flex m={'10px 30px 0px 30px'} w={'100%'}>
           {currentDiseaseId && (
-            <Tabs w={'100%'}>
-              <TabList>
-                <Tab>Immunization Information</Tab>
-                <Tab>Immunization Configuration</Tab>
-              </TabList>
-
-              <TabPanels mt={'30px'}>
-                <TabPanel>
-                  <ImmunizationInformationTab diseaseId={currentDiseaseId} />
-                </TabPanel>
-                <TabPanel>
-                  <ImmunizationConfigurationTab diseaseId={currentDiseaseId} />
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
+            <ImmunizationInformationTab
+              w={'100%'}
+              mt={'30px'}
+              diseaseId={currentDiseaseId}
+            />
           )}
         </Flex>
       </Flex>
