@@ -8,6 +8,8 @@ import {
   Reference as FHIRReference,
 } from 'fhir/r4';
 import { settings } from '../../settings';
+import dayjs from 'dayjs';
+import { cloneDeep } from 'lodash';
 
 export type ImmunizationStatus = 'completed' | 'entered-in-error' | 'not-done';
 
@@ -62,28 +64,71 @@ export class ImmunizationMapper implements Immunization {
     return this._raw.status;
   }
 
-  get vaccineCode(): CodeableConcept {
-    const vaccineCodeCoding = fhirpath.evaluate(
+  set status(status: ImmunizationStatus) {
+    this._raw.status = status;
+  }
+
+  withStatus(status: ImmunizationStatus): ImmunizationMapper {
+    const newImmunization = cloneDeep(this);
+    newImmunization.status = status;
+    return newImmunization;
+  }
+
+  get _vaccineCodeCoding(): FHIRCoding {
+    return fhirpath.evaluate(
       this._raw,
       `vaccineCode.coding.where(system = 'http://fhir.de/CodeSystem/ifa/pzn')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRCoding;
+  }
 
+  get vaccineCode(): CodeableConcept {
     return {
       coding: {
-        code: vaccineCodeCoding.code!,
-        system: vaccineCodeCoding.system!,
+        code: this._vaccineCodeCoding.code!,
+        system: this._vaccineCodeCoding.system!,
       },
     };
+  }
+
+  set vaccineCode(vaccineCode: CodeableConcept) {
+    this._vaccineCodeCoding.code = vaccineCode.coding.code;
+    this._vaccineCodeCoding.system = vaccineCode.coding.system;
+  }
+
+  withVaccineCode(vaccineCode: CodeableConcept): ImmunizationMapper {
+    const newImmunization = cloneDeep(this);
+    newImmunization.vaccineCode = vaccineCode;
+    return newImmunization;
   }
 
   get occurrenceTime(): Date {
     return new Date(this._raw.occurrenceDateTime!);
   }
 
+  set occurrenceTime(occurrenceTime: Date) {
+    this._raw.occurrenceDateTime = dayjs(occurrenceTime).format('YYYY-MM-DD');
+  }
+
+  withOccurrenceTime(occurrenceTime: Date): ImmunizationMapper {
+    const newImmunization = cloneDeep(this);
+    newImmunization.occurrenceTime = occurrenceTime;
+    return newImmunization;
+  }
+
   get lotNumber(): string {
     return this._raw.lotNumber!;
+  }
+
+  set lotNumber(lotNumber: string) {
+    this._raw.lotNumber = lotNumber;
+  }
+
+  withLotNumber(lotNumber: string): ImmunizationMapper {
+    const newImmunization = cloneDeep(this);
+    newImmunization.lotNumber = lotNumber;
+    return newImmunization;
   }
 
   get patientId(): string {
@@ -91,30 +136,64 @@ export class ImmunizationMapper implements Immunization {
     return referenceParts[referenceParts.length - 1];
   }
 
-  get performerId(): string {
-    const performerReference = fhirpath.evaluate(
+  set patientId(patientId: string) {
+    this._raw.patient.reference = `Patient/${patientId}`;
+  }
+
+  withPatientId(patientId: string): ImmunizationMapper {
+    const newImmunization = cloneDeep(this);
+    newImmunization.patientId = patientId;
+    return newImmunization;
+  }
+
+  get _performerReference(): FHIRReference {
+    return fhirpath.evaluate(
       this._raw,
       `performer.actor`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRReference;
+  }
 
-    const referenceParts = performerReference.reference!.split('/');
+  get performerId(): string {
+    const referenceParts = this._performerReference.reference!.split('/');
     return referenceParts[referenceParts.length - 1];
   }
 
-  get vaccinationDoseId(): string {
-    const administeredVaccinationDoseExtension = fhirpath.evaluate(
+  set performerId(performerId: string) {
+    this._performerReference.reference = `Practitioner/${performerId}`;
+  }
+
+  withPerformerId(performerId: string): ImmunizationMapper {
+    const newImmunization = cloneDeep(this);
+    newImmunization.performerId = performerId;
+    return newImmunization;
+  }
+
+  get _administeredVaccinationDoseExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._raw,
       `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-administered-vaccination-dose')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
+  }
 
+  get vaccinationDoseId(): string {
     const referenceParts =
-      administeredVaccinationDoseExtension.valueReference!.reference!.split(
+      this._administeredVaccinationDoseExtension.valueReference!.reference!.split(
         '/'
       );
     return referenceParts[referenceParts.length - 1];
+  }
+
+  set vaccinationDoseId(vaccinationDoseId: string) {
+    this._administeredVaccinationDoseExtension.valueReference!.reference = `Basic/${vaccinationDoseId}`;
+  }
+
+  withVaccinationDoseId(vaccinationDoseId: string): ImmunizationMapper {
+    const newImmunization = cloneDeep(this);
+    newImmunization.vaccinationDoseId = vaccinationDoseId;
+    return newImmunization;
   }
 }
