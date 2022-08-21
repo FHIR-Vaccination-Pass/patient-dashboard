@@ -18,7 +18,7 @@ import MDDashboard from './mdViews/dashboard/dashboard';
 import VaccineInformation from './mdViews/settings/vaccineInformation';
 import { PatientStatus } from './mdViews/patientOverview/patientStatus';
 import { PatientHistory } from './mdViews/patientOverview/patientHistory';
-import { PatientDiseaseRecord } from './mdViews/patientOverview/patientDiseaseRecord';
+import { PatientDiseaseRecord } from './mdViews/patientOverview/diseaseRecord/patientDiseaseRecord';
 import { PatientVacationPlans } from './mdViews/patientOverview/patientVacationPlans';
 
 const RequirePatientAuth: FC = ({ children }) => {
