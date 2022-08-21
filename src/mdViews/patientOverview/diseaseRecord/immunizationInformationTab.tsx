@@ -55,7 +55,7 @@ export const ImmunizationInformationTab: FC<
     useVaccinationDoses({});
   const { idToPractitioner } = usePractitioners({});
   const { idToOrganization } = useOrganizations({});
-
+  //TODO: Insert real data with recommended vaccine Name
   return (
     <Flex w={'100%'} flexDirection={'column'}>
       <Box
@@ -68,7 +68,14 @@ export const ImmunizationInformationTab: FC<
           Recommended Vaccine
         </Text>
       </Box>
-      <HStack mb={'30px'} spacing={'20px'} w={'100%'} mt={'30px'}>
+      <HStack spacing={'20px'} w={'100%'} m={'30px 0px 30px 24px'}>
+        <Flex flexDirection={'column'} w={'100%'}>
+          <Text fontSize={'sm'} color={'gray.500'}>
+            Name
+          </Text>
+          <Text>Best Vaccine EUW</Text>
+        </Flex>
+
         <Flex flexDirection={'column'} w={'100%'}>
           <Text fontSize={'sm'} color={'gray.500'}>
             Manufacturer
