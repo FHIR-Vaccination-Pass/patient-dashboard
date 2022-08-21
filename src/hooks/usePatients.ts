@@ -10,6 +10,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 
 export interface UsePatientsReturnType {
   data?: GetResponse<TResource, GetResponseGroups>;
+  isFetching: boolean;
   patients?: PatientMapper[];
   idToPatient: (id: string | undefined) => PatientMapper | undefined;
 }
@@ -17,12 +18,13 @@ export interface UsePatientsReturnType {
 export const usePatients = (
   arg: GetArgs | typeof skipToken
 ): UsePatientsReturnType => {
-  const { data } = patientApi.endpoints.get.useQuery(arg);
+  const { data, isFetching } = patientApi.endpoints.get.useQuery(arg);
   const idToPatient = PatientMapper.curry((id) => data?.entities[id]);
   const patients = data?.ids.map((id: string) => idToPatient(id)!);
 
   return {
     data,
+    isFetching,
     patients,
     idToPatient,
   };

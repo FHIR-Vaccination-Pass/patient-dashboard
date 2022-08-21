@@ -4,11 +4,11 @@ import {
   Basic as FHIRBasic,
   Coding as FHIRCoding,
   Extension as FHIRExtension,
-  Quantity as FHIRQuantity,
 } from 'fhir/r4';
 import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
+import { cloneDeep } from 'lodash';
 
 export interface PopulationRecommendation {
   id: string;
@@ -23,7 +23,6 @@ export class PopulationRecommendationMapper
 {
   private _raw: FHIRBasic;
   private _populationRecommendationExtension: FHIRExtension;
-  locations: Location[];
 
   constructor(resource: FHIRBasic) {
     this._raw = resource;
@@ -34,14 +33,6 @@ export class PopulationRecommendationMapper
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
-
-    const locationExtensions = fhirpath.evaluate(
-      this._populationRecommendationExtension,
-      `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-location-extension')`,
-      undefined,
-      fhirpath_r4_model
-    ) as FHIRExtension[];
-    this.locations = locationExtensions.map(LocationMapper.fromResource);
   }
 
   static fromResource<T extends FHIRBasic | undefined>(
@@ -72,36 +63,130 @@ export class PopulationRecommendationMapper
     return this._raw.id!;
   }
 
-  get ageStart(): number | undefined {
-    const ageStartQuantity = fhirpath.evaluate(
+  get _ageStartExtension(): FHIRExtension | undefined {
+    return fhirpath.evaluate(
       this._populationRecommendationExtension,
-      `extension.where(url = 'ageStart').value`,
+      `extension.where(url = 'ageStart')`,
       undefined,
       fhirpath_r4_model
-    )[0] as FHIRQuantity | undefined;
+    )[0] as FHIRExtension | undefined;
+  }
 
-    return ageStartQuantity?.value;
+  get ageStart(): number | undefined {
+    return this._ageStartExtension?.valueAge!.value!;
+  }
+
+  set ageStart(ageStart: number | undefined) {
+    if (ageStart === undefined) {
+      this._populationRecommendationExtension.extension =
+        this._populationRecommendationExtension.extension!.filter(
+          (ex) => ex !== this._ageStartExtension
+        );
+    } else if (this._ageStartExtension === undefined) {
+      this._populationRecommendationExtension.extension!.push({
+        url: 'ageStart',
+        valueAge: {
+          system: 'http://unitsofmeasure.org',
+          value: ageStart,
+          code: 'a',
+        },
+      });
+    } else {
+      this._ageStartExtension.valueAge!.value = ageStart;
+    }
+  }
+
+  withAgeStart(ageStart: number | undefined): PopulationRecommendationMapper {
+    const newPopulationRecommendation = cloneDeep(this);
+    newPopulationRecommendation.ageStart = ageStart;
+    return newPopulationRecommendation;
+  }
+
+  get _ageEndExtension(): FHIRExtension | undefined {
+    return fhirpath.evaluate(
+      this._populationRecommendationExtension,
+      `extension.where(url = 'ageEnd')`,
+      undefined,
+      fhirpath_r4_model
+    )[0] as FHIRExtension | undefined;
   }
 
   get ageEnd(): number | undefined {
-    const ageEndQuantity = fhirpath.evaluate(
-      this._populationRecommendationExtension,
-      `extension.where(url = 'ageEnd').value`,
-      undefined,
-      fhirpath_r4_model
-    )[0] as FHIRQuantity | undefined;
-
-    return ageEndQuantity?.value;
+    return this._ageEndExtension?.valueAge!.value!;
   }
 
-  get diseaseId(): string {
-    const targetDiseaseCoding = fhirpath.evaluate(
+  set ageEnd(ageEnd: number | undefined) {
+    if (ageEnd === undefined) {
+      this._populationRecommendationExtension.extension =
+        this._populationRecommendationExtension.extension!.filter(
+          (ex) => ex !== this._ageEndExtension
+        );
+    } else if (this._ageEndExtension === undefined) {
+      this._populationRecommendationExtension.extension!.push({
+        url: 'ageEnd',
+        valueAge: {
+          system: 'http://unitsofmeasure.org',
+          value: ageEnd,
+          code: 'a',
+        },
+      });
+    } else {
+      this._ageEndExtension.valueAge!.value = ageEnd;
+    }
+  }
+
+  withAgeEnd(ageEnd: number | undefined): PopulationRecommendationMapper {
+    const newPopulationRecommendation = cloneDeep(this);
+    newPopulationRecommendation.ageEnd = ageEnd;
+    return newPopulationRecommendation;
+  }
+
+  get _locationExtensions(): FHIRExtension[] {
+    return fhirpath.evaluate(
+      this._populationRecommendationExtension,
+      `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-location-extension')`,
+      undefined,
+      fhirpath_r4_model
+    ) as FHIRExtension[];
+  }
+
+  get locations(): LocationMapper[] {
+    return this._locationExtensions.map(LocationMapper.fromResource);
+  }
+
+  set locations(locations: LocationMapper[]) {
+    this._populationRecommendationExtension.extension =
+      this._populationRecommendationExtension
+        .extension!.filter((ex) => !this._locationExtensions.includes(ex))
+        .concat(locations.map((l) => l.toResource()));
+  }
+
+  withLocations(locations: LocationMapper[]): PopulationRecommendationMapper {
+    const newPopulationRecommendation = cloneDeep(this);
+    newPopulationRecommendation.locations = locations;
+    return newPopulationRecommendation;
+  }
+
+  get _targetDiseaseCoding(): FHIRCoding {
+    return fhirpath.evaluate(
       this._populationRecommendationExtension,
       `extension.where(url = 'targetDisease').value.coding.where(system = 'http://hl7.org/fhir/sid/icd-10')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRCoding;
+  }
 
-    return targetDiseaseCoding.code!;
+  get diseaseId(): string {
+    return this._targetDiseaseCoding.code!;
+  }
+
+  set diseaseId(diseaseId: string) {
+    this._targetDiseaseCoding.code = diseaseId;
+  }
+
+  withDiseaseId(diseaseId: string): PopulationRecommendationMapper {
+    const newPopulationRecommendation = cloneDeep(this);
+    newPopulationRecommendation.diseaseId = diseaseId;
+    return newPopulationRecommendation;
   }
 }

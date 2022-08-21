@@ -10,6 +10,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 
 export interface UseTargetDiseasesReturnType {
   data?: GetResponse<TResource, GetResponseGroups>;
+  isFetching: boolean;
   targetDiseases?: DiseaseMapper[];
   idToTargetDisease: (id: string | undefined) => DiseaseMapper | undefined;
 }
@@ -17,12 +18,13 @@ export interface UseTargetDiseasesReturnType {
 export const useTargetDiseases = (
   arg: GetArgs | typeof skipToken
 ): UseTargetDiseasesReturnType => {
-  const { data } = targetDiseaseApi.endpoints.get.useQuery(arg);
+  const { data, isFetching } = targetDiseaseApi.endpoints.get.useQuery(arg);
   const idToTargetDisease = DiseaseMapper.curry((id) => data?.entities[id]);
   const targetDiseases = data?.ids.map((id: string) => idToTargetDisease(id)!);
 
   return {
     data,
+    isFetching,
     targetDiseases,
     idToTargetDisease,
   };

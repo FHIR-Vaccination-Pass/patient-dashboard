@@ -8,6 +8,7 @@ import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 
 import { settings } from '../../settings';
+import { cloneDeep } from 'lodash';
 
 export interface Disease {
   id: string;
@@ -59,34 +60,78 @@ export class DiseaseMapper implements Disease {
     return this._raw.id!;
   }
 
-  get code(): CodeableConcept {
-    const coding = fhirpath.evaluate(
+  get _codeCoding(): FHIRCoding {
+    return fhirpath.evaluate(
       this._targetDiseaseExtension,
       `extension.where(url = 'code').value.coding.where(system = 'http://hl7.org/fhir/sid/icd-10')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRCoding;
-
-    return { coding: { code: coding.code!, system: coding.system! } };
   }
 
-  get name(): string {
-    const nameExtension = fhirpath.evaluate(
+  get code(): CodeableConcept {
+    return {
+      coding: {
+        code: this._codeCoding.code!,
+        system: this._codeCoding.system!,
+      },
+    };
+  }
+
+  set code(code: CodeableConcept) {
+    this._codeCoding.code = code.coding.code;
+    this._codeCoding.system = code.coding.system;
+  }
+
+  withCode(code: CodeableConcept): DiseaseMapper {
+    const newDisease = cloneDeep(this);
+    newDisease.code = code;
+    return newDisease;
+  }
+
+  get _nameExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._targetDiseaseExtension,
       `extension.where(url = 'name')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
+  }
 
-    return nameExtension.valueString!;
+  get name(): string {
+    return this._nameExtension.valueString!;
+  }
+
+  set name(name: string) {
+    this._nameExtension.valueString = name;
+  }
+
+  withName(name: string): DiseaseMapper {
+    const newDisease = cloneDeep(this);
+    newDisease.name = name;
+    return newDisease;
+  }
+
+  get _descriptionExtension(): FHIRExtension {
+    return fhirpath.evaluate(
+      this._targetDiseaseExtension,
+      `extension.where(url = 'description')`,
+      undefined,
+      fhirpath_r4_model
+    )[0] as FHIRExtension;
   }
 
   get description(): string {
-    return fhirpath.evaluate(
-      this._targetDiseaseExtension,
-      `extension.where(url = 'description').value`,
-      undefined,
-      fhirpath_r4_model
-    )[0] as string;
+    return this._descriptionExtension.valueMarkdown!;
+  }
+
+  set description(description: string) {
+    this._descriptionExtension.valueMarkdown = description;
+  }
+
+  withDescription(description: string): DiseaseMapper {
+    const newDisease = cloneDeep(this);
+    newDisease.description = description;
+    return newDisease;
   }
 }

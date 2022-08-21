@@ -14,6 +14,7 @@ import {
 
 export interface UseVaccinationDosesReturnType {
   data?: GetResponse<TResource, GetResponseGroups>;
+  isFetching: boolean;
   vaccinationDoses?: (
     | VaccinationDoseSingleMapper
     | VaccinationDoseRepeatingMapper
@@ -26,7 +27,7 @@ export interface UseVaccinationDosesReturnType {
 export const useVaccinationDoses = (
   arg: GetArgs | typeof skipToken
 ): UseVaccinationDosesReturnType => {
-  const { data } = vaccinationDoseApi.endpoints.get.useQuery(arg);
+  const { data, isFetching } = vaccinationDoseApi.endpoints.get.useQuery(arg);
   const idToVaccinationDose = VaccinationDoseMapper.curry(
     (id) => data?.entities[id]
   );
@@ -36,6 +37,7 @@ export const useVaccinationDoses = (
 
   return {
     data,
+    isFetching,
     vaccinationDoses,
     idToVaccinationDose,
   };

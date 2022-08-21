@@ -22,6 +22,7 @@ import { CloseIcon } from '@chakra-ui/icons';
 import { FaWrench } from 'react-icons/fa';
 import { cloneDeep } from 'lodash';
 import { patientApi } from '../../../core/services/redux/fhir';
+import dayjs from 'dayjs';
 
 export const PatientInformationWidget: FC = () => {
   const params = useParams();
@@ -55,14 +56,7 @@ export const PatientInformationWidget: FC = () => {
     }
 
     setToggleEditModeRequested(false);
-  }, [
-    editMode,
-    toggleEditModeRequested,
-    getIsFetching,
-    putIsLoading,
-    patient,
-    updatedPatient,
-  ]);
+  }, [editMode, toggleEditModeRequested, getIsFetching, putIsLoading, patient]);
 
   const currentResource = useMemo((): PatientMapper | undefined => {
     if (editMode) {
@@ -101,15 +95,13 @@ export const PatientInformationWidget: FC = () => {
   );
 
   const birthDate = useMemo(
-    () => currentResource?.birthDate.toLocaleDateString(),
+    () =>
+      currentResource && dayjs(currentResource.birthDate).format('YYYY-MM-DD'),
     [currentResource]
   );
   const setBirthDate = useCallback(
     ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-      const [day, month, year] = value.split('/');
-      const birthDate = new Date(`${year}-${month}-${day}`);
-
-      setUpdatedPatient(updatedPatient!.withBirthDate(birthDate));
+      setUpdatedPatient(updatedPatient!.withBirthDate(new Date(value)));
     },
     [updatedPatient]
   );
@@ -266,6 +258,7 @@ export const PatientInformationWidget: FC = () => {
             color={'gray.500'}
             mb={'20px'}
             pl={'5px'}
+            isDisabled={!editMode}
             onChange={setGivenName}
           />
         </FormControl>
@@ -287,6 +280,7 @@ export const PatientInformationWidget: FC = () => {
             color={'gray.500'}
             mb={'20px'}
             pl={'5px'}
+            isDisabled={!editMode}
             onChange={setFamilyName}
           />
         </FormControl>
@@ -300,7 +294,8 @@ export const PatientInformationWidget: FC = () => {
           <FormLabel color={'gray.600'}>Birthday</FormLabel>
           <Input
             variant='flushed'
-            value={birthDate}
+            type={'date'}
+            defaultValue={birthDate}
             p={'5px 10px'}
             borderBottom={'1px'}
             borderColor={'gray.200'}
@@ -308,6 +303,7 @@ export const PatientInformationWidget: FC = () => {
             color={'gray.500'}
             mb={'20px'}
             pl={'5px'}
+            isDisabled={!editMode}
             onChange={setBirthDate}
           />
         </FormControl>

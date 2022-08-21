@@ -10,6 +10,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 
 export interface UsePopulationRecommendationsReturnType {
   data?: GetResponse<TResource, GetResponseGroups>;
+  isFetching: boolean;
   populationRecommendations?: PopulationRecommendationMapper[];
   idToPopulationRecommendation: (
     id: string | undefined
@@ -19,7 +20,8 @@ export interface UsePopulationRecommendationsReturnType {
 export const usePopulationRecommendations = (
   arg: GetArgs | typeof skipToken
 ): UsePopulationRecommendationsReturnType => {
-  const { data } = populationRecommendationApi.endpoints.get.useQuery(arg);
+  const { data, isFetching } =
+    populationRecommendationApi.endpoints.get.useQuery(arg);
   const idToPopulationRecommendation = PopulationRecommendationMapper.curry(
     (id) => data?.entities[id]
   );
@@ -29,6 +31,7 @@ export const usePopulationRecommendations = (
 
   return {
     data,
+    isFetching,
     populationRecommendations,
     idToPopulationRecommendation,
   };
