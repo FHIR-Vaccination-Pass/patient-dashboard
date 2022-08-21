@@ -42,6 +42,46 @@ export class AddressMapper {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
+  static fromModel({
+    country,
+    countryCode,
+    state,
+    stateCode,
+    district,
+    postalCode,
+    city,
+    line,
+  }: Address): AddressMapper {
+    return new AddressMapper({
+      country,
+      _country: {
+        extension: [
+          {
+            url: `${settings.fhir.profileBaseUrl}/vp-country-code-extension`,
+            valueCodeableConcept: {
+              coding: [{ system: 'urn:iso:std:iso:3166', code: countryCode }],
+            },
+          },
+        ],
+      },
+      state,
+      _state: {
+        extension: [
+          {
+            url: `${settings.fhir.profileBaseUrl}/vp-state-code-extension`,
+            valueCodeableConcept: {
+              coding: [{ system: 'urn:iso:std:iso:3166:-2', code: stateCode }],
+            },
+          },
+        ],
+      },
+      district,
+      postalCode,
+      city,
+      line,
+    });
+  }
+
   toResource(): FHIRAddress {
     return this._raw;
   }
