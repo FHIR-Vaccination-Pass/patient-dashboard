@@ -3,13 +3,11 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
   HStack,
   Icon,
   IconButton,
   Image,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Menu,
   MenuButton,
   MenuItem,
@@ -18,8 +16,15 @@ import {
   useBoolean,
   useColorModeValue,
 } from '@chakra-ui/react';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import VaccinationPass from '../../../assets/VaccinationPassV2.png';
 import { useKeycloak } from '@react-keycloak/web';
 import { KeycloakProfile } from 'keycloak-js';
@@ -27,9 +32,10 @@ import {
   FaBookMedical,
   FaSignOutAlt,
   FaSyringe,
-  FaUser,
   FaUserCircle,
 } from 'react-icons/fa';
+import { usePatients } from '../../../hooks';
+import Select from 'react-select';
 
 export const DashboardHeader: FC = () => {
   const { keycloak } = useKeycloak();
@@ -44,6 +50,24 @@ export const DashboardHeader: FC = () => {
     setLogoutLoading.on();
     keycloak.logout();
   }, [keycloak, setLogoutLoading]);
+
+  const params = useParams();
+  const navigate = useNavigate();
+  const { patients } = usePatients({});
+  const patientOptions = useMemo(
+    () =>
+      patients?.map((p) => ({
+        value: p.id,
+        label: `${p.name.given[0]} ${p.name.family}`,
+      })),
+    [patients]
+  );
+  const selectedOption = patientOptions?.find(
+    ({ value }) => value === params['patientId']
+  ) ?? {
+    value: '',
+    label: 'Patient Search',
+  };
 
   return (
     <>
@@ -72,18 +96,18 @@ export const DashboardHeader: FC = () => {
             />
           </Link>
 
-          <InputGroup w={'50%'}>
-            <InputLeftElement
-              pointerEvents='none'
-              children={<FaUser color={'gray'} />}
-            />
-            <Input
-              variant='filled'
-              type='user'
-              placeholder='Patient Search'
-              focusBorderColor={'gray.400'}
-            />
-          </InputGroup>
+          <Flex flexDirection={'row'} w={'50%'}>
+            <FormControl mr={'5px'}>
+              <Select
+                placeholder={'Patient Search'}
+                options={patientOptions}
+                value={selectedOption}
+                onChange={(newValue) => {
+                  navigate(`/md/dashboard/patient/${newValue!.value}`);
+                }}
+              />
+            </FormControl>
+          </Flex>
           <HStack spacing={5} mr={'15px'}>
             <Link to={'vaccines'}>
               <Icon
