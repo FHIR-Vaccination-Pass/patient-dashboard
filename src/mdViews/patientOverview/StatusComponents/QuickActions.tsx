@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
-import { Button, Flex, useColorModeValue } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 
 export const QuickActions: FC = ({}) => {
   return (
     <Flex
-      bg={useColorModeValue('white', 'gray.900')}
+      bg={'white'}
       flexDir='row-reverse'
       justifyContent='space-between'
       h={'100%'}
