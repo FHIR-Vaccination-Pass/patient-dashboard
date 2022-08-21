@@ -4,9 +4,11 @@ import { settings } from '../../../../settings';
 import { PatientMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
 import { ResourceName } from './types';
+import { addOwnUpdate } from './notificationWebsocket';
 
 export type TResource = Patient;
 export const TMapper = PatientMapper;
+
 export interface GetArgs {
   _id?: string;
   active?: string;
@@ -16,6 +18,7 @@ export interface GetArgs {
   deceased?: string;
   address?: string;
 }
+
 export type GetResponseGroups =
   | 'byActive'
   | 'byGender'
@@ -92,6 +95,40 @@ export const patientApi = createApi({
       query: (id) => ({ url: `${resourcePath}/${id}` }),
       providesTags: (result) =>
         result ? [{ type: resourceName, id: result.id }] : [],
+    }),
+    put: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: `${resourcePath}/${resource.id}`,
+        method: 'PUT',
+        body: resource,
+      }),
+      invalidatesTags: (_result, _error, resource) => [
+        { type: resourceName, id: resource.id },
+      ],
+      onQueryStarted: (resource) => {
+        addOwnUpdate({ type: resourceName, id: resource.id });
+      },
+    }),
+    post: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: resourcePath,
+        method: 'POST',
+        body: resource,
+      }),
+      invalidatesTags: () => [{ type: resourceName, id: 'LIST' }],
+      onQueryStarted: () => {
+        addOwnUpdate({ type: resourceName, id: 'LIST' });
+      },
+    }),
+    deleteById: build.mutation<void, string>({
+      query: (id) => ({
+        url: `${resourcePath}/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, id) => [{ type: resourceName, id }],
+      onQueryStarted: (id) => {
+        addOwnUpdate({ type: resourceName, id });
+      },
     }),
   }),
 });

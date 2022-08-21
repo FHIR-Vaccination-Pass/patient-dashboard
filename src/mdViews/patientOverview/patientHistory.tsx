@@ -118,9 +118,10 @@ export function PatientHistory() {
                 );
               const dose = idToVaccinationDose(imm?.vaccinationDoseId);
 
-              return med?.targetDiseaseIds.map((diseaseId) => {
+              return med?.targetDiseaseCodes.map((diseaseId) => {
                 return (
                   <VerticalTimelineElement
+                    key={`${iId}/${diseaseId}`}
                     iconStyle={timelineElementIconStyles}
                     contentStyle={timelineElementStyles}
                     contentArrowStyle={{ display: 'none' }}

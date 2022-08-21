@@ -65,7 +65,7 @@ export function MDOverview() {
           </Thead>
           <Tbody>
             {patients.map((patient: Patient) => (
-              <Tr>
+              <Tr key={patient.id}>
                 <Td>
                   <Link to={`patient/${patient.id}`}>
                     {patient.name.given.join(' ') + ' ' + patient.name.family}

@@ -19,7 +19,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'organization1',
       tradeName: 'Vaccine1',
-      targetDiseaseIds: ['disease1'],
+      targetDiseaseCodes: ['disease1'],
     },
   ],
   [
@@ -40,7 +40,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'valneva',
       tradeName: 'Dukoral',
-      targetDiseaseIds: ['cholera'],
+      targetDiseaseCodes: ['cholera'],
     },
   ],
   [
@@ -61,7 +61,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'biontech-pfizer',
       tradeName: 'Comirnaty',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseCodes: ['covid-19'],
     },
   ],
   [
@@ -82,7 +82,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'janssen',
       tradeName: 'JCOVDEN',
-      targetDiseaseIds: ['U07.1'],
+      targetDiseaseCodes: ['U07.1'],
     },
   ],
   [
@@ -103,7 +103,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'novavax',
       tradeName: 'Nuvaxovid',
-      targetDiseaseIds: ['U07.1'],
+      targetDiseaseCodes: ['U07.1'],
     },
   ],
   [
@@ -124,7 +124,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'moderna',
       tradeName: 'Spikevax',
-      targetDiseaseIds: ['U07.1'],
+      targetDiseaseCodes: ['U07.1'],
     },
   ],
   [
@@ -145,7 +145,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'astrazeneca',
       tradeName: 'Vaxzevria',
-      targetDiseaseIds: ['U07.1'],
+      targetDiseaseCodes: ['U07.1'],
     },
   ],
   [
@@ -166,7 +166,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'valneva',
       tradeName: 'COVID-19 Vaccine Valneva',
-      targetDiseaseIds: ['covid-19'],
+      targetDiseaseCodes: ['covid-19'],
     },
   ],
   [
@@ -187,7 +187,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'gsk',
       tradeName: 'Td-pur',
-      targetDiseaseIds: ['diphtheria', 'tetanus'],
+      targetDiseaseCodes: ['diphtheria', 'tetanus'],
     },
   ],
   [
@@ -208,7 +208,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'gsk',
       tradeName: 'Td-RIX',
-      targetDiseaseIds: ['diphtheria', 'tetanus'],
+      targetDiseaseCodes: ['diphtheria', 'tetanus'],
     },
   ],
   [
@@ -229,7 +229,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'cslbehring',
       tradeName: 'TETAGAM P',
-      targetDiseaseIds: ['tetanus'],
+      targetDiseaseCodes: ['tetanus'],
     },
   ],
   [
@@ -250,7 +250,7 @@ export const MockMedications = new Map<string, Medication>([
       },
       manufacturerId: 'gsk',
       tradeName: 'Tetanol pur',
-      targetDiseaseIds: ['tetanus'],
+      targetDiseaseCodes: ['tetanus'],
     },
   ],
 ]);

@@ -10,6 +10,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 
 export interface UseVacationPlansReturnType {
   data?: GetResponse<TResource, GetResponseGroups>;
+  isFetching: boolean;
   vacationPlans?: VacationPlanMapper[];
   idToVacationPlan: (id: string | undefined) => VacationPlanMapper | undefined;
 }
@@ -17,12 +18,13 @@ export interface UseVacationPlansReturnType {
 export const useVacationPlans = (
   arg: GetArgs | typeof skipToken
 ): UseVacationPlansReturnType => {
-  const { data } = vacationPlanApi.endpoints.get.useQuery(arg);
+  const { data, isFetching } = vacationPlanApi.endpoints.get.useQuery(arg);
   const idToVacationPlan = VacationPlanMapper.curry((id) => data?.entities[id]);
   const vacationPlans = data?.ids.map((id: string) => idToVacationPlan(id)!);
 
   return {
     data,
+    isFetching,
     vacationPlans,
     idToVacationPlan,
   };

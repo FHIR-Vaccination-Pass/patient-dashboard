@@ -2,6 +2,7 @@ import { Basic as FHIRBasic, Extension as FHIRExtension } from 'fhir/r4';
 import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
+import { cloneDeep } from 'lodash';
 
 // normalize to days
 export type AgeUnit = 'min' | 'h' | 'd' | 'wk' | 'mo' | 'a';
@@ -99,6 +100,93 @@ export class VaccinationDoseMapper implements VaccinationDose {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
+  static fromModel(model: VaccinationDoseSingle): VaccinationDoseSingleMapper;
+  static fromModel(
+    model: VaccinationDoseRepeating
+  ): VaccinationDoseRepeatingMapper;
+  static fromModel(
+    model: VaccinationDoseSingle | VaccinationDoseRepeating
+  ): VaccinationDoseSingleMapper | VaccinationDoseRepeatingMapper {
+    return VaccinationDoseMapper.fromResource({
+      resourceType: 'Basic',
+      meta: {
+        profile: [`${settings.fhir.profileBaseUrl}/vp-vaccination-dose`],
+      },
+      code: { coding: [{ code: 'VaccinationDose' }] },
+      subject: { reference: `Basic/${model.vaccinationSchemeId}` },
+      extension: [
+        {
+          url: `${settings.fhir.profileBaseUrl}/vp-vaccination-dose-base-extension`,
+          extension: [
+            {
+              url: 'doseQuantity',
+              valueQuantity: {
+                system: 'http://unitsofmeasure.org',
+                value: model.doseQuantity,
+                code: 'ml',
+              },
+            },
+            {
+              url: 'http://unitsofmeasure.org',
+              valueBoolean: model.isProtected,
+            },
+            {
+              url: 'notes',
+              valueMarkdown: model.notes,
+            },
+          ],
+        },
+        model.type === 'single'
+          ? {
+              url: `${settings.fhir.profileBaseUrl}/vp-vaccination-dose-single-extension`,
+              extension: [
+                {
+                  url: 'numberInScheme',
+                  valueUnsignedInt: model.numberInScheme,
+                },
+                ...(model.timeframeStart
+                  ? [
+                      {
+                        url: 'timeframeStart',
+                        valueQuantity: {
+                          system: 'http://unitsofmeasure.org',
+                          value: model.timeframeStart,
+                          code: 'd',
+                        },
+                      },
+                    ]
+                  : []),
+                ...(model.timeframeEnd
+                  ? [
+                      {
+                        url: 'timeframeEnd',
+                        valueQuantity: {
+                          system: 'http://unitsofmeasure.org',
+                          value: model.timeframeEnd,
+                          code: 'd',
+                        },
+                      },
+                    ]
+                  : []),
+              ],
+            }
+          : {
+              url: `${settings.fhir.profileBaseUrl}/vp-vaccination-dose-repeating-extension`,
+              extension: [
+                {
+                  url: 'interval',
+                  valueQuantity: {
+                    system: 'http://unitsofmeasure.org',
+                    value: model.interval.value,
+                    code: model.interval.code,
+                  },
+                },
+              ],
+            },
+      ],
+    });
+  }
+
   toResource(): FHIRBasic {
     return this._raw;
   }
@@ -107,42 +195,88 @@ export class VaccinationDoseMapper implements VaccinationDose {
     return this._raw.id!;
   }
 
-  get doseQuantity(): number {
-    const doseQuantityExtension = fhirpath.evaluate(
+  get _doseQuantityExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._vaccinationDoseBaseExtension,
       `extension.where(url = 'doseQuantity')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
-
-    return doseQuantityExtension.valueQuantity!.value!;
   }
 
-  get isProtected(): boolean {
-    const isProtectedExtension = fhirpath.evaluate(
+  get doseQuantity(): number {
+    return this._doseQuantityExtension.valueQuantity!.value!;
+  }
+
+  set doseQuantity(doseQuantity: number) {
+    this._doseQuantityExtension.valueQuantity!.value = doseQuantity;
+  }
+
+  withDoseQuantity(doseQuantity: number): this {
+    const newVaccinationDose = cloneDeep(this);
+    newVaccinationDose.doseQuantity = doseQuantity;
+    return newVaccinationDose;
+  }
+
+  get _isProtectedExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._vaccinationDoseBaseExtension,
       `extension.where(url = 'isProtected')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
-
-    return isProtectedExtension.valueBoolean!;
   }
 
-  get notes(): string {
-    const notesExtension = fhirpath.evaluate(
+  get isProtected(): boolean {
+    return this._isProtectedExtension.valueBoolean!;
+  }
+
+  set isProtected(isProtected: boolean) {
+    this._isProtectedExtension.valueBoolean = isProtected;
+  }
+
+  withIsProtected(isProtected: boolean): this {
+    const newVaccinationDose = cloneDeep(this);
+    newVaccinationDose.isProtected = isProtected;
+    return newVaccinationDose;
+  }
+
+  get _notesExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._vaccinationDoseBaseExtension,
       `extension.where(url = 'notes')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
+  }
 
-    return notesExtension.valueMarkdown!;
+  get notes(): string {
+    return this._notesExtension.valueMarkdown!;
+  }
+
+  set notes(notes: string) {
+    this._notesExtension.valueMarkdown = notes;
+  }
+
+  withNotes(notes: string): this {
+    const newVaccinationDose = cloneDeep(this);
+    newVaccinationDose.notes = notes;
+    return newVaccinationDose;
   }
 
   get vaccinationSchemeId(): string {
     const referenceParts = this._raw.subject!.reference!.split('/');
     return referenceParts[referenceParts.length - 1];
+  }
+
+  set vaccinationSchemeId(vaccinationSchemeId: string) {
+    this._raw.subject!.reference = `Basic/${vaccinationSchemeId}`;
+  }
+
+  withVaccinationSchemeId(vaccinationSchemeId: string): this {
+    const newVaccinationDose = cloneDeep(this);
+    newVaccinationDose.vaccinationSchemeId = vaccinationSchemeId;
+    return newVaccinationDose;
   }
 }
 
@@ -162,45 +296,117 @@ export class VaccinationDoseSingleMapper
     this._vaccinationDoseSingleExtension = vaccinationDoseSingleExtension;
   }
 
-  get numberInScheme(): number {
-    const numberInSchemeExtension = fhirpath.evaluate(
+  get _numberInSchemeExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._vaccinationDoseSingleExtension,
       `extension.where(url = 'numberInScheme')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
-
-    return numberInSchemeExtension.valueUnsignedInt!;
   }
 
-  get timeframeStart(): number | undefined {
-    const timeframeStartExtension = fhirpath.evaluate(
+  get numberInScheme(): number {
+    return this._numberInSchemeExtension.valueUnsignedInt!;
+  }
+
+  set numberInScheme(numberInScheme: number) {
+    this._numberInSchemeExtension.valueUnsignedInt = numberInScheme;
+  }
+
+  withNumberInScheme(numberInScheme: number): this {
+    const newVaccinationDose = cloneDeep(this);
+    newVaccinationDose.numberInScheme = numberInScheme;
+    return newVaccinationDose;
+  }
+
+  get _timeframeStartExtension(): FHIRExtension | undefined {
+    return fhirpath.evaluate(
       this._vaccinationDoseSingleExtension,
       `extension.where(url = 'timeframeStart')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension | undefined;
-    if (timeframeStartExtension === undefined) {
+  }
+
+  get timeframeStart(): number | undefined {
+    if (this._timeframeStartExtension === undefined) {
       return undefined;
     }
 
-    const { code, value } = timeframeStartExtension.valueQuantity!;
+    const { code, value } = this._timeframeStartExtension.valueQuantity!;
     return TIMEFRAME_VALUE_FACTORS[code! as AgeUnit] * value!;
   }
 
-  get timeframeEnd(): number | undefined {
-    const timeframeEndExtension = fhirpath.evaluate(
+  set timeframeStart(timeframeStart: number | undefined) {
+    if (timeframeStart === undefined) {
+      this._vaccinationDoseSingleExtension.extension =
+        this._vaccinationDoseSingleExtension.extension!.filter(
+          (ex) => ex !== this._timeframeStartExtension
+        );
+    } else if (this._timeframeStartExtension === undefined) {
+      this._vaccinationDoseSingleExtension.extension!.push({
+        url: 'timeframeStart',
+        valueQuantity: {
+          system: 'http://unitsofmeasure.org',
+          value: timeframeStart,
+          code: 'd',
+        },
+      });
+    } else {
+      this._timeframeStartExtension.valueQuantity!.value = timeframeStart;
+      this._timeframeStartExtension.valueQuantity!.code = 'd';
+    }
+  }
+
+  withTimeframeStart(timeframeStart: number | undefined): this {
+    const newVaccinationDose = cloneDeep(this);
+    newVaccinationDose.timeframeStart = timeframeStart;
+    return newVaccinationDose;
+  }
+
+  get _timeframeEndExtension(): FHIRExtension | undefined {
+    return fhirpath.evaluate(
       this._vaccinationDoseSingleExtension,
       `extension.where(url = 'timeframeEnd')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension | undefined;
-    if (timeframeEndExtension === undefined) {
+  }
+
+  get timeframeEnd(): number | undefined {
+    if (this._timeframeEndExtension === undefined) {
       return undefined;
     }
 
-    const { code, value } = timeframeEndExtension.valueQuantity!;
+    const { code, value } = this._timeframeEndExtension.valueQuantity!;
     return TIMEFRAME_VALUE_FACTORS[code! as AgeUnit] * value!;
+  }
+
+  set timeframeEnd(timeframeEnd: number | undefined) {
+    if (timeframeEnd === undefined) {
+      this._vaccinationDoseSingleExtension.extension =
+        this._vaccinationDoseSingleExtension.extension!.filter(
+          (ex) => ex !== this._timeframeEndExtension
+        );
+    } else if (this._timeframeEndExtension === undefined) {
+      this._vaccinationDoseSingleExtension.extension!.push({
+        url: 'timeframeEnd',
+        valueQuantity: {
+          system: 'http://unitsofmeasure.org',
+          value: timeframeEnd,
+          code: 'd',
+        },
+      });
+    } else {
+      this._timeframeEndExtension.valueQuantity!.value = timeframeEnd;
+      this._timeframeEndExtension.valueQuantity!.code = 'd';
+    }
+  }
+
+  withTimeframeEnd(timeframeEnd: number | undefined): this {
+    const newVaccinationDose = cloneDeep(this);
+    newVaccinationDose.timeframeEnd = timeframeEnd;
+    return newVaccinationDose;
   }
 }
 
@@ -220,15 +426,28 @@ export class VaccinationDoseRepeatingMapper
     this._vaccinationDoseRepeatingExtension = vaccinationDoseRepeatingExtension;
   }
 
-  get interval(): { value: number; code: AgeUnit } {
-    const timeframeEndExtension = fhirpath.evaluate(
+  get _intervalExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._vaccinationDoseRepeatingExtension,
       `extension.where(url = 'interval')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
+  }
 
-    const { code, value } = timeframeEndExtension.valueQuantity!;
+  get interval(): { value: number; code: AgeUnit } {
+    const { code, value } = this._intervalExtension.valueQuantity!;
     return { code: code! as AgeUnit, value: value! };
+  }
+
+  set interval(interval: { value: number; code: AgeUnit }) {
+    this._intervalExtension.valueQuantity!.value = interval.value;
+    this._intervalExtension.valueQuantity!.code = interval.code;
+  }
+
+  withInterval(interval: { value: number; code: AgeUnit }): this {
+    const newVaccinationDose = cloneDeep(this);
+    newVaccinationDose.interval = interval;
+    return newVaccinationDose;
   }
 }

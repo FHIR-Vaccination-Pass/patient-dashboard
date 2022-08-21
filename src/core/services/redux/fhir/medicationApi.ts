@@ -4,6 +4,7 @@ import { settings } from '../../../../settings';
 import { MedicationMapper } from '../../../models';
 import { GetResponse, storeIdRecursive } from './utils';
 import { ResourceName } from './types';
+import { addOwnUpdate } from './notificationWebsocket';
 
 export type TResource = Medication;
 export const TMapper = MedicationMapper;
@@ -55,7 +56,7 @@ export const medicationApi = createApi({
         };
 
         for (const resource of resources) {
-          const { id, code, form, manufacturerId, targetDiseaseIds } =
+          const { id, code, form, manufacturerId, targetDiseaseCodes } =
             TMapper.fromResource(resource);
 
           response.ids.push(id);
@@ -65,7 +66,7 @@ export const medicationApi = createApi({
             ['byCode', code.coding.code],
             ['byForm', form.coding.code],
             ['byManufacturer', manufacturerId],
-            ...targetDiseaseIds.map(
+            ...targetDiseaseCodes.map(
               (targetDisease) =>
                 ['byTargetDisease', targetDisease] as [
                   'byTargetDisease',
@@ -92,6 +93,40 @@ export const medicationApi = createApi({
       query: (id) => ({ url: `${resourcePath}/${id}` }),
       providesTags: (result) =>
         result ? [{ type: resourceName, id: result.id }] : [],
+    }),
+    put: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: `${resourcePath}/${resource.id}`,
+        method: 'PUT',
+        body: resource,
+      }),
+      invalidatesTags: (_result, _error, resource) => [
+        { type: resourceName, id: resource.id },
+      ],
+      onQueryStarted: (resource) => {
+        addOwnUpdate({ type: resourceName, id: resource.id });
+      },
+    }),
+    post: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: resourcePath,
+        method: 'POST',
+        body: resource,
+      }),
+      invalidatesTags: () => [{ type: resourceName, id: 'LIST' }],
+      onQueryStarted: () => {
+        addOwnUpdate({ type: resourceName, id: 'LIST' });
+      },
+    }),
+    deleteById: build.mutation<void, string>({
+      query: (id) => ({
+        url: `${resourcePath}/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, id) => [{ type: resourceName, id }],
+      onQueryStarted: (id) => {
+        addOwnUpdate({ type: resourceName, id });
+      },
     }),
   }),
 });

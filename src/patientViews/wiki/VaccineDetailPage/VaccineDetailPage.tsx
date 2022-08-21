@@ -42,6 +42,7 @@ import {
 interface VaccineDetailHeaderProps {
   disease: Disease;
 }
+
 const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
   const { data: medications, idToMedication } = useMedications({});
   const medicationsForDisease =
@@ -168,6 +169,7 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
               allDoses &&
               dose && (
                 <RecommendationCard
+                  key={irId}
                   recommendation={ir}
                   medication={med}
                   organization={org}
@@ -213,6 +215,7 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
                 allDoses &&
                 dose && (
                   <ImmunizationCard
+                    key={iId}
                     immunization={imm}
                     medication={med}
                     organization={org}
@@ -240,6 +243,7 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
 interface VaccineDetailBodyProps {
   disease: Disease;
 }
+
 const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({ disease }) => {
   const { data: populationRecommendations, idToPopulationRecommendation } =
     usePopulationRecommendations({});
@@ -346,7 +350,9 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({ disease }) => {
         </Heading>
         <UnorderedList color={'gray.500'}>
           {pr?.locations.map((location) => (
-            <ListItem ml={'10px'}>{location.country}</ListItem>
+            <ListItem key={`${location.country}/${location.state}`} ml={'10px'}>
+              {location.country}
+            </ListItem>
           ))}
         </UnorderedList>
       </Box>
@@ -376,7 +382,7 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({ disease }) => {
               );
 
             return (
-              <AccordionItem>
+              <AccordionItem key={mId}>
                 <AccordionButton>
                   <Box flex='1' textAlign='left'>
                     {med?.tradeName}
