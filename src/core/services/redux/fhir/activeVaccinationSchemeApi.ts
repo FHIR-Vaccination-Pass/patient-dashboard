@@ -31,9 +31,10 @@ export const activeVaccinationSchemeApi = createApi({
   tagTypes: [resourceName],
   endpoints: (build) => ({
     get: build.query<GetResponse<TResource, GetResponseGroups>, GetArgs>({
-      query: () => ({
+      query: (args) => ({
         url: resourcePath,
         params: {
+          ...args,
           code: 'ActiveVaccinationScheme',
           _profile: `${settings.fhir.profileBaseUrl}/vp-active-vaccination-scheme`,
         },

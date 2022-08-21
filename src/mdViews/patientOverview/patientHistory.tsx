@@ -52,15 +52,15 @@ export function PatientHistory() {
   const { idToPractitioner } = usePractitioners({});
 
   const {
-    vaccinationSchemes,
+    vaccinationSchemesData,
     idToVaccinationScheme,
-    vaccinationDoses,
+    vaccinationDosesData,
     idToVaccinationDose,
   } = useMedicationInfo(
     medicationsData?.ids.map((id: string) => idToMedication(id)!)
   );
 
-  const standardVaccinationSchemes = vaccinationSchemes?.byType['standard'];
+  const standardVaccinationSchemes = vaccinationSchemesData?.byType['standard'];
 
   const timelineElementStyles: React.CSSProperties = {
     boxShadow: `0 0px 0px 2.5px ${color}`,
@@ -113,7 +113,7 @@ export function PatientHistory() {
               const prac = idToPractitioner(imm?.performerId);
               const allDoses =
                 vs &&
-                vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
+                vaccinationDosesData?.byVaccinationScheme[vs.id]?.ids.map(
                   idToVaccinationDose
                 );
               const dose = idToVaccinationDose(imm?.vaccinationDoseId);

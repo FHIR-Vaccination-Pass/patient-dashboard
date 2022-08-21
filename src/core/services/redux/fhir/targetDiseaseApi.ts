@@ -30,9 +30,10 @@ export const targetDiseaseApi = createApi({
   tagTypes: [resourceName],
   endpoints: (build) => ({
     get: build.query<GetResponse<TResource, GetResponseGroups>, GetArgs>({
-      query: () => ({
+      query: (args) => ({
         url: resourcePath,
         params: {
+          ...args,
           code: 'TargetDisease',
           _profile: `${settings.fhir.profileBaseUrl}/vp-target-disease`,
         },

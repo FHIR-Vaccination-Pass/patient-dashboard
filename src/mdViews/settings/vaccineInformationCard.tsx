@@ -1,3 +1,5 @@
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import Select from 'react-select';
 import {
   Accordion,
   AccordionButton,
@@ -28,73 +30,309 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import React, { FC, useState } from 'react';
-import { Medication } from '../../core/models/Medication';
-import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
-import Select, { OnChangeValue } from 'react-select';
 import { SmallCloseIcon } from '@chakra-ui/icons';
+import { cloneDeep } from 'lodash';
+import { skipToken } from '@reduxjs/toolkit/query';
+
+import { MedicationMapper } from '../../core/models';
 import { AddVaccinationDoseModal } from './addVaccinationDoseModal';
 import { AddVaccinationSchemeModal } from './addVaccinationSchemeModal';
+import { OptionType } from '../../core/services/util/convertArrayToOptionArray';
 import {
-  convertArrayToOptionArray,
-  OptionType,
-} from '../../core/services/util/convertArrayToOptionArray';
+  medicationApi,
+  vaccinationSchemeApi,
+} from '../../core/services/redux/fhir';
+import {
+  useOrganizations,
+  useTargetDiseases,
+  useVaccinationDoses,
+  useVaccinationSchemes,
+} from '../../hooks';
+import { VaccinationSchemeMapper } from '../../core/models';
 
-interface VaccineInformationCardProps extends BoxProps {
-  selectedMedication: Medication;
+interface VaccinationSchemeAccordionItemProps {
+  vaccinationSchemeId: string;
 }
 
-export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
-  selectedMedication,
-}) => {
-  const mapper = useMapper();
-  const {
-    isOpen: isSchemeOpen,
-    onOpen: onSchemeOpen,
-    onClose: onSchemeClose,
-  } = useDisclosure();
+const VaccinationSchemeAccordionItem: FC<
+  VaccinationSchemeAccordionItemProps
+> = ({ vaccinationSchemeId }) => {
+  const { data: vsRaw } =
+    vaccinationSchemeApi.endpoints.getById.useQuery(vaccinationSchemeId);
+  const [putVs, { isLoading: putVsIsLoading }] =
+    vaccinationSchemeApi.endpoints.put.useMutation();
+  const vs = VaccinationSchemeMapper.fromResource(vsRaw);
+
+  const { vaccinationDoses } = useVaccinationDoses({
+    subject: vaccinationSchemeId,
+  });
+
   const {
     isOpen: isDoseOpen,
     onOpen: onDoseOpen,
     onClose: onDoseClose,
   } = useDisclosure();
-  const vaccinationSchemes = mapper
-    .getAllVaccinationSchemes()
-    .filter((scheme) => scheme.medicationId === selectedMedication.id);
-  const diseases = mapper.getAllDiseases();
-  const dosesMap = mapper.getVaccinationDosesForVaccinationSchemes(
-    vaccinationSchemes.map((scheme) => scheme.id)
+
+  return (
+    <AccordionItem>
+      {vs && (
+        <>
+          <h2>
+            <AccordionButton>
+              <Box flex='1' textAlign='left'>
+                {vs.name}
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </h2>
+          <AccordionPanel pb={4}>
+            <Flex flexDirection={'row'}>
+              <Text color={'gray.600'} mr={'5px'}>
+                Standard Scheme
+              </Text>
+              <Switch
+                id='email-alerts'
+                mb={'15px'}
+                colorScheme='green'
+                size={'lg'}
+                defaultChecked={vs.isPreferred}
+                onChange={() => (vs.isPreferred = !vs.isPreferred)}
+              />
+            </Flex>
+            <HStack mb={'30px'} spacing={'20px'} w={'100%'}>
+              <Flex flexDirection={'column'} w={'50%'}>
+                <Text fontSize={'sm'} color={'gray.500'}>
+                  Recommended from age
+                </Text>
+                <NumberInput
+                  defaultValue={vs?.ageStart}
+                  min={0}
+                  max={99}
+                  onChange={(value) => {
+                    console.error('not implemented');
+                  }}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </Flex>
+
+              <Flex flexDirection={'column'} w={'50%'}>
+                <Text fontSize={'sm'} color={'gray.500'}>
+                  Recommended until age
+                </Text>
+                <NumberInput
+                  defaultValue={vs?.ageEnd}
+                  min={0}
+                  max={99}
+                  onChange={(value) => {
+                    if (vs) {
+                      vs.ageEnd = Number(value);
+                    }
+                  }}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </Flex>
+            </HStack>
+
+            <TableContainer>
+              <Table variant='simple'>
+                <Thead>
+                  <Tr>
+                    <Th>Dose Number</Th>
+                    <Th>Type</Th>
+                    <Th>Dose Quantity</Th>
+                    <Th>Time Frame</Th>
+                    <Th>Notes</Th>
+                    <Th isNumeric></Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {vaccinationDoses?.map((dose) => (
+                    <Tr key={dose.id}>
+                      <Td>
+                        {dose.type === 'single'
+                          ? `${dose.numberInScheme} / ${vaccinationDoses.length}`
+                          : 'Booster'}
+                      </Td>
+                      <Td>Single</Td>
+                      <Td>{dose.doseQuantity}</Td>
+                      <Td>TODO: wrong logic! months after</Td>
+                      <Td>{dose.notes}</Td>
+                      <Td isNumeric>
+                        <SmallCloseIcon
+                          _hover={{ cursor: 'pointer' }}
+                          onClick={() => {
+                            console.error('not implemented');
+                          }}
+                        />
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+            <Button
+              variant={'solid'}
+              color={'white'}
+              bg={'green.400'}
+              _hover={{ bg: 'green.500' }}
+              _active={{ bg: 'green.500' }}
+              _focus={{
+                bg: 'green.500',
+              }}
+              mt={'10px'}
+              onClick={onDoseOpen}
+            >
+              Add Dose
+            </Button>
+            <AddVaccinationDoseModal
+              isOpen={isDoseOpen}
+              onClose={onDoseClose}
+              vaccinationSchemeId={vaccinationSchemeId}
+            />
+          </AccordionPanel>
+        </>
+      )}
+    </AccordionItem>
+  );
+};
+
+interface VaccineInformationCardProps extends BoxProps {
+  medicationId: string;
+}
+
+export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
+  medicationId,
+}) => {
+  const {
+    isOpen: isSchemeOpen,
+    onOpen: onSchemeOpen,
+    onClose: onSchemeClose,
+  } = useDisclosure();
+
+  const { data: medRaw, isFetching: getMedIsFetching } =
+    medicationApi.endpoints.getById.useQuery(medicationId);
+  const [putMed, { isLoading: putMedIsLoading }] =
+    medicationApi.endpoints.put.useMutation();
+  const med = MedicationMapper.fromResource(medRaw);
+
+  const {
+    data: vaccinationSchemesData,
+    idToVaccinationScheme,
+    isFetching: vaccinationSchemesIsFetching,
+  } = useVaccinationSchemes(med ? { subject: medicationId } : skipToken);
+
+  const { organizations, idToOrganization } = useOrganizations({});
+  const {
+    data: targetDiseasesData,
+    targetDiseases,
+    idToTargetDisease,
+  } = useTargetDiseases({});
+
+  const [updatedMed, setUpdatedMed] = useState<MedicationMapper | undefined>(
+    undefined
+  );
+  const isLoading =
+    getMedIsFetching || putMedIsLoading || vaccinationSchemesIsFetching;
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [toggleEditModeRequested, setToggleEditModeRequested] = useState(false);
+
+  const toggleEditMode = useCallback(() => {
+    setToggleEditModeRequested(!toggleEditModeRequested);
+  }, [toggleEditModeRequested]);
+
+  useEffect(() => {
+    if (!toggleEditModeRequested || isLoading) {
+      return;
+    }
+
+    if (editMode) {
+      setEditMode(false);
+    } else {
+      setUpdatedMed(cloneDeep(med));
+      setEditMode(true);
+    }
+
+    setToggleEditModeRequested(false);
+  }, [editMode, toggleEditModeRequested, isLoading, med]);
+
+  const currentMed = useMemo((): MedicationMapper | undefined => {
+    if (editMode) {
+      return updatedMed;
+    } else if (isLoading) {
+      return updatedMed;
+    } else {
+      return med;
+    }
+  }, [editMode, isLoading, med, updatedMed]);
+
+  const manufacturer = useMemo((): OptionType => {
+    const org = idToOrganization(currentMed?.manufacturerId);
+    return org
+      ? { value: org.id, label: org.name }
+      : { value: '', label: 'Manufacturer' };
+  }, [currentMed, idToOrganization]);
+
+  const code = useMemo(
+    (): string | undefined => currentMed?.code.coding.code,
+    [currentMed]
+  );
+
+  const form = useMemo(
+    (): string | undefined => currentMed?.form.coding.code,
+    [currentMed]
+  );
+
+  const diseases = useMemo(
+    (): OptionType[] =>
+      currentMed?.targetDiseaseCodes.flatMap((tdCode) => {
+        const td = idToTargetDisease(
+          targetDiseasesData?.byCode[tdCode]?.ids[0]
+        );
+        return td ? [{ value: td.id, label: td.name }] : [];
+      }) ?? [],
+    [currentMed, targetDiseasesData, idToTargetDisease]
+  );
+
+  const vaccinationSchemes = useMemo(
+    (): VaccinationSchemeMapper[] =>
+      (currentMed &&
+        vaccinationSchemesData?.byMedication[currentMed.id]?.ids.map(
+          (vsId) => idToVaccinationScheme(vsId)!
+        )) ??
+      [],
+    [currentMed, vaccinationSchemesData, idToVaccinationScheme]
   );
 
   // options for select component
-  const diseaseOptions: OptionType[] = convertArrayToOptionArray(
-    diseases.map((disease) => disease.name)
+  const organizationOptions = useMemo(
+    (): OptionType[] =>
+      organizations?.map((org) => ({
+        value: org.id,
+        label: org.name,
+      })) ?? [],
+    [organizations]
+  );
+  const diseaseOptions = useMemo(
+    (): OptionType[] =>
+      targetDiseases?.map((td) => ({
+        value: td.id,
+        label: td.name,
+      })) ?? [],
+    [targetDiseases]
   );
 
-  const [currentMedication, setCurrentMedication] =
-    useState<Medication>(selectedMedication);
-
-  function setNewManufacturer(name: string) {
-    const organization = mapper.getOrganizationByName(name);
-    if (organization) {
-      currentMedication.manufacturerId = organization.id;
-    }
-  }
-
-  function updateTargetDiseases(
-    newTargetDiseases: OnChangeValue<OptionType, true>
-  ) {
-    currentMedication.targetDiseaseCodes = diseases
-      .filter((disease) =>
-        newTargetDiseases
-          .map((newTargetDisease) => newTargetDisease.label)
-          .includes(disease.name)
-      )
-      .map((disease) => disease.id);
-  }
-
   function saveVaccineInformation() {
-    const result = mapper.saveVaccineInformation(currentMedication);
+    console.log(updatedMed);
   }
 
   function monthDiff(d1: Date, d2: Date) {
@@ -104,6 +342,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
     months += d2.getMonth();
     return months <= 0 ? 0 : months;
   }
+
   return (
     <Flex flexDirection={'column'} pr={'70px'} mt={'20px'} w={'80%'}>
       <Box borderBottom={'1px'} borderBottomColor={'gray.300'} mb={'15px'}>
@@ -116,23 +355,13 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
           <Text fontSize={'sm'} color={'gray.500'}>
             Manufacturer
           </Text>
-          <Editable
-            defaultValue={
-              mapper.getOrganizationById(currentMedication.manufacturerId)?.name
-            }
-            p={'5px 10px'}
-            border={'1px'}
-            borderColor={'gray.200'}
-            borderRadius={'5px'}
-            color={'gray.500'}
-            mb={'20px'}
-            onChange={(value) => {
-              setNewManufacturer(value);
+          <Select
+            options={organizationOptions}
+            value={manufacturer}
+            onChange={() => {
+              console.error('not implemented');
             }}
-          >
-            <EditablePreview />
-            <EditableTextarea />
-          </Editable>
+          />
         </Flex>
 
         <Flex flexDirection={'column'} w={'100%'}>
@@ -140,15 +369,15 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             PZN Code
           </Text>
           <Editable
-            defaultValue={currentMedication.code.coding.code}
             p={'5px 10px'}
             border={'1px'}
             borderColor={'gray.200'}
             borderRadius={'5px'}
             color={'gray.500'}
             mb={'20px'}
+            value={code}
             onChange={(value) => {
-              currentMedication.code.coding.code = value;
+              console.error('not implemented');
             }}
           >
             <EditablePreview />
@@ -161,15 +390,15 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             Form
           </Text>
           <Editable
-            defaultValue={currentMedication.form.coding.code}
             p={'5px 10px'}
             border={'1px'}
             borderColor={'gray.200'}
             borderRadius={'5px'}
             color={'gray.500'}
             mb={'20px'}
+            value={form}
             onChange={(value) => {
-              currentMedication.form.coding.code = value;
+              console.error('not implemented');
             }}
           >
             <EditablePreview />
@@ -177,182 +406,51 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
           </Editable>
         </Flex>
       </HStack>
-      <Flex justifyContent={'space-between'}>
-        <Box
-          borderBottom={'1px'}
-          borderBottomColor={'gray.300'}
-          mb={'30px'}
-          w={'92%'}
-          pr={'10px'}
-        >
-          <Text color={'gray.600'} mb={'5px'} fontSize={'xl'}>
-            Vaccination Scheme
-          </Text>
-        </Box>
-        <Button
-          variant={'solid'}
-          color={'white'}
-          bg={'green.400'}
-          _hover={{ bg: 'green.500' }}
-          _active={{ bg: 'green.500' }}
-          _focus={{
-            bg: 'green.500',
-          }}
-          onClick={onSchemeOpen}
-        >
-          Add Scheme
-        </Button>
-        <AddVaccinationSchemeModal
-          isOpen={isSchemeOpen}
-          onClose={onSchemeClose}
-          medicationId={currentMedication.id}
-        />
-      </Flex>
 
-      <Accordion defaultIndex={[]} allowMultiple mb={'30px'}>
-        {vaccinationSchemes.map((scheme) => (
-          <AccordionItem key={scheme.id}>
-            <h2>
-              <AccordionButton>
-                <Box flex='1' textAlign='left'>
-                  {scheme.name}
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              <Flex flexDirection={'row'}>
-                <Text color={'gray.600'} mr={'5px'}>
-                  Standard Scheme
-                </Text>
-                <Switch
-                  id='email-alerts'
-                  mb={'15px'}
-                  colorScheme='green'
-                  size={'lg'}
-                  defaultChecked={scheme.isPreferred}
-                  onChange={() => (scheme.isPreferred = !scheme.isPreferred)}
-                />
-              </Flex>
-              <HStack mb={'30px'} spacing={'20px'} w={'100%'}>
-                <Flex flexDirection={'column'} w={'50%'}>
-                  <Text fontSize={'sm'} color={'gray.500'}>
-                    Recommended from age
-                  </Text>
-                  <NumberInput
-                    defaultValue={scheme?.ageStart}
-                    min={0}
-                    max={99}
-                    onChange={(value) => {
-                      if (scheme) {
-                        scheme.ageStart = Number(value);
-                      }
-                    }}
-                  >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                </Flex>
+      {currentMed && (
+        <>
+          <Flex justifyContent={'space-between'}>
+            <Box
+              borderBottom={'1px'}
+              borderBottomColor={'gray.300'}
+              mb={'30px'}
+              w={'92%'}
+              pr={'10px'}
+            >
+              <Text color={'gray.600'} mb={'5px'} fontSize={'xl'}>
+                Vaccination Scheme
+              </Text>
+            </Box>
+            <Button
+              variant={'solid'}
+              color={'white'}
+              bg={'green.400'}
+              _hover={{ bg: 'green.500' }}
+              _active={{ bg: 'green.500' }}
+              _focus={{
+                bg: 'green.500',
+              }}
+              onClick={onSchemeOpen}
+            >
+              Add Scheme
+            </Button>
+            <AddVaccinationSchemeModal
+              isOpen={isSchemeOpen}
+              onClose={onSchemeClose}
+              medicationId={currentMed.id}
+            />
+          </Flex>
 
-                <Flex flexDirection={'column'} w={'50%'}>
-                  <Text fontSize={'sm'} color={'gray.500'}>
-                    Recommended until age
-                  </Text>
-                  <NumberInput
-                    defaultValue={scheme?.ageEnd}
-                    min={0}
-                    max={99}
-                    onChange={(value) => {
-                      if (scheme) {
-                        scheme.ageEnd = Number(value);
-                      }
-                    }}
-                  >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                </Flex>
-              </HStack>
-
-              <TableContainer>
-                <Table variant='simple'>
-                  <Thead>
-                    <Tr>
-                      <Th>Dose Number</Th>
-                      <Th>Type</Th>
-                      <Th>Dose Quantity</Th>
-                      <Th>Time Frame</Th>
-                      <Th>Notes</Th>
-                      <Th isNumeric></Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {dosesMap.get(scheme.id)?.map((dose) => (
-                      <Tr key={dose.id}>
-                        <Td>
-                          {dose.numberInScheme}/
-                          {dosesMap.get(scheme.id)?.length}
-                        </Td>
-                        <Td>Single</Td>
-                        <Td>{dose.doseQuantity}</Td>
-                        <Td>
-                          TODO: wrong logic!
-                          {dose.timeframeStart !== undefined &&
-                            dose.timeframeEnd !== undefined &&
-                            (dose.timeframeEnd - dose.timeframeStart) / 30}{' '}
-                          months after
-                        </Td>
-                        <Td>{dose.notes}</Td>
-                        <Td isNumeric>
-                          <SmallCloseIcon
-                            _hover={{ cursor: 'pointer' }}
-                            onClick={() => {
-                              dosesMap.set(
-                                scheme.id,
-                                dosesMap
-                                  .get(scheme.id)!
-                                  .filter(
-                                    (possibleDose) =>
-                                      possibleDose.id !== dose.id
-                                  )
-                              );
-                            }}
-                          />
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-              <Button
-                variant={'solid'}
-                color={'white'}
-                bg={'green.400'}
-                _hover={{ bg: 'green.500' }}
-                _active={{ bg: 'green.500' }}
-                _focus={{
-                  bg: 'green.500',
-                }}
-                mt={'10px'}
-                onClick={onDoseOpen}
-              >
-                Add Dose
-              </Button>
-              <AddVaccinationDoseModal
-                isOpen={isDoseOpen}
-                onClose={onDoseClose}
+          <Accordion defaultIndex={[]} allowMultiple mb={'30px'}>
+            {vaccinationSchemes.map((scheme) => (
+              <VaccinationSchemeAccordionItem
+                key={scheme.id}
                 vaccinationSchemeId={scheme.id}
               />
-            </AccordionPanel>
-          </AccordionItem>
-        ))}
-      </Accordion>
+            ))}
+          </Accordion>
+        </>
+      )}
 
       <Box
         borderBottom={'1px'}
@@ -366,16 +464,12 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
         </Text>
       </Box>
       <Select
-        defaultValue={convertArrayToOptionArray(
-          diseases
-            .filter((disease) =>
-              currentMedication.targetDiseaseCodes.includes(disease.id)
-            )
-            .map((disease) => disease.name)
-        )}
         isMulti
         options={diseaseOptions}
-        onChange={updateTargetDiseases}
+        value={diseases}
+        onChange={(values) => {
+          console.error('not implemented');
+        }}
       />
       <Button
         variant={'solid'}

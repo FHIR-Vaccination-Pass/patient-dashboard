@@ -28,7 +28,7 @@ export const RecentHistoryWidget: FC = () => {
         }
       : skipToken
   );
-  const { vaccinationDoses, idToVaccinationDose } =
+  const { vaccinationDosesData, idToVaccinationDose } =
     useMedicationInfo(medications);
 
   return (
@@ -58,7 +58,7 @@ export const RecentHistoryWidget: FC = () => {
             const dose = idToVaccinationDose(imm?.vaccinationDoseId);
             const allDoses =
               dose &&
-              vaccinationDoses?.byVaccinationScheme[
+              vaccinationDosesData?.byVaccinationScheme[
                 dose.vaccinationSchemeId
               ]?.ids.map(idToVaccinationDose);
 

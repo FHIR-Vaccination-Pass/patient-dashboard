@@ -29,9 +29,10 @@ export const vacationPlanApi = createApi({
   tagTypes: [resourceName],
   endpoints: (build) => ({
     get: build.query<GetResponse<TResource, GetResponseGroups>, GetArgs>({
-      query: () => ({
+      query: (args) => ({
         url: resourcePath,
         params: {
+          ...args,
           code: 'VacationPlan',
           _profile: `${settings.fhir.profileBaseUrl}/vp-vacation-plan`,
         },

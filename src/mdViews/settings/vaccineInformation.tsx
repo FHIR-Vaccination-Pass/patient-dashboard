@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Divider,
@@ -6,23 +7,26 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
-import React, { useState } from 'react';
-import { VaccineInformationCard } from './vaccineInformationCard';
-import { Medication } from '../../core/models/Medication';
 import { AddIcon } from '@chakra-ui/icons';
+import _ from 'lodash';
+
+import { VaccineInformationCard } from './vaccineInformationCard';
 import { AddVaccineModal } from './addVaccineModal';
+import { useMedications } from '../../hooks';
 
 export default function VaccineInformation() {
-  const mapper = useMapper();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const medications = mapper.getAllMedications().sort((a, b) => {
-    return a.tradeName > b.tradeName ? 1 : -1;
-  });
-  const [currentMedication, setCurrentMedication] = useState<Medication>(
-    medications[0]
-  );
+  const { medications } = useMedications({});
+  const [currentMedicationId, setCurrentMedicationId] = useState<
+    string | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (medications && currentMedicationId === undefined) {
+      setCurrentMedicationId(medications[0].id);
+    }
+  }, [medications, currentMedicationId]);
 
   return (
     <Flex h={'100%'} flexDirection={'row'}>
@@ -37,25 +41,30 @@ export default function VaccineInformation() {
         mr={'50px'}
         justifyContent={'space-between'}
       >
-        <Flex flexDirection={'column'} overflowY={'scroll'}>
-          {medications.map((medication, i) => (
-            <Flex
-              key={medication.id}
-              h={'60px'}
-              alignItems={'center'}
-              justifyContent={'flex-start'}
-              onClick={() => setCurrentMedication(medication)}
-              bg={currentMedication === medication ? 'gray.100' : 'white'}
-              textColor={
-                currentMedication === medication ? 'gray.800' : 'gray.500'
-              }
-              cursor={'pointer'}
-              borderTopRadius={i === 0 ? '10px' : '0px'}
-            >
-              <Text pl={'20px'}>{medication.tradeName}</Text>
-            </Flex>
-          ))}
-        </Flex>
+        {medications && (
+          <Flex flexDirection={'column'} overflowY={'scroll'}>
+            {_.sortBy(medications, ({ tradeName }) => tradeName).map(
+              (med, i) => (
+                <Flex
+                  key={med.id}
+                  h={'60px'}
+                  alignItems={'center'}
+                  justifyContent={'flex-start'}
+                  onClick={() => setCurrentMedicationId(med.id)}
+                  bg={currentMedicationId === med.id ? 'gray.100' : 'white'}
+                  textColor={
+                    currentMedicationId === med.id ? 'gray.800' : 'gray.500'
+                  }
+                  cursor={'pointer'}
+                  borderTopRadius={i === 0 ? '10px' : '0px'}
+                >
+                  <Text pl={'20px'}>{med.tradeName}</Text>
+                </Flex>
+              )
+            )}
+          </Flex>
+        )}
+
         <Box>
           <Divider orientation='horizontal' mt={'5px'} />
           <Flex
@@ -74,7 +83,9 @@ export default function VaccineInformation() {
           </Flex>
         </Box>
       </Flex>
-      <VaccineInformationCard selectedMedication={currentMedication} />
+      {currentMedicationId && (
+        <VaccineInformationCard medicationId={currentMedicationId} />
+      )}
     </Flex>
   );
 }

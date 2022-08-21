@@ -5,43 +5,61 @@ import { useVaccinationSchemes } from './useVaccinationSchemes';
 import { useVaccinationDoses } from './useVaccinationDoses';
 
 export interface UseMedicationInfoResult {
-  organizations?: ReturnType<typeof useOrganizations>['data'];
+  organizationsData?: ReturnType<typeof useOrganizations>['data'];
   idToOrganization: ReturnType<typeof useOrganizations>['idToOrganization'];
-  vaccinationSchemes?: ReturnType<typeof useVaccinationSchemes>['data'];
+  organizationsIsFetching: boolean;
+  vaccinationSchemesData?: ReturnType<typeof useVaccinationSchemes>['data'];
   idToVaccinationScheme: ReturnType<
     typeof useVaccinationSchemes
   >['idToVaccinationScheme'];
-  vaccinationDoses?: ReturnType<typeof useVaccinationDoses>['data'];
+  vaccinationSchemesIsFetching: boolean;
+  vaccinationDosesData?: ReturnType<typeof useVaccinationDoses>['data'];
   idToVaccinationDose: ReturnType<
     typeof useVaccinationDoses
   >['idToVaccinationDose'];
+  vaccinationDosesIsFetching: boolean;
 }
+
 export const useMedicationInfo = (
   medications: Medication[] | undefined
 ): UseMedicationInfoResult => {
-  const { data: organizations, idToOrganization } = useOrganizations({});
-  const { data: vaccinationSchemes, idToVaccinationScheme } =
-    useVaccinationSchemes(
-      medications
-        ? {
-            subject: medications.map((med) => med.id).join(','),
-          }
-        : skipToken
-    );
-  const { data: vaccinationDoses, idToVaccinationDose } = useVaccinationDoses(
-    vaccinationSchemes
+  const {
+    data: organizationsData,
+    idToOrganization,
+    isFetching: organizationsIsFetching,
+  } = useOrganizations({});
+  const {
+    data: vaccinationSchemesData,
+    idToVaccinationScheme,
+    isFetching: vaccinationSchemesIsFetching,
+  } = useVaccinationSchemes(
+    medications
       ? {
-          subject: vaccinationSchemes.ids.join(','),
+          subject: medications.map((med) => med.id).join(','),
+        }
+      : skipToken
+  );
+  const {
+    data: vaccinationDosesData,
+    idToVaccinationDose,
+    isFetching: vaccinationDosesIsFetching,
+  } = useVaccinationDoses(
+    vaccinationSchemesData
+      ? {
+          subject: vaccinationSchemesData.ids.join(','),
         }
       : skipToken
   );
 
   return {
-    organizations,
+    organizationsData,
     idToOrganization,
-    vaccinationSchemes,
+    organizationsIsFetching,
+    vaccinationSchemesData,
     idToVaccinationScheme,
-    vaccinationDoses,
+    vaccinationSchemesIsFetching,
+    vaccinationDosesData,
     idToVaccinationDose,
+    vaccinationDosesIsFetching,
   };
 };
