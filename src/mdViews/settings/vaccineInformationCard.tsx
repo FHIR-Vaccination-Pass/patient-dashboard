@@ -9,6 +9,7 @@ import {
   Box,
   BoxProps,
   Button,
+  ButtonGroup,
   Editable,
   EditablePreview,
   EditableTextarea,
@@ -30,11 +31,11 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import { SmallCloseIcon } from '@chakra-ui/icons';
+import { CloseIcon, SmallCloseIcon } from '@chakra-ui/icons';
 import { cloneDeep } from 'lodash';
 import { skipToken } from '@reduxjs/toolkit/query';
 
-import { MedicationMapper } from '../../core/models';
+import { MedicationMapper, VaccinationSchemeMapper } from '../../core/models';
 import { AddVaccinationDoseModal } from './addVaccinationDoseModal';
 import { AddVaccinationSchemeModal } from './addVaccinationSchemeModal';
 import { OptionType } from '../../core/services/util/convertArrayToOptionArray';
@@ -48,7 +49,7 @@ import {
   useVaccinationDoses,
   useVaccinationSchemes,
 } from '../../hooks';
-import { VaccinationSchemeMapper } from '../../core/models';
+import { FaWrench } from 'react-icons/fa';
 
 interface VaccinationSchemeAccordionItemProps {
   vaccinationSchemeId: string;
@@ -345,12 +346,47 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
 
   return (
     <Flex flexDirection={'column'} pr={'70px'} mt={'20px'} w={'80%'}>
-      <Box borderBottom={'1px'} borderBottomColor={'gray.300'} mb={'15px'}>
-        <Text color={'gray.600'} mb={'5px'} fontSize={'xl'}>
+      <Flex
+        flexDirection={'row'}
+        justifyContent={'space-between'}
+        borderBottom={'1px'}
+        borderBottomColor={'gray.300'}
+        py={'12px'}
+      >
+        <Text color={'gray.600'} fontSize={'xl'}>
           Vaccine Information
         </Text>
-      </Box>
-      <HStack mb={'30px'} spacing={'20px'} w={'100%'}>
+        {editMode ? (
+          <ButtonGroup isAttached={true} w={'256px'}>
+            <Button
+              isLoading={isLoading}
+              colorScheme={'green'}
+              leftIcon={<FaWrench color={'white'} />}
+              flexGrow={1}
+              onClick={() => {
+                saveVaccineInformation();
+                toggleEditMode();
+              }}
+            >
+              Save Changes
+            </Button>
+            <Button
+              colorScheme={'gray'}
+              onClick={toggleEditMode}
+              leftIcon={<CloseIcon color={'darkgray'} />}
+            />
+          </ButtonGroup>
+        ) : (
+          <Button
+            w={'256px'}
+            onClick={toggleEditMode}
+            leftIcon={<FaWrench color={'black'} />}
+          >
+            Edit Vaccine
+          </Button>
+        )}
+      </Flex>
+      <HStack mt={'16px'} spacing={'20px'} w={'100%'}>
         <Flex flexDirection={'column'} w={'100%'}>
           <Text fontSize={'sm'} color={'gray.500'}>
             Manufacturer
@@ -407,55 +443,10 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
         </Flex>
       </HStack>
 
-      {currentMed && (
-        <>
-          <Flex justifyContent={'space-between'}>
-            <Box
-              borderBottom={'1px'}
-              borderBottomColor={'gray.300'}
-              mb={'30px'}
-              w={'92%'}
-              pr={'10px'}
-            >
-              <Text color={'gray.600'} mb={'5px'} fontSize={'xl'}>
-                Vaccination Scheme
-              </Text>
-            </Box>
-            <Button
-              variant={'solid'}
-              color={'white'}
-              bg={'green.400'}
-              _hover={{ bg: 'green.500' }}
-              _active={{ bg: 'green.500' }}
-              _focus={{
-                bg: 'green.500',
-              }}
-              onClick={onSchemeOpen}
-            >
-              Add Scheme
-            </Button>
-            <AddVaccinationSchemeModal
-              isOpen={isSchemeOpen}
-              onClose={onSchemeClose}
-              medicationId={currentMed.id}
-            />
-          </Flex>
-
-          <Accordion defaultIndex={[]} allowMultiple mb={'30px'}>
-            {vaccinationSchemes.map((scheme) => (
-              <VaccinationSchemeAccordionItem
-                key={scheme.id}
-                vaccinationSchemeId={scheme.id}
-              />
-            ))}
-          </Accordion>
-        </>
-      )}
-
       <Box
         borderBottom={'1px'}
         borderBottomColor={'gray.300'}
-        mb={'15px'}
+        mt={'32px'}
         w={'100%'}
         pr={'10px'}
       >
@@ -471,22 +462,52 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
           console.error('not implemented');
         }}
       />
-      <Button
-        variant={'solid'}
-        color={'white'}
-        bg={'green.400'}
-        _hover={{ bg: 'green.500' }}
-        _active={{ bg: 'green.500' }}
-        _focus={{
-          bg: 'green.500',
-        }}
-        w={'150px'}
-        h={'40px'}
-        mt={'30px'}
-        onClick={() => saveVaccineInformation()}
-      >
-        Save Changes
-      </Button>
+
+      {currentMed && (
+        <>
+          <Flex justifyContent={'space-between'}>
+            <Box
+              borderBottom={'1px'}
+              borderBottomColor={'gray.300'}
+              mt={'32px'}
+              w={'92%'}
+              pr={'10px'}
+            >
+              <Text color={'gray.600'} mb={'5px'} fontSize={'xl'}>
+                Vaccination Scheme
+              </Text>
+            </Box>
+            <AddVaccinationSchemeModal
+              isOpen={isSchemeOpen}
+              onClose={onSchemeClose}
+              medicationId={currentMed.id}
+            />
+          </Flex>
+
+          <Accordion defaultIndex={[]} allowMultiple mb={'30px'}>
+            {vaccinationSchemes.map((scheme) => (
+              <VaccinationSchemeAccordionItem
+                key={scheme.id}
+                vaccinationSchemeId={scheme.id}
+              />
+            ))}
+          </Accordion>
+
+          <Button
+            variant={'solid'}
+            color={'white'}
+            bg={'green.400'}
+            _hover={{ bg: 'green.500' }}
+            _active={{ bg: 'green.500' }}
+            _focus={{
+              bg: 'green.500',
+            }}
+            onClick={onSchemeOpen}
+          >
+            Add Scheme
+          </Button>
+        </>
+      )}
     </Flex>
   );
 };
