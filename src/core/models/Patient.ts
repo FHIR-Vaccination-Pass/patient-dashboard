@@ -53,6 +53,40 @@ export class PatientMapper implements Patient {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
+  static fromModel({
+    active,
+    name,
+    gender,
+    birthDate,
+    deceased,
+    address,
+    isPregnant,
+    keycloakUsername,
+  }: Patient): PatientMapper {
+    return new PatientMapper({
+      resourceType: 'Patient',
+      meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-patient`] },
+      active,
+      name: [HumanNameMapper.fromModel(name).toResource()],
+      gender,
+      birthDate: dayjs(birthDate).format('YYYY-MM-DD'),
+      ...(typeof deceased === 'boolean'
+        ? { deceasedBoolean: deceased }
+        : { deceasedDateTime: dayjs(deceased).format('YYYY-MM-DD') }),
+      address: [AddressMapper.fromModel(address).toResource()],
+      extension: [
+        {
+          url: `${settings.fhir.profileBaseUrl}/vp-patient-is-pregnant-extension`,
+          valueBoolean: isPregnant,
+        },
+        {
+          url: `${settings.fhir.profileBaseUrl}/vp-patient-keycloak-username-extension`,
+          valueString: keycloakUsername,
+        },
+      ],
+    });
+  }
+
   toResource(): FHIRPatient {
     return this._raw;
   }
