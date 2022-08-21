@@ -14,7 +14,7 @@ import {
   Badge,
 } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import { Disease } from '../../../core/models/Disease';
+import { DiseaseMapper } from '../../../core/models';
 import {
   useImmunizations,
   useMedications,
@@ -25,16 +25,21 @@ import {
 import { useParams } from 'react-router-dom';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { resolvePractitionerName } from '../../../core/services/util/resolveHumanName';
+import { targetDiseaseApi } from '../../../core/services/redux/fhir';
 
 interface ImmunizationInformationTabProps extends BoxProps {
-  currentDisease: Disease | undefined;
+  diseaseId: string;
 }
 
 export const ImmunizationInformationTab: FC<
   ImmunizationInformationTabProps
-> = ({ currentDisease }) => {
+> = ({ diseaseId }) => {
   const params = useParams();
   const patientId = params['patientId']!;
+
+  const { data: tdRaw } =
+    targetDiseaseApi.endpoints.getById.useQuery(diseaseId);
+  const currentDisease = DiseaseMapper.fromResource(tdRaw);
 
   const { idToMedication, data: medicationsData } = useMedications({});
   const medicationsForDisease =
@@ -127,7 +132,7 @@ export const ImmunizationInformationTab: FC<
                 ]?.ids.length;
               const manufacturer = idToOrganization(med?.manufacturerId);
               return (
-                <Tr>
+                <Tr key={immunization.id}>
                   <Td>
                     <Text size={'md'}>{med?.tradeName}</Text>{' '}
                     <Text color={'gray.500'} size={'xs'}>

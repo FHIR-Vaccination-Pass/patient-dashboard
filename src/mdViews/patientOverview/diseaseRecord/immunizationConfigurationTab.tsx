@@ -1,13 +1,18 @@
 import { BoxProps } from '@chakra-ui/react';
 import { FC } from 'react';
-import { Disease } from '../../../core/models/Disease';
+import { DiseaseMapper } from '../../../core/models';
+import { targetDiseaseApi } from '../../../core/services/redux/fhir';
 
 interface ImmunizationConfigurationTabProps extends BoxProps {
-  currentDisease: Disease | undefined;
+  diseaseId: string;
 }
 
 export const ImmunizationConfigurationTab: FC<
   ImmunizationConfigurationTabProps
-> = ({ currentDisease }) => {
+> = ({ diseaseId }) => {
+  const { data: tdRaw } =
+    targetDiseaseApi.endpoints.getById.useQuery(diseaseId);
+  const currentDisease = DiseaseMapper.fromResource(tdRaw);
+
   return <></>;
 };
