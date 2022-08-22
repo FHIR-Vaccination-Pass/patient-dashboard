@@ -35,6 +35,7 @@ export default function DiseaseInformation() {
         boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
         borderRadius={'10px'}
         w={'300px'}
+        flexDir={'column'}
         h={'100%'}
         mb={'10px'}
         mr={'50px'}
