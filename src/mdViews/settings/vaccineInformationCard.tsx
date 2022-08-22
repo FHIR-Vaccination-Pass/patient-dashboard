@@ -1,5 +1,12 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import Select from 'react-select';
+import React, {
+  ChangeEvent,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import Select, { MultiValue, SingleValue } from 'react-select';
 import {
   Accordion,
   AccordionButton,
@@ -10,11 +17,9 @@ import {
   BoxProps,
   Button,
   ButtonGroup,
-  Editable,
-  EditablePreview,
-  EditableTextarea,
   Flex,
   HStack,
+  Input,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -226,11 +231,8 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
     medicationApi.endpoints.put.useMutation();
   const med = MedicationMapper.fromResource(medRaw);
 
-  const {
-    data: vaccinationSchemesData,
-    idToVaccinationScheme,
-    isFetching: vaccinationSchemesIsFetching,
-  } = useVaccinationSchemes(med ? { subject: medicationId } : skipToken);
+  const { vaccinationSchemes, isFetching: vaccinationSchemesIsFetching } =
+    useVaccinationSchemes(med ? { subject: medicationId } : skipToken);
 
   const { organizations, idToOrganization } = useOrganizations({});
   const {
@@ -282,15 +284,41 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
       ? { value: org.id, label: org.name }
       : { value: '', label: 'Manufacturer' };
   }, [currentMed, idToOrganization]);
+  const setManufacturer = useCallback(
+    (value: SingleValue<OptionType>) => {
+      setUpdatedMed(updatedMed!.withManufacturerId(value!.value));
+    },
+    [updatedMed]
+  );
 
   const code = useMemo(
     (): string | undefined => currentMed?.code.coding.code,
     [currentMed]
   );
+  const setCode = useCallback(
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+      setUpdatedMed(
+        updatedMed!.withCode({
+          coding: { system: updatedMed!.code.coding.system, code: value },
+        })
+      );
+    },
+    [updatedMed]
+  );
 
   const form = useMemo(
     (): string | undefined => currentMed?.form.coding.code,
     [currentMed]
+  );
+  const setForm = useCallback(
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+      setUpdatedMed(
+        updatedMed!.withForm({
+          coding: { system: updatedMed!.form.coding.system, code: value },
+        })
+      );
+    },
+    [updatedMed]
   );
 
   const diseases = useMemo(
@@ -299,19 +327,17 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
         const td = idToTargetDisease(
           targetDiseasesData?.byCode[tdCode]?.ids[0]
         );
-        return td ? [{ value: td.id, label: td.name }] : [];
+        return td ? [{ value: tdCode, label: td.name }] : [];
       }) ?? [],
     [currentMed, targetDiseasesData, idToTargetDisease]
   );
-
-  const vaccinationSchemes = useMemo(
-    (): VaccinationSchemeMapper[] =>
-      (currentMed &&
-        vaccinationSchemesData?.byMedication[currentMed.id]?.ids.map(
-          (vsId) => idToVaccinationScheme(vsId)!
-        )) ??
-      [],
-    [currentMed, vaccinationSchemesData, idToVaccinationScheme]
+  const setDiseases = useCallback(
+    (values: MultiValue<OptionType>) => {
+      setUpdatedMed(
+        updatedMed!.withTargetDiseaseCodes(values.map(({ value }) => value))
+      );
+    },
+    [updatedMed]
   );
 
   // options for select component
@@ -326,14 +352,16 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
   const diseaseOptions = useMemo(
     (): OptionType[] =>
       targetDiseases?.map((td) => ({
-        value: td.id,
+        value: td.code.coding.code,
         label: td.name,
       })) ?? [],
     [targetDiseases]
   );
 
   function saveVaccineInformation() {
-    console.log(updatedMed);
+    if (updatedMed !== undefined) {
+      putMed(updatedMed.toResource());
+    }
   }
 
   function monthDiff(d1: Date, d2: Date) {
@@ -386,7 +414,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
           </Button>
         )}
       </Flex>
-      <HStack mt={'16px'} spacing={'20px'} w={'100%'}>
+      <HStack mt={'12px'} spacing={'20px'} w={'100%'}>
         <Flex flexDirection={'column'} w={'100%'}>
           <Text fontSize={'sm'} color={'gray.500'}>
             Manufacturer
@@ -394,9 +422,8 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
           <Select
             options={organizationOptions}
             value={manufacturer}
-            onChange={() => {
-              console.error('not implemented');
-            }}
+            isDisabled={!editMode}
+            onChange={setManufacturer}
           />
         </Flex>
 
@@ -404,42 +431,34 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
           <Text fontSize={'sm'} color={'gray.500'}>
             PZN Code
           </Text>
-          <Editable
+          <Input
+            variant={'flushed'}
             p={'5px 10px'}
             border={'1px'}
             borderColor={'gray.200'}
             borderRadius={'5px'}
             color={'gray.500'}
-            mb={'20px'}
             value={code}
-            onChange={(value) => {
-              console.error('not implemented');
-            }}
-          >
-            <EditablePreview />
-            <EditableTextarea />
-          </Editable>
+            isDisabled={!editMode}
+            onChange={setCode}
+          />
         </Flex>
 
         <Flex flexDirection={'column'} w={'100%'}>
           <Text fontSize={'sm'} color={'gray.500'}>
             Form
           </Text>
-          <Editable
+          <Input
+            variant={'flushed'}
             p={'5px 10px'}
             border={'1px'}
             borderColor={'gray.200'}
             borderRadius={'5px'}
             color={'gray.500'}
-            mb={'20px'}
             value={form}
-            onChange={(value) => {
-              console.error('not implemented');
-            }}
-          >
-            <EditablePreview />
-            <EditableTextarea />
-          </Editable>
+            isDisabled={!editMode}
+            onChange={setForm}
+          />
         </Flex>
       </HStack>
 
@@ -458,12 +477,11 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
         isMulti
         options={diseaseOptions}
         value={diseases}
-        onChange={(values) => {
-          console.error('not implemented');
-        }}
+        isDisabled={!editMode}
+        onChange={setDiseases}
       />
 
-      {currentMed && (
+      {currentMed && vaccinationSchemes && (
         <>
           <Flex justifyContent={'space-between'}>
             <Box
