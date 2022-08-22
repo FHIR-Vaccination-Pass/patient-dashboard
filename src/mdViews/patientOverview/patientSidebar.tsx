@@ -46,7 +46,7 @@ const LinkItems: Array<LinkItemProps> = [
     link: 'history',
   },
   { name: 'Disease Record', icon: FaBookMedical, link: 'record' },
-  { name: 'Vacation Plans', icon: FaPlane, link: 'vacations' },
+  //{ name: 'Vacation Plans', icon: FaPlane, link: 'vacations' },
 ];
 
 export const PatientSidebar = ({
