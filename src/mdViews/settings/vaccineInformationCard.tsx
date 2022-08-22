@@ -440,6 +440,15 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
     [updatedSchemes]
   );
 
+  const addScheme = useCallback(
+    (vs: VaccinationSchemeMapper) => {
+      const newSchemes = cloneDeep(updatedSchemes!);
+      newSchemes[vs.id] = { vs, doses: [] };
+      setUpdatedSchemes(newSchemes);
+    },
+    [updatedSchemes]
+  );
+
   // options for select component
   const organizationOptions = useMemo(
     (): OptionType[] =>
@@ -622,6 +631,10 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
               isOpen={isSchemeOpen}
               onClose={onSchemeClose}
               medicationId={currentMed.id}
+              onChange={(schemeModel) => {
+                const vs = VaccinationSchemeMapper.fromModel(schemeModel);
+                addScheme(vs);
+              }}
             />
           </Flex>
 
