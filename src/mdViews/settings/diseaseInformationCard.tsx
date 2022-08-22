@@ -7,20 +7,23 @@ import React, {
   useState,
 } from 'react';
 import {
+  Box,
   BoxProps,
   Button,
   ButtonGroup,
   Flex,
+  FormControl,
+  HStack,
+  IconButton,
   Input,
-  ListItem,
   Text,
   Textarea,
-  UnorderedList,
 } from '@chakra-ui/react';
 import { cloneDeep } from 'lodash';
 
 import {
   DiseaseMapper,
+  LocationMapper,
   PopulationRecommendationMapper,
 } from '../../core/models';
 import {
@@ -29,7 +32,9 @@ import {
 } from '../../core/services/redux/fhir';
 import { usePopulationRecommendations } from '../../hooks';
 import { FaWrench } from 'react-icons/fa';
-import { CloseIcon } from '@chakra-ui/icons';
+import { AddIcon, CloseIcon, SmallCloseIcon } from '@chakra-ui/icons';
+import { Country, State } from 'country-state-city';
+import Select, { SingleValue } from 'react-select';
 
 interface DiseaseInformationCardProps extends BoxProps {
   diseaseId: string;
@@ -141,6 +146,66 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
     [updatedPr]
   );
 
+  const locations = useMemo(
+    (): LocationMapper[] => currentPr?.locations ?? [],
+    [currentPr]
+  );
+  const setCountry = useCallback(
+    (
+      value: SingleValue<{
+        value: string;
+        label: string;
+      }>,
+      index: number
+    ): void => {
+      setUpdatedPr(
+        updatedPr?.withLocations(
+          updatedPr.locations.map((loc, i) =>
+            index === i
+              ? loc.withCountry(value!.value).withState(undefined)
+              : loc
+          )
+        )
+      );
+    },
+    [updatedPr]
+  );
+
+  const setState = useCallback(
+    (
+      value: SingleValue<{
+        value: string | undefined;
+        label: string | undefined;
+      }>,
+      index: number
+    ): void => {
+      setUpdatedPr(
+        updatedPr?.withLocations(
+          updatedPr.locations.map((loc, i) =>
+            index === i ? loc.withState(value?.value) : loc
+          )
+        )
+      );
+    },
+    [updatedPr]
+  );
+
+  function addLocation() {
+    let updatedAffectedLocations = updatedPr?.locations;
+    const newCountry = allCountries.at(0);
+    const newLocation = LocationMapper.fromModel({
+      country: newCountry!.isoCode,
+      state: undefined,
+    });
+    allStateOptions.push(getStateOptionsForCountry(newCountry!.isoCode));
+    if (updatedAffectedLocations) {
+      updatedAffectedLocations.push(newLocation);
+    } else {
+      updatedAffectedLocations = [newLocation];
+    }
+    setUpdatedPr(updatedPr!.withLocations(updatedAffectedLocations));
+  }
+
   function saveDiseaseInformation() {
     if (updatedTd !== undefined && updatedPr !== undefined) {
       putTd(updatedTd.toResource());
@@ -148,8 +213,29 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
     }
   }
 
+  const allCountries = Country.getAllCountries();
+  const allCountryOptions = allCountries.map((country) => {
+    return { value: country.isoCode, label: country.name };
+  });
+
+  const allStateOptions: { value: string | undefined; label: string }[][] = [];
+  const wholeCountry = { value: undefined, label: 'Entire' };
+  locations.forEach((loc) => {
+    const stateOptions = getStateOptionsForCountry(loc.country);
+    stateOptions.unshift(wholeCountry);
+    allStateOptions.push(stateOptions);
+  });
+
+  function getStateOptionsForCountry(
+    countryCode: string
+  ): { value: string | undefined; label: string }[] {
+    return State.getStatesOfCountry(countryCode).map((stateOption) => {
+      return { value: stateOption.isoCode, label: stateOption.name };
+    });
+  }
+
   return (
-    <Flex pt={'30px'} flexDirection={'column'} w={'100%'}>
+    <Flex pt={'30px'} flexDirection={'column'} w={'100%'} pr={'6px'}>
       {td && (
         <>
           <Flex
@@ -250,7 +336,7 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
                 Affected Locations
               </Text>
 
-              <UnorderedList
+              <FormControl
                 p={'10px 10px 10px 25px'}
                 border={'1px'}
                 borderColor={'gray.200'}
@@ -258,15 +344,77 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
                 mb={'10px'}
                 ml={'0px'}
               >
-                {pr?.locations.map((location) => (
-                  <ListItem
-                    key={`${location.country}/${location.state}`}
-                    color={'gray.500'}
+                {locations.map((location, index) => (
+                  <HStack
+                    key={`${location.country}-${location.state}`}
+                    spacing={'20px'}
+                    w={'100%'}
+                    mt={index !== 0 ? '5px' : '0px'}
                   >
-                    {location.country}
-                  </ListItem>
+                    <Box w={'40%'} h={'40px'}>
+                      <Select
+                        value={{
+                          value: location.country,
+                          label: allCountries.find(
+                            (country) => country.isoCode === location.country
+                          )!.name,
+                        }}
+                        options={allCountryOptions}
+                        isDisabled={!editMode}
+                        onChange={(value) => setCountry(value, index)}
+                      />
+                    </Box>
+                    <Box w={'40%'} h={'40px'}>
+                      <Select
+                        value={{
+                          value: location.state,
+                          label:
+                            State.getStatesOfCountry(location.country).find(
+                              (stateOption) =>
+                                stateOption.isoCode === location.state
+                            )?.name || 'Entire',
+                        }}
+                        options={allStateOptions.at(index)}
+                        isDisabled={!editMode}
+                        onChange={(value) => {
+                          setState(value, index);
+                        }}
+                      />
+                    </Box>
+                    <IconButton
+                      aria-label='Remove location'
+                      icon={<SmallCloseIcon />}
+                      _hover={{ cursor: 'pointer', bg: 'gray.200' }}
+                      bg={'gray.100'}
+                      isDisabled={!editMode}
+                      onClick={() => {
+                        setUpdatedPr(
+                          updatedPr!.withLocations(
+                            locations.filter((l, i) => i !== index)
+                          )
+                        );
+                      }}
+                    />
+                  </HStack>
                 ))}
-              </UnorderedList>
+              </FormControl>
+              <Button
+                leftIcon={<AddIcon />}
+                variant={'solid'}
+                color={'white'}
+                bg={'green.400'}
+                _hover={{ bg: 'green.500' }}
+                _active={{ bg: 'green.500' }}
+                _focus={{
+                  bg: 'green.500',
+                }}
+                size={'sm'}
+                w={'155px'}
+                onClick={addLocation}
+                isDisabled={!editMode}
+              >
+                Add Location
+              </Button>
             </Flex>
             <Flex flexDirection={'column'} w={'70%'} ml={'50px'}>
               <Text fontSize={'sm'} color={'gray.500'}>
