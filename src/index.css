@@ -19,8 +19,8 @@ code {
 
 .vertical-timeline {
   margin: 0 !important;
-  height: 110%;
-  padding-top: 5px !important;
+  height: 100%;
+  padding-top: 2vh !important;
 }
 
 .vertical-timeline::before {
