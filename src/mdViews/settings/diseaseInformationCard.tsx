@@ -158,13 +158,11 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
       }>,
       index: number
     ): void => {
-      const state = State.getStatesOfCountry(value!.value)?.at(0);
-
       setUpdatedPr(
         updatedPr?.withLocations(
           updatedPr.locations.map((loc, i) =>
             index === i
-              ? loc.withCountry(value!.value).withState(state!.isoCode)
+              ? loc.withCountry(value!.value).withState(undefined)
               : loc
           )
         )
