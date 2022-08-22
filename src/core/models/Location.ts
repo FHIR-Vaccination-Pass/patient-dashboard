@@ -85,8 +85,8 @@ export class LocationMapper implements Location {
 
   get _stateCoding(): FHIRCoding | undefined {
     return fhirpath.evaluate(
-      this._stateCodeExtension,
-      `value.coding.where(system = 'urn:iso:std:iso:3166:-2')`,
+      this._raw,
+      `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-state-code-extension').valueCodeableConcept.coding.where(system = 'urn:iso:std:iso:3166:-2')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRCoding | undefined;
