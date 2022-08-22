@@ -186,7 +186,15 @@ const VaccinationSchemeAccordionItem: FC<
                     </Td>
                     <Td>Single</Td>
                     <Td>{dose.doseQuantity}</Td>
-                    <Td>TODO: wrong logic! months after</Td>
+                    <Td>
+                      {dose.type === 'single'
+                        ? dose.timeframeStart && dose.timeframeEnd
+                          ? `After ${dose.timeframeStart} to ${dose.timeframeEnd} days`
+                          : dose.timeframeStart
+                          ? `After ${dose.timeframeStart} days`
+                          : `Immediately`
+                        : `Every ${dose.interval.value}${dose.interval.code}`}
+                    </Td>
                     <Td>{dose.notes}</Td>
                     <Td isNumeric>
                       {editMode ? (
@@ -634,19 +642,21 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             ))}
           </Accordion>
 
-          <Button
-            variant={'solid'}
-            color={'white'}
-            bg={'green.400'}
-            _hover={{ bg: 'green.500' }}
-            _active={{ bg: 'green.500' }}
-            _focus={{
-              bg: 'green.500',
-            }}
-            onClick={onSchemeOpen}
-          >
-            Add Scheme
-          </Button>
+          {editMode && (
+            <Button
+              variant={'solid'}
+              color={'white'}
+              bg={'green.400'}
+              _hover={{ bg: 'green.500' }}
+              _active={{ bg: 'green.500' }}
+              _focus={{
+                bg: 'green.500',
+              }}
+              onClick={onSchemeOpen}
+            >
+              Add Scheme
+            </Button>
+          )}
         </>
       )}
     </Flex>
