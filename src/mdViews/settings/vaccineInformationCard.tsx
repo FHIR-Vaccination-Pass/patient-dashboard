@@ -511,7 +511,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             borderColor={'gray.200'}
             borderRadius={'5px'}
             color={'gray.500'}
-            value={code}
+            value={code ?? ''}
             isDisabled={!editMode}
             onChange={setCode}
           />
@@ -528,7 +528,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             borderColor={'gray.200'}
             borderRadius={'5px'}
             color={'gray.500'}
-            value={form}
+            value={form ?? ''}
             isDisabled={!editMode}
             onChange={setForm}
           />
