@@ -18,12 +18,13 @@ export function PatientDiseaseRecord() {
   }, [targetDiseases, currentDiseaseId]);
 
   return (
-    <Box w={'80%'} alignItems={'center'}>
+    <Box pl={6} w={'100%'} alignItems={'center'}>
       <Flex
         h={'85vh'}
         w={'100%'}
         flexDirection={'row'}
         boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
+        borderRadius={'15px'}
       >
         {targetDiseases && (
           <Flex
