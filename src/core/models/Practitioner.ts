@@ -41,8 +41,9 @@ export class PractitionerMapper {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
-  static fromModel({ name }: Practitioner): PractitionerMapper {
+  static fromModel({ id, name }: Practitioner): PractitionerMapper {
     return new PractitionerMapper({
+      id,
       resourceType: 'Practitioner',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-practitioner`] },
       name: [HumanNameMapper.fromModel(name).toResource()],

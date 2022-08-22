@@ -52,8 +52,9 @@ export class DiseaseMapper implements Disease {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
-  static fromModel({ code, name, description }: Disease): DiseaseMapper {
+  static fromModel({ id, code, name, description }: Disease): DiseaseMapper {
     return new DiseaseMapper({
+      id,
       resourceType: 'Basic',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-target-disease`] },
       code: { coding: [{ code: 'TargetDisease' }] },

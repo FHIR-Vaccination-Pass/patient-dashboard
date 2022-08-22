@@ -34,8 +34,9 @@ export class OrganizationMapper implements Organization {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
-  static fromModel({ name }: Organization): OrganizationMapper {
+  static fromModel({ id, name }: Organization): OrganizationMapper {
     return new OrganizationMapper({
+      id,
       resourceType: 'Organization',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-organization`] },
       name,

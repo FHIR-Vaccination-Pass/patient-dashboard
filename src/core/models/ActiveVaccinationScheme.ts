@@ -47,11 +47,13 @@ export class ActiveVaccinationSchemeMapper implements ActiveVaccinationScheme {
   }
 
   static fromModel({
+    id,
     changeReason,
     vaccinationSchemeId,
     patientId,
   }: ActiveVaccinationScheme): ActiveVaccinationSchemeMapper {
     return new ActiveVaccinationSchemeMapper({
+      id: id,
       resourceType: 'Basic',
       meta: {
         profile: [

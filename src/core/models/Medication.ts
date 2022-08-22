@@ -46,6 +46,7 @@ export class MedicationMapper implements Medication {
   }
 
   static fromModel({
+    id,
     code,
     form,
     manufacturerId,
@@ -53,6 +54,7 @@ export class MedicationMapper implements Medication {
     targetDiseaseCodes,
   }: Medication): MedicationMapper {
     return new MedicationMapper({
+      id,
       resourceType: 'Medication',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-medication`] },
       code: {

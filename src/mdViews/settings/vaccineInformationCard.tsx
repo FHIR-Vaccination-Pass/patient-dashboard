@@ -50,6 +50,7 @@ import { AddVaccinationSchemeModal } from './addVaccinationSchemeModal';
 import { OptionType } from '../../core/services/util/convertArrayToOptionArray';
 import {
   medicationApi,
+  vaccinationDoseApi,
   vaccinationSchemeApi,
 } from '../../core/services/redux/fhir';
 import {
@@ -194,7 +195,10 @@ const VaccinationSchemeAccordionItem: FC<
                           h={'16px'}
                           _hover={{ cursor: 'pointer' }}
                           onClick={() => {
-                            console.error('not implemented');
+                            onChange({
+                              vs,
+                              doses: doses.filter(({ id }) => id !== dose.id),
+                            });
                           }}
                         />
                       ) : (
@@ -227,6 +231,10 @@ const VaccinationSchemeAccordionItem: FC<
             isOpen={isDoseOpen}
             onClose={onDoseClose}
             vaccinationSchemeId={vs.id}
+            onChange={(doseModel) => {
+              const dose = VaccinationDoseMapper.fromModel(doseModel);
+              onChange({ vs, doses: [...doses, dose] });
+            }}
           />
         </AccordionPanel>
       </>
@@ -257,6 +265,10 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
     useVaccinationSchemes(med ? { subject: medicationId } : skipToken);
   const [putVs, { isLoading: putVsIsLoading }] =
     vaccinationSchemeApi.endpoints.put.useMutation();
+  const [postVs, { isLoading: postVsIsLoading }] =
+    vaccinationSchemeApi.endpoints.post.useMutation();
+  const [deleteVsById, { isLoading: deleteVsIsLoading }] =
+    vaccinationSchemeApi.endpoints.deleteById.useMutation();
 
   const { vaccinationDoses, isFetching: vaccinationDosesIsFetching } =
     useVaccinationDoses(
@@ -264,6 +276,12 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
         ? { subject: vaccinationSchemes.map(({ id }) => id).join(',') }
         : skipToken
     );
+  const [putDose, { isLoading: putDoseIsLoading }] =
+    vaccinationDoseApi.endpoints.put.useMutation();
+  const [postDose, { isLoading: postDoseIsLoading }] =
+    vaccinationDoseApi.endpoints.post.useMutation();
+  const [deleteDoseById, { isLoading: deleteDoseIsLoading }] =
+    vaccinationDoseApi.endpoints.deleteById.useMutation();
 
   const schemes: Record<string, VaccinationSchemeUpdate> | undefined =
     vaccinationSchemes && vaccinationDoses && {};
@@ -291,7 +309,13 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
     getMedIsFetching ||
     putMedIsLoading ||
     vaccinationSchemesIsFetching ||
-    putVsIsLoading;
+    putVsIsLoading ||
+    postVsIsLoading ||
+    deleteVsIsLoading ||
+    vaccinationDosesIsFetching ||
+    putDoseIsLoading ||
+    postDoseIsLoading ||
+    deleteDoseIsLoading;
   const [editMode, setEditMode] = useState<boolean>(false);
   const [toggleEditModeRequested, setToggleEditModeRequested] = useState(false);
 
@@ -429,8 +453,26 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
   function saveVaccineInformation() {
     if (updatedMed !== undefined && updatedSchemes !== undefined) {
       putMed(updatedMed.toResource());
+
       Object.values(updatedSchemes).forEach(({ vs, doses }) => {
         putVs(vs.toResource());
+
+        const originalDosesIds = schemes![vs.id].doses.map(({ id }) => id);
+        const newDosesIds = doses.map(({ id }) => id);
+
+        doses.forEach((dose) => {
+          if (originalDosesIds.includes(dose.id)) {
+            putDose(dose.toResource());
+          } else {
+            postDose(dose.toResource());
+          }
+        });
+
+        originalDosesIds
+          .filter((id) => !newDosesIds.includes(id))
+          .forEach((id) => {
+            deleteDoseById(id);
+          });
       });
     }
   }

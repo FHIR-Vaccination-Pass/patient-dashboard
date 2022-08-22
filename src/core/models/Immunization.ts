@@ -53,6 +53,7 @@ export class ImmunizationMapper implements Immunization {
   }
 
   static fromModel({
+    id,
     status,
     vaccineCode,
     occurrenceTime,
@@ -62,6 +63,7 @@ export class ImmunizationMapper implements Immunization {
     vaccinationDoseId,
   }: Immunization): ImmunizationMapper {
     return new ImmunizationMapper({
+      id,
       resourceType: 'Immunization',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-immunization`] },
       status,

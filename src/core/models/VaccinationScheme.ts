@@ -52,6 +52,7 @@ export class VaccinationSchemeMapper implements VaccinationScheme {
   }
 
   static fromModel({
+    id,
     name,
     type,
     isPreferred,
@@ -60,6 +61,7 @@ export class VaccinationSchemeMapper implements VaccinationScheme {
     medicationId,
   }: VaccinationScheme): VaccinationSchemeMapper {
     return new VaccinationSchemeMapper({
+      id,
       resourceType: 'Basic',
       meta: {
         profile: [`${settings.fhir.profileBaseUrl}/vp-vaccination-scheme`],

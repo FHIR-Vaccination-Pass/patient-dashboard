@@ -50,11 +50,13 @@ export class VacationPlanMapper {
   }
 
   fromModel({
+    id,
     departureDate,
     locations,
     patientId,
   }: VacationPlan): VacationPlanMapper {
     return new VacationPlanMapper({
+      id,
       resourceType: 'Basic',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-vacation-plan`] },
       code: { coding: [{ code: 'VacationPlan' }] },

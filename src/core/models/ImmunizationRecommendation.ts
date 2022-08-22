@@ -65,6 +65,7 @@ export class ImmunizationRecommendationMapper
   }
 
   static fromModel({
+    id,
     date,
     forecastStatus,
     vaccineCode,
@@ -78,6 +79,7 @@ export class ImmunizationRecommendationMapper
     vaccinationDoseId,
   }: ImmunizationRecommendation): ImmunizationRecommendationMapper {
     return new ImmunizationRecommendationMapper({
+      id,
       resourceType: 'ImmunizationRecommendation',
       meta: {
         profile: [

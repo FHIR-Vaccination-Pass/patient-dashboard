@@ -106,8 +106,12 @@ export class VaccinationDoseMapper implements VaccinationDose {
   ): VaccinationDoseRepeatingMapper;
   static fromModel(
     model: VaccinationDoseSingle | VaccinationDoseRepeating
+  ): VaccinationDoseSingleMapper | VaccinationDoseRepeatingMapper;
+  static fromModel(
+    model: VaccinationDoseSingle | VaccinationDoseRepeating
   ): VaccinationDoseSingleMapper | VaccinationDoseRepeatingMapper {
     return VaccinationDoseMapper.fromResource({
+      id: model.id,
       resourceType: 'Basic',
       meta: {
         profile: [`${settings.fhir.profileBaseUrl}/vp-vaccination-dose`],
@@ -127,7 +131,7 @@ export class VaccinationDoseMapper implements VaccinationDose {
               },
             },
             {
-              url: 'http://unitsofmeasure.org',
+              url: 'isProtected',
               valueBoolean: model.isProtected,
             },
             {

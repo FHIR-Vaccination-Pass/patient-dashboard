@@ -54,6 +54,7 @@ export class PatientMapper implements Patient {
   }
 
   static fromModel({
+    id,
     active,
     name,
     gender,
@@ -64,6 +65,7 @@ export class PatientMapper implements Patient {
     keycloakUsername,
   }: Patient): PatientMapper {
     return new PatientMapper({
+      id,
       resourceType: 'Patient',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-patient`] },
       active,

@@ -56,12 +56,14 @@ export class PopulationRecommendationMapper
   }
 
   static fromModel({
+    id,
     ageStart,
     ageEnd,
     locations,
     diseaseId,
   }: PopulationRecommendation): PopulationRecommendationMapper {
     const newPopulationRecommendation = new PopulationRecommendationMapper({
+      id,
       resourceType: 'Basic',
       meta: {
         profile: [
