@@ -66,7 +66,7 @@ export const ImportantDiseaseWidget: FC = () => {
                     {status.status}
                   </Text>
                   <Link
-                    to={`/md/dashboard/patient/${patientId}/diseases/${disease.id}`}
+                    to={`/md/dashboard/patient/${patientId}/record/${disease.id}`}
                   >
                     <Button colorScheme='blue' variant={'ghost'}>
                       Details
@@ -91,7 +91,7 @@ export const ImportantDiseaseWidget: FC = () => {
           justifyContent={'center'}
           m={1}
         >
-          <Link to={`/md/dashboard/patient/${patientId}/diseases/`}>
+          <Link to={`/md/dashboard/patient/${patientId}/record/`}>
             <Text justifyContent={'flex-start'} color={'gray.600'}>
               Open Disease Record
             </Text>

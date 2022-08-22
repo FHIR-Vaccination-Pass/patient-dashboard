@@ -1,19 +1,18 @@
 import {
-  BoxProps,
-  Flex,
-  Text,
-  Box,
-  HStack,
-  Table,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Td,
-  TableContainer,
   Badge,
+  Box,
+  Flex,
+  HStack,
   Icon,
   Stack,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
 } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { DiseaseMapper } from '../../../core/models';
@@ -31,15 +30,10 @@ import { resolvePractitionerName } from '../../../core/services/util/resolveHuma
 import { targetDiseaseApi } from '../../../core/services/redux/fhir';
 import { FaFolderOpen } from 'react-icons/fa';
 
-interface ImmunizationInformationTabProps extends BoxProps {
-  diseaseId: string;
-}
-
-export const ImmunizationInformationTab: FC<
-  ImmunizationInformationTabProps
-> = ({ diseaseId }) => {
+export const ImmunizationInformationTab: FC = ({}) => {
   const params = useParams();
   const patientId = params['patientId']!;
+  const diseaseId = params['diseaseCode']!;
 
   const { data: tdRaw } =
     targetDiseaseApi.endpoints.getById.useQuery(diseaseId);
@@ -92,7 +86,7 @@ export const ImmunizationInformationTab: FC<
   const manufacturer = idToOrganization(standardMedication?.manufacturerId);
 
   return (
-    <Flex w={'100%'} flexDirection={'column'}>
+    <Flex flexDirection={'column'}>
       <Box
         w={'100%'}
         borderBottom={'1px'}
@@ -188,7 +182,7 @@ export const ImmunizationInformationTab: FC<
                       <Td>{immunization.lotNumber}</Td>
                       <Td>
                         <Badge
-                          w={'75%'}
+                          w={'100%'}
                           textAlign={'center'}
                           colorScheme='orange'
                           variant='subtle'
@@ -200,12 +194,12 @@ export const ImmunizationInformationTab: FC<
                       </Td>
                       <Td>
                         <Badge
-                          w={'75%'}
+                          w={'100%'}
                           textAlign={'center'}
                           colorScheme='green'
                           variant='subtle'
                         >
-                          {immunization.occurrenceTime.toDateString()}
+                          {immunization.occurrenceTime.toLocaleDateString()}
                         </Badge>
                       </Td>
                       <Td>{resolvePractitionerName(pract?.name)}</Td>

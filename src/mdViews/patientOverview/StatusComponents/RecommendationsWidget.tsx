@@ -92,7 +92,7 @@ export const RecommendationsWidget: FC = () => {
                         : 'Booster'}
                     </Badge>
                     <Link
-                      to={`/md/dashboard/patient/${patientId}/diseases/${td.code.coding.code}`}
+                      to={`/md/dashboard/patient/${patientId}/record/${td.id}`}
                     >
                       <Button colorScheme='blue' variant={'ghost'}>
                         Details
