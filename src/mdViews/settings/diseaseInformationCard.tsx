@@ -409,7 +409,7 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
                   bg: 'green.500',
                 }}
                 size={'sm'}
-                w={'30%'}
+                w={'155px'}
                 onClick={addLocation}
                 isDisabled={!editMode}
               >
