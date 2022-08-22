@@ -8,8 +8,8 @@ import {
   BoxProps,
   Button,
   Editable,
-  EditableInput,
   EditablePreview,
+  EditableTextarea,
   Flex,
   HStack,
   NumberDecrementStepper,
@@ -35,26 +35,13 @@ import Select, { OnChangeValue } from 'react-select';
 import { SmallCloseIcon } from '@chakra-ui/icons';
 import { AddVaccinationDoseModal } from './addVaccinationDoseModal';
 import { AddVaccinationSchemeModal } from './addVaccinationSchemeModal';
+import {
+  convertArrayToOptionArray,
+  OptionType,
+} from '../../core/services/util/convertArrayToOptionArray';
 
 interface VaccineInformationCardProps extends BoxProps {
   selectedMedication: Medication;
-}
-
-export type OptionType = {
-  value: string;
-  label: string;
-};
-
-// Convert to option array for Select component
-export function convertArrayToOptionArray(list: string[]): OptionType[] {
-  const result: OptionType[] = [];
-  list.forEach((listElement) => {
-    result.push({
-      value: listElement.toLowerCase(),
-      label: listElement,
-    });
-  });
-  return result;
 }
 
 export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
@@ -97,7 +84,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
   function updateTargetDiseases(
     newTargetDiseases: OnChangeValue<OptionType, true>
   ) {
-    currentMedication.targetDiseaseIds = diseases
+    currentMedication.targetDiseaseCodes = diseases
       .filter((disease) =>
         newTargetDiseases
           .map((newTargetDisease) => newTargetDisease.label)
@@ -144,7 +131,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             }}
           >
             <EditablePreview />
-            <EditableInput />
+            <EditableTextarea />
           </Editable>
         </Flex>
 
@@ -165,7 +152,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             }}
           >
             <EditablePreview />
-            <EditableInput />
+            <EditableTextarea />
           </Editable>
         </Flex>
 
@@ -186,7 +173,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             }}
           >
             <EditablePreview />
-            <EditableInput />
+            <EditableTextarea />
           </Editable>
         </Flex>
       </HStack>
@@ -224,7 +211,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
 
       <Accordion defaultIndex={[]} allowMultiple mb={'30px'}>
         {vaccinationSchemes.map((scheme) => (
-          <AccordionItem>
+          <AccordionItem key={scheme.id}>
             <h2>
               <AccordionButton>
                 <Box flex='1' textAlign='left'>
@@ -307,7 +294,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
                   </Thead>
                   <Tbody>
                     {dosesMap.get(scheme.id)?.map((dose) => (
-                      <Tr>
+                      <Tr key={dose.id}>
                         <Td>
                           {dose.numberInScheme}/
                           {dosesMap.get(scheme.id)?.length}
@@ -382,7 +369,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
         defaultValue={convertArrayToOptionArray(
           diseases
             .filter((disease) =>
-              currentMedication.targetDiseaseIds.includes(disease.id)
+              currentMedication.targetDiseaseCodes.includes(disease.id)
             )
             .map((disease) => disease.name)
         )}

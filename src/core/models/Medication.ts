@@ -7,6 +7,7 @@ import {
   Medication as FHIRMedication,
 } from 'fhir/r4';
 import { settings } from '../../settings';
+import { cloneDeep } from 'lodash';
 
 export interface Medication {
   id: string;
@@ -14,7 +15,7 @@ export interface Medication {
   form: CodeableConcept;
   manufacturerId: string; // id refers to an Organization id
   tradeName: string;
-  targetDiseaseIds: string[];
+  targetDiseaseCodes: string[];
 }
 
 export class MedicationMapper implements Medication {
@@ -44,6 +45,40 @@ export class MedicationMapper implements Medication {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
+  static fromModel({
+    code,
+    form,
+    manufacturerId,
+    tradeName,
+    targetDiseaseCodes,
+  }: Medication): MedicationMapper {
+    return new MedicationMapper({
+      resourceType: 'Medication',
+      meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-medication`] },
+      code: {
+        coding: [{ system: code.coding.system, code: code.coding.code }],
+      },
+      form: {
+        coding: [{ system: form.coding.system, code: form.coding.code }],
+      },
+      manufacturer: { reference: `Organization/${manufacturerId}` },
+      extension: [
+        {
+          url: `${settings.fhir.profileBaseUrl}/vp-medication-trade-name`,
+          valueString: tradeName,
+        },
+        ...targetDiseaseCodes.map((tdCode) => ({
+          url: `${settings.fhir.profileBaseUrl}/vp-medication-target-disease`,
+          valueCodeableConcept: {
+            coding: [
+              { system: 'http://hl7.org/fhir/sid/icd-10', code: tdCode },
+            ],
+          },
+        })),
+      ],
+    });
+  }
+
   toResource(): FHIRMedication {
     return this._raw;
   }
@@ -52,36 +87,62 @@ export class MedicationMapper implements Medication {
     return this._raw.id!;
   }
 
-  get code(): CodeableConcept {
-    const codeCoding = fhirpath.evaluate(
+  get _codeCoding(): FHIRCoding {
+    return fhirpath.evaluate(
       this._raw,
       `code.coding.where(system = 'http://fhir.de/CodeSystem/ifa/pzn')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRCoding;
+  }
 
+  get code(): CodeableConcept {
     return {
       coding: {
-        code: codeCoding.code!,
-        system: codeCoding.system!,
+        code: this._codeCoding.code!,
+        system: this._codeCoding.system!,
       },
     };
   }
 
-  get form(): CodeableConcept {
-    const formCoding = fhirpath.evaluate(
+  set code(code: CodeableConcept) {
+    this._codeCoding.code = code.coding.code;
+    this._codeCoding.system = code.coding.system;
+  }
+
+  withCode(code: CodeableConcept): MedicationMapper {
+    const newMedication = cloneDeep(this);
+    newMedication.code = code;
+    return newMedication;
+  }
+
+  get _formCoding(): FHIRCoding {
+    return fhirpath.evaluate(
       this._raw,
       `form.coding.where(system = 'http://snomed.info/sct')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRCoding;
+  }
 
+  get form(): CodeableConcept {
     return {
       coding: {
-        code: formCoding.code!,
-        system: formCoding.system!,
+        code: this._formCoding.code!,
+        system: this._formCoding.system!,
       },
     };
+  }
+
+  set form(form: CodeableConcept) {
+    this._formCoding.code = form.coding.code;
+    this._formCoding.system = form.coding.system;
+  }
+
+  withForm(form: CodeableConcept): MedicationMapper {
+    const newMedication = cloneDeep(this);
+    newMedication.form = form;
+    return newMedication;
   }
 
   get manufacturerId(): string {
@@ -89,28 +150,72 @@ export class MedicationMapper implements Medication {
     return referenceParts[referenceParts.length - 1];
   }
 
-  get tradeName(): string {
-    const tradeNameExtension = fhirpath.evaluate(
+  set manufacturerId(manufacturerId: string) {
+    this._raw.manufacturer!.reference = `Organization/${manufacturerId}`;
+  }
+
+  withManufacturerId(manufacturerId: string): MedicationMapper {
+    const newMedication = cloneDeep(this);
+    newMedication.manufacturerId = manufacturerId;
+    return newMedication;
+  }
+
+  get _tradeNameExtension(): FHIRExtension {
+    return fhirpath.evaluate(
       this._raw,
       `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-medication-trade-name')`,
       undefined,
       fhirpath_r4_model
     )[0] as FHIRExtension;
-
-    return tradeNameExtension.valueString!;
   }
 
-  get targetDiseaseIds(): string[] {
-    const targetDiseaseCodings = fhirpath.evaluate(
+  get tradeName(): string {
+    return this._tradeNameExtension.valueString!;
+  }
+
+  set tradeName(tradeName: string) {
+    this._tradeNameExtension.valueString = tradeName;
+  }
+
+  withTradeName(tradeName: string): MedicationMapper {
+    const newMedication = cloneDeep(this);
+    newMedication.tradeName = tradeName;
+    return newMedication;
+  }
+
+  get _targetDiseaseExtensions(): FHIRExtension[] {
+    return fhirpath.evaluate(
       this._raw,
-      `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-medication-target-disease')` +
-        `.value` +
-        `.coding` +
-        `.where(system = 'http://hl7.org/fhir/sid/icd-10')`,
+      `extension.where(url = '${settings.fhir.profileBaseUrl}/vp-medication-target-disease')`,
       undefined,
       fhirpath_r4_model
-    ) as FHIRCoding[];
+    ) as FHIRExtension[];
+  }
 
-    return targetDiseaseCodings.map((coding) => coding.code!);
+  get targetDiseaseCodes(): string[] {
+    return this._targetDiseaseExtensions.map(
+      (ex) => ex.valueCodeableConcept!.coding![0].code!
+    );
+  }
+
+  set targetDiseaseCodes(targetDiseaseCodes: string[]) {
+    this._raw.extension = this._raw
+      .extension!.filter((ex) => !this._targetDiseaseExtensions.includes(ex))
+      .concat(
+        targetDiseaseCodes.map((tdCode) => ({
+          url: `${settings.fhir.profileBaseUrl}/vp-medication-target-disease`,
+          valueCodeableConcept: {
+            coding: [
+              { system: 'http://hl7.org/fhir/sid/icd-10', code: tdCode },
+            ],
+          },
+        }))
+      );
+  }
+
+  withTargetDiseaseCodes(targetDiseaseCodes: string[]): MedicationMapper {
+    const newMedication = cloneDeep(this);
+    newMedication.targetDiseaseCodes = targetDiseaseCodes;
+    return newMedication;
   }
 }

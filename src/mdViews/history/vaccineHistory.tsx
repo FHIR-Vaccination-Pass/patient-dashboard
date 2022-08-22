@@ -58,7 +58,7 @@ export function VaccineHistory() {
         {mapper.getAllImmunizations().map((immunization) => {
           return mapper
             .getMedicationByVaccineCode(immunization.vaccineCode)
-            ?.targetDiseaseIds.map((diseaseId) => (
+            ?.targetDiseaseCodes.map((diseaseId) => (
               <VerticalTimelineElement
                 iconStyle={timelineElementIconStyles}
                 contentStyle={timelineElementStyles}

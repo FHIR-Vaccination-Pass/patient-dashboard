@@ -10,6 +10,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 
 export interface UseImmunizationRecommendationsReturnType {
   data?: GetResponse<TResource, GetResponseGroups>;
+  isFetching: boolean;
   immunizationRecommendations?: ImmunizationRecommendationMapper[];
   idToImmunizationRecommendation: (
     id: string | undefined
@@ -19,7 +20,8 @@ export interface UseImmunizationRecommendationsReturnType {
 export const useImmunizationRecommendations = (
   arg: GetArgs | typeof skipToken
 ): UseImmunizationRecommendationsReturnType => {
-  const { data } = immunizationRecommendationApi.endpoints.get.useQuery(arg);
+  const { data, isFetching } =
+    immunizationRecommendationApi.endpoints.get.useQuery(arg);
   const idToImmunizationRecommendation = ImmunizationRecommendationMapper.curry(
     (id) => data?.entities[id]
   );
@@ -29,6 +31,7 @@ export const useImmunizationRecommendations = (
 
   return {
     data,
+    isFetching,
     immunizationRecommendations,
     idToImmunizationRecommendation,
   };

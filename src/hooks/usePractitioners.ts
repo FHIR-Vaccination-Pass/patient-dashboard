@@ -10,6 +10,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 
 export interface UsePractitionersReturnType {
   data?: GetResponse<TResource, GetResponseGroups>;
+  isFetching: boolean;
   practitioners?: PractitionerMapper[];
   idToPractitioner: (id: string | undefined) => PractitionerMapper | undefined;
 }
@@ -17,12 +18,13 @@ export interface UsePractitionersReturnType {
 export const usePractitioners = (
   arg: GetArgs | typeof skipToken
 ): UsePractitionersReturnType => {
-  const { data } = practitionerApi.endpoints.get.useQuery(arg);
+  const { data, isFetching } = practitionerApi.endpoints.get.useQuery(arg);
   const idToPractitioner = PractitionerMapper.curry((id) => data?.entities[id]);
   const practitioners = data?.ids.map((id: string) => idToPractitioner(id)!);
 
   return {
     data,
+    isFetching,
     practitioners,
     idToPractitioner,
   };

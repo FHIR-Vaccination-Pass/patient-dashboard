@@ -39,6 +39,8 @@ export interface ResourceMapper {
 
   getAllMedications(): Medication[];
 
+  getAllOrganizations(): Organization[];
+
   getDiseaseById(id: string): Disease | undefined;
 
   getDiseaseByCode(code: string): Disease | undefined;
@@ -89,4 +91,8 @@ export interface ResourceMapper {
   saveVaccinationScheme(
     vaccinationScheme: VaccinationScheme
   ): VaccinationScheme | undefined;
+
+  saveDisease(disease: Disease): Disease | undefined;
+
+  saveMedication(medication: Medication): Medication | undefined;
 }

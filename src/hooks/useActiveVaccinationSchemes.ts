@@ -10,6 +10,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 
 export interface UseActiveVaccinationSchemesReturnType {
   data?: GetResponse<TResource, GetResponseGroups>;
+  isFetching: boolean;
   activeVaccinationSchemes?: ActiveVaccinationSchemeMapper[];
   idToActiveVaccinationScheme: (
     id: string | undefined
@@ -19,7 +20,8 @@ export interface UseActiveVaccinationSchemesReturnType {
 export const useActiveVaccinationSchemes = (
   arg: GetArgs | typeof skipToken
 ): UseActiveVaccinationSchemesReturnType => {
-  const { data } = activeVaccinationSchemeApi.endpoints.get.useQuery(arg);
+  const { data, isFetching } =
+    activeVaccinationSchemeApi.endpoints.get.useQuery(arg);
   const idToActiveVaccinationScheme = ActiveVaccinationSchemeMapper.curry(
     (id) => data?.entities[id]
   );
@@ -29,6 +31,7 @@ export const useActiveVaccinationSchemes = (
 
   return {
     data,
+    isFetching,
     activeVaccinationSchemes,
     idToActiveVaccinationScheme,
   };

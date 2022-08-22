@@ -4,13 +4,16 @@ import { settings } from '../../../../settings';
 import { GetResponse, storeIdRecursive } from './utils';
 import { ActiveVaccinationSchemeMapper } from '../../../models';
 import { ResourceName } from './types';
+import { addOwnUpdate } from './notificationWebsocket';
 
 export type TResource = Basic;
 export const TMapper = ActiveVaccinationSchemeMapper;
+
 export interface GetArgs {
   _id?: string;
   subject?: string;
 }
+
 export type GetResponseGroups = 'byVaccinationScheme' | 'byPatient';
 const resourceName: ResourceName = 'Basic';
 const resourcePath = '/Basic' as const;
@@ -76,6 +79,40 @@ export const activeVaccinationSchemeApi = createApi({
       query: (id) => ({ url: `${resourcePath}/${id}` }),
       providesTags: (result) =>
         result ? [{ type: resourceName, id: result.id }] : [],
+    }),
+    put: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: `${resourcePath}/${resource.id}`,
+        method: 'PUT',
+        body: resource,
+      }),
+      invalidatesTags: (_result, _error, resource) => [
+        { type: resourceName, id: resource.id },
+      ],
+      onQueryStarted: (resource) => {
+        addOwnUpdate({ type: resourceName, id: resource.id });
+      },
+    }),
+    post: build.mutation<void, TResource>({
+      query: (resource) => ({
+        url: resourcePath,
+        method: 'POST',
+        body: resource,
+      }),
+      invalidatesTags: () => [{ type: resourceName, id: 'LIST' }],
+      onQueryStarted: () => {
+        addOwnUpdate({ type: resourceName, id: 'LIST' });
+      },
+    }),
+    deleteById: build.mutation<void, string>({
+      query: (id) => ({
+        url: `${resourcePath}/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, id) => [{ type: resourceName, id }],
+      onQueryStarted: (id) => {
+        addOwnUpdate({ type: resourceName, id });
+      },
     }),
   }),
 });

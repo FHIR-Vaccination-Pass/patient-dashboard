@@ -15,7 +15,7 @@ import {
   vaccinationDoseApi,
   vaccinationSchemeApi,
 } from './fhir';
-import './fhir/notificationWebsocket';
+import { initNotificationWebsocket } from './fhir/notificationWebsocket';
 
 export const store = configureStore({
   reducer: {
@@ -58,6 +58,8 @@ export const store = configureStore({
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
 // see `setupListeners` docs - takes an optional callback as the 2nd arg for customization
 setupListeners(store.dispatch);
+
+initNotificationWebsocket();
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

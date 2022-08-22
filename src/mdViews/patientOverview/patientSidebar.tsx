@@ -96,6 +96,7 @@ export const PatientSidebar = ({
         <Divider />
         {LinkItems.map((navLink) => (
           <NavItem
+            key={`/md/dashboard/patient/${patient?.id}/${navLink.link}`}
             title={navLink.name}
             icon={navLink.icon}
             navSize={navSize}
