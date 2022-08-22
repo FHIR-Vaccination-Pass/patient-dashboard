@@ -195,11 +195,9 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
   function addLocation() {
     let updatedAffectedLocations = updatedPr?.locations;
     const newCountry = allCountries.at(0);
-    const states = State.getStatesOfCountry(newCountry!.isoCode);
-    const newState = states.at(0);
     const newLocation = LocationMapper.fromModel({
       country: newCountry!.isoCode,
-      state: newState?.isoCode,
+      state: undefined,
     });
     allStateOptions.push(getStateOptionsForCountry(newCountry!.isoCode));
     if (updatedAffectedLocations) {
@@ -222,20 +220,24 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
     return { value: country.isoCode, label: country.name };
   });
 
-  const allStateOptions: { value: string; label: string }[][] = [];
+  const allStateOptions: { value: string | undefined; label: string }[][] = [];
+  const wholeCountry = { value: undefined, label: 'Entire' };
   locations.forEach((loc) => {
     const stateOptions = getStateOptionsForCountry(loc.country);
+    stateOptions.unshift(wholeCountry);
     allStateOptions.push(stateOptions);
   });
 
-  function getStateOptionsForCountry(countryCode: string) {
+  function getStateOptionsForCountry(
+    countryCode: string
+  ): { value: string | undefined; label: string }[] {
     return State.getStatesOfCountry(countryCode).map((stateOption) => {
       return { value: stateOption.isoCode, label: stateOption.name };
     });
   }
 
   return (
-    <Flex pt={'30px'} flexDirection={'column'} w={'100%'}>
+    <Flex pt={'30px'} flexDirection={'column'} w={'100%'} pr={'6px'}>
       {td && (
         <>
           <Flex
@@ -349,6 +351,7 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
                     key={`${location.country}-${location.state}`}
                     spacing={'20px'}
                     w={'100%'}
+                    mt={index !== 0 ? '5px' : '0px'}
                   >
                     <Box w={'40%'} h={'40px'}>
                       <Select
@@ -367,12 +370,11 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
                       <Select
                         value={{
                           value: location.state,
-                          label: State.getStatesOfCountry(
-                            location.country
-                          ).find(
-                            (stateOption) =>
-                              stateOption.isoCode === location.state
-                          )?.name,
+                          label:
+                            State.getStatesOfCountry(location.country).find(
+                              (stateOption) =>
+                                stateOption.isoCode === location.state
+                            )?.name || 'Entire',
                         }}
                         options={allStateOptions.at(index)}
                         isDisabled={!editMode}
@@ -386,6 +388,7 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
                       icon={<SmallCloseIcon />}
                       _hover={{ cursor: 'pointer', bg: 'gray.200' }}
                       bg={'gray.100'}
+                      isDisabled={!editMode}
                       onClick={() => {
                         setUpdatedPr(
                           updatedPr!.withLocations(
