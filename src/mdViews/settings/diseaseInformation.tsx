@@ -17,7 +17,7 @@ export default function DiseaseInformation() {
         bg={useColorModeValue('white', 'gray.900')}
         boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
         borderRadius={'10px'}
-        w={'12%'}
+        w={'300px'}
         h={'100%'}
         mb={'10px'}
         flexDirection={'column'}
