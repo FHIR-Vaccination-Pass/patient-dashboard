@@ -37,10 +37,14 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { CloseIcon, SmallCloseIcon } from '@chakra-ui/icons';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, keyBy } from 'lodash';
 import { skipToken } from '@reduxjs/toolkit/query';
 
-import { MedicationMapper, VaccinationSchemeMapper } from '../../core/models';
+import {
+  MedicationMapper,
+  VaccinationDoseMapper,
+  VaccinationSchemeMapper,
+} from '../../core/models';
 import { AddVaccinationDoseModal } from './addVaccinationDoseModal';
 import { AddVaccinationSchemeModal } from './addVaccinationSchemeModal';
 import { OptionType } from '../../core/services/util/convertArrayToOptionArray';
@@ -55,24 +59,26 @@ import {
   useVaccinationSchemes,
 } from '../../hooks';
 import { FaWrench } from 'react-icons/fa';
+import {
+  VaccinationDoseRepeatingMapper,
+  VaccinationDoseSingleMapper,
+} from '../../core/models/VaccinationDose';
+
+interface VaccinationSchemeUpdate {
+  vs: VaccinationSchemeMapper;
+  doses: (VaccinationDoseSingleMapper | VaccinationDoseRepeatingMapper)[];
+}
 
 interface VaccinationSchemeAccordionItemProps {
-  vaccinationSchemeId: string;
+  vs: VaccinationSchemeMapper;
+  doses: (VaccinationDoseSingleMapper | VaccinationDoseRepeatingMapper)[];
+  onChange: ({ vs, doses }: VaccinationSchemeUpdate) => void;
+  editMode: boolean;
 }
 
 const VaccinationSchemeAccordionItem: FC<
   VaccinationSchemeAccordionItemProps
-> = ({ vaccinationSchemeId }) => {
-  const { data: vsRaw } =
-    vaccinationSchemeApi.endpoints.getById.useQuery(vaccinationSchemeId);
-  const [putVs, { isLoading: putVsIsLoading }] =
-    vaccinationSchemeApi.endpoints.put.useMutation();
-  const vs = VaccinationSchemeMapper.fromResource(vsRaw);
-
-  const { vaccinationDoses } = useVaccinationDoses({
-    subject: vaccinationSchemeId,
-  });
-
+> = ({ vs, doses, onChange, editMode }) => {
   const {
     isOpen: isDoseOpen,
     onOpen: onDoseOpen,
@@ -81,111 +87,126 @@ const VaccinationSchemeAccordionItem: FC<
 
   return (
     <AccordionItem>
-      {vs && (
-        <>
-          <h2>
-            <AccordionButton>
-              <Box flex='1' textAlign='left'>
-                {vs.name}
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-          </h2>
-          <AccordionPanel pb={4}>
-            <Flex flexDirection={'row'}>
-              <Text color={'gray.600'} mr={'5px'}>
-                Standard Scheme
+      <>
+        <h2>
+          <AccordionButton>
+            <Box flex='1' textAlign='left'>
+              {vs.name}
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={4}>
+          <Flex flexDirection={'row'}>
+            <Text color={'gray.600'} mr={'5px'}>
+              Standard Scheme
+            </Text>
+            <Switch
+              id='email-alerts'
+              mb={'15px'}
+              colorScheme='green'
+              size={'lg'}
+              isChecked={vs.isPreferred}
+              isDisabled={!editMode}
+              onChange={() => {
+                onChange({ vs: vs.withIsPreferred(!vs.isPreferred), doses });
+              }}
+            />
+          </Flex>
+          <HStack mb={'30px'} spacing={'20px'} w={'100%'}>
+            <Flex flexDirection={'column'} w={'50%'}>
+              <Text fontSize={'sm'} color={'gray.500'}>
+                Recommended from age
               </Text>
-              <Switch
-                id='email-alerts'
-                mb={'15px'}
-                colorScheme='green'
-                size={'lg'}
-                defaultChecked={vs.isPreferred}
-                onChange={() => (vs.isPreferred = !vs.isPreferred)}
-              />
+              <NumberInput
+                defaultValue={vs.ageStart}
+                min={0}
+                max={vs.ageEnd}
+                isDisabled={!editMode}
+                onChange={(value) => {
+                  onChange({
+                    vs: vs.withAgeStart(Number(value) || undefined),
+                    doses,
+                  });
+                }}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
             </Flex>
-            <HStack mb={'30px'} spacing={'20px'} w={'100%'}>
-              <Flex flexDirection={'column'} w={'50%'}>
-                <Text fontSize={'sm'} color={'gray.500'}>
-                  Recommended from age
-                </Text>
-                <NumberInput
-                  defaultValue={vs?.ageStart}
-                  min={0}
-                  max={99}
-                  onChange={(value) => {
-                    console.error('not implemented');
-                  }}
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </Flex>
 
-              <Flex flexDirection={'column'} w={'50%'}>
-                <Text fontSize={'sm'} color={'gray.500'}>
-                  Recommended until age
-                </Text>
-                <NumberInput
-                  defaultValue={vs?.ageEnd}
-                  min={0}
-                  max={99}
-                  onChange={(value) => {
-                    if (vs) {
-                      vs.ageEnd = Number(value);
-                    }
-                  }}
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </Flex>
-            </HStack>
+            <Flex flexDirection={'column'} w={'50%'}>
+              <Text fontSize={'sm'} color={'gray.500'}>
+                Recommended until age
+              </Text>
+              <NumberInput
+                defaultValue={vs.ageEnd}
+                min={vs.ageStart}
+                max={100}
+                isDisabled={!editMode}
+                onChange={(value) => {
+                  onChange({
+                    vs: vs.withAgeEnd(Number(value) || undefined),
+                    doses,
+                  });
+                }}
+              >
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </Flex>
+          </HStack>
 
-            <TableContainer>
-              <Table variant='simple'>
-                <Thead>
-                  <Tr>
-                    <Th>Dose Number</Th>
-                    <Th>Type</Th>
-                    <Th>Dose Quantity</Th>
-                    <Th>Time Frame</Th>
-                    <Th>Notes</Th>
-                    <Th isNumeric></Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {vaccinationDoses?.map((dose) => (
-                    <Tr key={dose.id}>
-                      <Td>
-                        {dose.type === 'single'
-                          ? `${dose.numberInScheme} / ${vaccinationDoses.length}`
-                          : 'Booster'}
-                      </Td>
-                      <Td>Single</Td>
-                      <Td>{dose.doseQuantity}</Td>
-                      <Td>TODO: wrong logic! months after</Td>
-                      <Td>{dose.notes}</Td>
-                      <Td isNumeric>
+          <TableContainer>
+            <Table variant='simple'>
+              <Thead>
+                <Tr>
+                  <Th>Dose Number</Th>
+                  <Th>Type</Th>
+                  <Th>Dose Quantity</Th>
+                  <Th>Time Frame</Th>
+                  <Th>Notes</Th>
+                  <Th isNumeric></Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {doses.map((dose) => (
+                  <Tr key={dose.id}>
+                    <Td>
+                      {dose.type === 'single'
+                        ? `${dose.numberInScheme} / ${doses.length}`
+                        : 'Booster'}
+                    </Td>
+                    <Td>Single</Td>
+                    <Td>{dose.doseQuantity}</Td>
+                    <Td>TODO: wrong logic! months after</Td>
+                    <Td>{dose.notes}</Td>
+                    <Td isNumeric>
+                      {editMode ? (
                         <SmallCloseIcon
+                          w={'16px'}
+                          h={'16px'}
                           _hover={{ cursor: 'pointer' }}
                           onClick={() => {
                             console.error('not implemented');
                           }}
                         />
-                      </Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
+                      ) : (
+                        <Box w={'16px'} h={'16px'} />
+                      )}
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </TableContainer>
+          {editMode && (
             <Button
               variant={'solid'}
               color={'white'}
@@ -200,14 +221,15 @@ const VaccinationSchemeAccordionItem: FC<
             >
               Add Dose
             </Button>
-            <AddVaccinationDoseModal
-              isOpen={isDoseOpen}
-              onClose={onDoseClose}
-              vaccinationSchemeId={vaccinationSchemeId}
-            />
-          </AccordionPanel>
-        </>
-      )}
+          )}
+
+          <AddVaccinationDoseModal
+            isOpen={isDoseOpen}
+            onClose={onDoseClose}
+            vaccinationSchemeId={vs.id}
+          />
+        </AccordionPanel>
+      </>
     </AccordionItem>
   );
 };
@@ -233,6 +255,24 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
 
   const { vaccinationSchemes, isFetching: vaccinationSchemesIsFetching } =
     useVaccinationSchemes(med ? { subject: medicationId } : skipToken);
+  const [putVs, { isLoading: putVsIsLoading }] =
+    vaccinationSchemeApi.endpoints.put.useMutation();
+
+  const { vaccinationDoses, isFetching: vaccinationDosesIsFetching } =
+    useVaccinationDoses(
+      vaccinationSchemes
+        ? { subject: vaccinationSchemes.map(({ id }) => id).join(',') }
+        : skipToken
+    );
+
+  const schemes: Record<string, VaccinationSchemeUpdate> | undefined =
+    vaccinationSchemes && vaccinationDoses && {};
+  if (vaccinationSchemes && vaccinationDoses) {
+    vaccinationSchemes?.forEach((vs) => (schemes![vs.id] = { vs, doses: [] }));
+    vaccinationDoses?.forEach((dose) =>
+      schemes![dose.vaccinationSchemeId].doses.push(dose)
+    );
+  }
 
   const { organizations, idToOrganization } = useOrganizations({});
   const {
@@ -244,8 +284,14 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
   const [updatedMed, setUpdatedMed] = useState<MedicationMapper | undefined>(
     undefined
   );
+  const [updatedSchemes, setUpdatedSchemes] = useState<
+    Record<string, VaccinationSchemeUpdate> | undefined
+  >(undefined);
   const isLoading =
-    getMedIsFetching || putMedIsLoading || vaccinationSchemesIsFetching;
+    getMedIsFetching ||
+    putMedIsLoading ||
+    vaccinationSchemesIsFetching ||
+    putVsIsLoading;
   const [editMode, setEditMode] = useState<boolean>(false);
   const [toggleEditModeRequested, setToggleEditModeRequested] = useState(false);
 
@@ -262,6 +308,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
       setEditMode(false);
     } else {
       setUpdatedMed(cloneDeep(med));
+      setUpdatedSchemes(cloneDeep(schemes));
       setEditMode(true);
     }
 
@@ -277,6 +324,18 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
       return med;
     }
   }, [editMode, isLoading, med, updatedMed]);
+
+  const currentSchemes = useMemo(():
+    | Record<string, VaccinationSchemeUpdate>
+    | undefined => {
+    if (editMode) {
+      return updatedSchemes;
+    } else if (isLoading) {
+      return updatedSchemes;
+    } else {
+      return schemes;
+    }
+  }, [editMode, isLoading, schemes, updatedSchemes]);
 
   const manufacturer = useMemo((): OptionType => {
     const org = idToOrganization(currentMed?.manufacturerId);
@@ -340,6 +399,15 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
     [updatedMed]
   );
 
+  const setScheme = useCallback(
+    (value: VaccinationSchemeUpdate) => {
+      const newSchemes = cloneDeep(updatedSchemes!);
+      newSchemes[value.vs.id] = value;
+      setUpdatedSchemes(newSchemes);
+    },
+    [updatedSchemes]
+  );
+
   // options for select component
   const organizationOptions = useMemo(
     (): OptionType[] =>
@@ -359,8 +427,11 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
   );
 
   function saveVaccineInformation() {
-    if (updatedMed !== undefined) {
+    if (updatedMed !== undefined && updatedSchemes !== undefined) {
       putMed(updatedMed.toResource());
+      Object.values(updatedSchemes).forEach(({ vs, doses }) => {
+        putVs(vs.toResource());
+      });
     }
   }
 
@@ -371,6 +442,8 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
     months += d2.getMonth();
     return months <= 0 ? 0 : months;
   }
+
+  const [expandedIdxs, setExpandedIdxs] = useState<number[]>([]);
 
   return (
     <Flex flexDirection={'column'} pr={'70px'} mt={'20px'} w={'80%'}>
@@ -481,7 +554,7 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
         onChange={setDiseases}
       />
 
-      {currentMed && vaccinationSchemes && (
+      {currentMed && currentSchemes && (
         <>
           <Flex justifyContent={'space-between'}>
             <Box
@@ -502,11 +575,19 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
             />
           </Flex>
 
-          <Accordion defaultIndex={[]} allowMultiple mb={'30px'}>
-            {vaccinationSchemes.map((scheme) => (
+          <Accordion
+            index={expandedIdxs}
+            onChange={(value) => setExpandedIdxs(value as number[])}
+            allowMultiple
+            mb={'30px'}
+          >
+            {Object.values(currentSchemes).map(({ vs, doses }) => (
               <VaccinationSchemeAccordionItem
-                key={scheme.id}
-                vaccinationSchemeId={scheme.id}
+                key={vs.id}
+                vs={vs}
+                doses={doses}
+                editMode={editMode}
+                onChange={setScheme}
               />
             ))}
           </Accordion>
