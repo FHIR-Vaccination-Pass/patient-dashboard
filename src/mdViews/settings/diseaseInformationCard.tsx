@@ -7,20 +7,22 @@ import React, {
   useState,
 } from 'react';
 import {
+  Box,
   BoxProps,
   Button,
   ButtonGroup,
   Flex,
+  FormControl,
+  HStack,
   Input,
-  ListItem,
   Text,
   Textarea,
-  UnorderedList,
 } from '@chakra-ui/react';
 import { cloneDeep } from 'lodash';
 
 import {
   DiseaseMapper,
+  LocationMapper,
   PopulationRecommendationMapper,
 } from '../../core/models';
 import {
@@ -29,7 +31,9 @@ import {
 } from '../../core/services/redux/fhir';
 import { usePopulationRecommendations } from '../../hooks';
 import { FaWrench } from 'react-icons/fa';
-import { CloseIcon } from '@chakra-ui/icons';
+import { AddIcon, CloseIcon } from '@chakra-ui/icons';
+import { Country, State } from 'country-state-city';
+import Select, { SingleValue } from 'react-select';
 
 interface DiseaseInformationCardProps extends BoxProps {
   diseaseId: string;
@@ -141,11 +145,99 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
     [updatedPr]
   );
 
+  const locations = useMemo(
+    (): LocationMapper[] => updatedPr?.locations ?? [],
+    [updatedPr]
+  );
+  const setCountry = useCallback(
+    (
+      value: SingleValue<{
+        value: string;
+        label: string;
+      }>,
+      index: number
+    ): void => {
+      const state = State.getStatesOfCountry(value!.value)?.at(0);
+
+      setUpdatedPr(
+        updatedPr?.withLocations(
+          updatedPr!.locations.map((loc, i) =>
+            index === i
+              ? loc.withCountry(value!.value).withState(state!.isoCode)
+              : loc
+          )
+        )
+      );
+    },
+    [updatedPr]
+  );
+
+  const setState = useCallback(
+    (
+      value: SingleValue<{
+        value: string | undefined;
+        label: string | undefined;
+      }>,
+      index: number
+    ): void => {
+      setUpdatedPr(
+        updatedPr?.withLocations(
+          updatedPr.locations.map((loc, i) =>
+            index === i ? loc.withState(value?.value) : loc
+          )
+        )
+      );
+    },
+    [updatedPr]
+  );
+
+  function addLocation() {
+    let updatedAffectedLocations = updatedPr?.locations;
+    const newCountry = allCountries.at(0);
+    const states = State.getStatesOfCountry(newCountry!.isoCode);
+    const newState = states.at(0);
+    const newLocation = LocationMapper.fromModel({
+      country: newCountry!.isoCode,
+      state: newState?.isoCode,
+    });
+    console.log('newLocation');
+    console.log(newLocation);
+    allStateOptions.push(getStateOptionsForCountry(newCountry!.isoCode));
+    if (updatedAffectedLocations) {
+      updatedAffectedLocations.push(newLocation);
+    } else {
+      updatedAffectedLocations = [newLocation];
+    }
+    console.log(updatedAffectedLocations.at(0)!.country);
+    console.log(updatedAffectedLocations.at(0)!.state);
+    setUpdatedPr(updatedPr!.withLocations(updatedAffectedLocations));
+    console.log(updatedPr?.locations);
+  }
+
   function saveDiseaseInformation() {
     if (updatedTd !== undefined && updatedPr !== undefined) {
       putTd(updatedTd.toResource());
       putPr(updatedPr.toResource());
     }
+  }
+
+  const allCountries = Country.getAllCountries();
+  const allCountryOptions = allCountries.map((country) => {
+    return { value: country.isoCode, label: country.name };
+  });
+
+  const allStateOptions: { value: string; label: string }[][] = [];
+  locations.forEach((loc) => {
+    const stateOptions = getStateOptionsForCountry(loc.country);
+    allStateOptions.push(stateOptions);
+  });
+
+  function getStateOptionsForCountry(countryCode: string) {
+    const test = State.getStatesOfCountry(countryCode).map((stateOption) => {
+      return { value: stateOption.isoCode, label: stateOption.name };
+    });
+    // console.log(test); // works
+    return test;
   }
 
   return (
@@ -250,7 +342,7 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
                 Affected Locations
               </Text>
 
-              <UnorderedList
+              <FormControl
                 p={'10px 10px 10px 25px'}
                 border={'1px'}
                 borderColor={'gray.200'}
@@ -258,15 +350,58 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
                 mb={'10px'}
                 ml={'0px'}
               >
-                {pr?.locations.map((location) => (
-                  <ListItem
-                    key={`${location.country}/${location.state}`}
-                    color={'gray.500'}
+                {locations.map((location, index) => (
+                  <HStack
+                    key={`${location.country}-${location.state}`}
+                    spacing={'20px'}
+                    w={'100%'}
                   >
-                    {location.country}
-                  </ListItem>
+                    <Box w={'40%'} h={'40px'}>
+                      <Select
+                        value={{
+                          value: location.country,
+                          label: allCountries.find(
+                            (country) => country.isoCode === location.country
+                          )!.name,
+                        }}
+                        options={allCountryOptions}
+                        isDisabled={!editMode}
+                        onChange={(value) => setCountry(value, index)}
+                      />
+                    </Box>
+                    <Box w={'40%'} h={'40px'}>
+                      <Select
+                        value={{
+                          value: location?.state,
+                          label: location?.state,
+                        }}
+                        options={allStateOptions.at(index)}
+                        isDisabled={!editMode}
+                        onChange={(value) => {
+                          setState(value, index);
+                        }}
+                      />
+                    </Box>
+                  </HStack>
                 ))}
-              </UnorderedList>
+              </FormControl>
+              <Button
+                leftIcon={<AddIcon />}
+                variant={'solid'}
+                color={'white'}
+                bg={'green.400'}
+                _hover={{ bg: 'green.500' }}
+                _active={{ bg: 'green.500' }}
+                _focus={{
+                  bg: 'green.500',
+                }}
+                size={'sm'}
+                w={'30%'}
+                onClick={addLocation}
+                isDisabled={!editMode}
+              >
+                Add Location
+              </Button>
             </Flex>
             <Flex flexDirection={'column'} w={'70%'} ml={'50px'}>
               <Text fontSize={'sm'} color={'gray.500'}>
