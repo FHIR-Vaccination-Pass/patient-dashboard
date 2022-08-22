@@ -20,6 +20,7 @@ import { PatientStatus } from './mdViews/patientOverview/patientStatus';
 import { PatientHistory } from './mdViews/patientOverview/patientHistory';
 import { PatientDiseaseRecord } from './mdViews/patientOverview/diseaseRecord/patientDiseaseRecord';
 import { PatientVacationPlans } from './mdViews/patientOverview/patientVacationPlans';
+import { ImmunizationInformationTab } from './mdViews/patientOverview/diseaseRecord/immunizationInformationTab';
 
 const RequirePatientAuth: FC = ({ children }) => {
   const { initialized, keycloak } = useKeycloak();
@@ -100,7 +101,9 @@ const AppRoutes: FC = () => (
       <Route path='patient/:patientId' element={<PatientOverview />}>
         <Route path='' element={<PatientStatus />} />
         <Route path='history' element={<PatientHistory />} />
-        <Route path='record' element={<PatientDiseaseRecord />} />
+        <Route path='record' element={<PatientDiseaseRecord />}>
+          <Route path=':diseaseCode' element={<ImmunizationInformationTab />} />
+        </Route>
         <Route path='vacations' element={<PatientVacationPlans />} />
       </Route>
     </Route>

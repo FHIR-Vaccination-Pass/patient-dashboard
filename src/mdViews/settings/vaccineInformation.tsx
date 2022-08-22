@@ -30,10 +30,10 @@ export default function VaccineInformation() {
         bg={useColorModeValue('white', 'gray.900')}
         boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
         borderRadius={'10px'}
-        flexDirection={'column'}
-        w={'250px'}
-        h={'90vh'}
+        w={'300px'}
+        h={'100%'}
         mb={'10px'}
+        flexDirection={'column'}
         mr={'50px'}
         justifyContent={'space-between'}
       >
