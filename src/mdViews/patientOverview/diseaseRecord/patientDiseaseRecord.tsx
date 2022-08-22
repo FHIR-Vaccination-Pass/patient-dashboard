@@ -44,7 +44,6 @@ export function PatientDiseaseRecord() {
                 to={currentDiseaseId ?? ''}
                 onClick={() => {
                   setCurrentDiseaseId(td.id);
-                  console.log(currentDiseaseId);
                 }}
               >
                 <Flex
