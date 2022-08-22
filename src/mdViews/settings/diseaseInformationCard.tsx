@@ -14,6 +14,7 @@ import {
   Flex,
   FormControl,
   HStack,
+  IconButton,
   Input,
   Text,
   Textarea,
@@ -31,7 +32,7 @@ import {
 } from '../../core/services/redux/fhir';
 import { usePopulationRecommendations } from '../../hooks';
 import { FaWrench } from 'react-icons/fa';
-import { AddIcon, CloseIcon } from '@chakra-ui/icons';
+import { AddIcon, CloseIcon, SmallCloseIcon } from '@chakra-ui/icons';
 import { Country, State } from 'country-state-city';
 import Select, { SingleValue } from 'react-select';
 
@@ -146,8 +147,8 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
   );
 
   const locations = useMemo(
-    (): LocationMapper[] => updatedPr?.locations ?? [],
-    [updatedPr]
+    (): LocationMapper[] => currentPr?.locations ?? [],
+    [currentPr]
   );
   const setCountry = useCallback(
     (
@@ -161,7 +162,7 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
 
       setUpdatedPr(
         updatedPr?.withLocations(
-          updatedPr!.locations.map((loc, i) =>
+          updatedPr.locations.map((loc, i) =>
             index === i
               ? loc.withCountry(value!.value).withState(state!.isoCode)
               : loc
@@ -200,18 +201,13 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
       country: newCountry!.isoCode,
       state: newState?.isoCode,
     });
-    console.log('newLocation');
-    console.log(newLocation);
     allStateOptions.push(getStateOptionsForCountry(newCountry!.isoCode));
     if (updatedAffectedLocations) {
       updatedAffectedLocations.push(newLocation);
     } else {
       updatedAffectedLocations = [newLocation];
     }
-    console.log(updatedAffectedLocations.at(0)!.country);
-    console.log(updatedAffectedLocations.at(0)!.state);
     setUpdatedPr(updatedPr!.withLocations(updatedAffectedLocations));
-    console.log(updatedPr?.locations);
   }
 
   function saveDiseaseInformation() {
@@ -233,11 +229,9 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
   });
 
   function getStateOptionsForCountry(countryCode: string) {
-    const test = State.getStatesOfCountry(countryCode).map((stateOption) => {
+    return State.getStatesOfCountry(countryCode).map((stateOption) => {
       return { value: stateOption.isoCode, label: stateOption.name };
     });
-    // console.log(test); // works
-    return test;
   }
 
   return (
@@ -372,8 +366,13 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
                     <Box w={'40%'} h={'40px'}>
                       <Select
                         value={{
-                          value: location?.state,
-                          label: location?.state,
+                          value: location.state,
+                          label: State.getStatesOfCountry(
+                            location.country
+                          ).find(
+                            (stateOption) =>
+                              stateOption.isoCode === location.state
+                          )?.name,
                         }}
                         options={allStateOptions.at(index)}
                         isDisabled={!editMode}
@@ -382,6 +381,19 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
                         }}
                       />
                     </Box>
+                    <IconButton
+                      aria-label='Remove location'
+                      icon={<SmallCloseIcon />}
+                      _hover={{ cursor: 'pointer', bg: 'gray.200' }}
+                      bg={'gray.100'}
+                      onClick={() => {
+                        setUpdatedPr(
+                          updatedPr!.withLocations(
+                            locations.filter((l, i) => i !== index)
+                          )
+                        );
+                      }}
+                    />
                   </HStack>
                 ))}
               </FormControl>
