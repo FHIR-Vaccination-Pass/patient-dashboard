@@ -184,7 +184,7 @@ const VaccinationSchemeAccordionItem: FC<
                         ? `${dose.numberInScheme} / ${doses.length}`
                         : 'Booster'}
                     </Td>
-                    <Td>Single</Td>
+                    <Td>{dose.type === 'single' ? 'Single' : 'Repeating'}</Td>
                     <Td>{dose.doseQuantity}</Td>
                     <Td>
                       {dose.type === 'single'
