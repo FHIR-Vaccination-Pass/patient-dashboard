@@ -60,7 +60,6 @@ export function MDOverview() {
               <Th>Name</Th>
               <Th>Birthday</Th>
               <Th>Status</Th>
-              <Th>Tag</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -80,9 +79,6 @@ export function MDOverview() {
                   >
                     {patientStatusMap.get(patient.id)?.status}
                   </Badge>
-                </Td>
-                <Td>
-                  <Badge>Tag</Badge>
                 </Td>
               </Tr>
             ))}
