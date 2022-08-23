@@ -6,10 +6,10 @@ export type GetResponse<TResource, T extends string> = {
   entities: Record<string, TResource>;
 } & NestedCartesian<T>;
 
-export function storeIdRecursive<T extends string>(
-  response: NestedCartesian<T>,
+export function storeIdRecursive(
+  response: any,
   id: string,
-  pairs: [T, keyof NestedCartesian<T>[T]][],
+  pairs: [string, string][],
   maxDepth: number = 4
 ) {
   if (maxDepth <= 0) {
@@ -17,11 +17,11 @@ export function storeIdRecursive<T extends string>(
   }
 
   for (const [key, value] of pairs) {
-    const otherPairs = pairs.filter(([k, v]) => k !== key || v !== value) as [
-      Exclude<T, typeof key>,
-      string
-    ][];
+    const otherPairs = pairs.filter(([k, v]) => k !== key || v !== value);
 
+    if (!(key in response)) {
+      response[key] = {};
+    }
     if (!(value in response[key])) {
       response[key][value] = Object.fromEntries([
         ['ids', []],
