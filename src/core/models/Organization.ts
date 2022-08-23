@@ -1,6 +1,7 @@
 import { Organization as FHIROrganization } from 'fhir/r4';
 import { cloneDeep } from 'lodash';
 import { settings } from '../../settings';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface Organization {
   id: string;
@@ -34,8 +35,9 @@ export class OrganizationMapper implements Organization {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
-  static fromModel({ name }: Organization): OrganizationMapper {
+  static fromModel({ id, name }: Organization): OrganizationMapper {
     return new OrganizationMapper({
+      id: id || uuidv4(),
       resourceType: 'Organization',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-organization`] },
       name,

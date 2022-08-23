@@ -72,14 +72,14 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
 
   const {
     idToOrganization,
-    vaccinationSchemes,
+    vaccinationSchemesData,
     idToVaccinationScheme,
-    vaccinationDoses,
+    vaccinationDosesData,
     idToVaccinationDose,
   } = useMedicationInfo(
     medicationsForDisease?.ids.map((id: string) => idToMedication(id)!)
   );
-  const standardVaccinationSchemes = vaccinationSchemes?.byType['standard'];
+  const standardVaccinationSchemes = vaccinationSchemesData?.byType['standard'];
 
   const [showPersonalizedInfo, setShowPersonalizedInfo] = useBoolean(false);
   const status = calcAggregateImmunizationStatus(
@@ -156,7 +156,7 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
               );
             const allDoses =
               vs &&
-              vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
+              vaccinationDosesData?.byVaccinationScheme[vs.id]?.ids.map(
                 idToVaccinationDose
               );
             const dose = idToVaccinationDose(ir?.vaccinationDoseId);
@@ -202,7 +202,7 @@ const VaccineDetailHeader: FC<VaccineDetailHeaderProps> = ({ disease }) => {
                 );
               const allDoses =
                 vs &&
-                vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
+                vaccinationDosesData?.byVaccinationScheme[vs.id]?.ids.map(
                   idToVaccinationDose
                 );
               const dose = idToVaccinationDose(imm?.vaccinationDoseId);
@@ -257,14 +257,14 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({ disease }) => {
 
   const {
     idToOrganization,
-    vaccinationSchemes,
+    vaccinationSchemesData,
     idToVaccinationScheme,
-    vaccinationDoses,
+    vaccinationDosesData,
     idToVaccinationDose,
   } = useMedicationInfo(
     medicationsForDisease?.ids.map((id: string) => idToMedication(id)!)
   );
-  const standardVaccinationSchemes = vaccinationSchemes?.byType['standard'];
+  const standardVaccinationSchemes = vaccinationSchemesData?.byType['standard'];
 
   const generatePopulationRecommendationText = () => {
     if (pr === undefined) {
@@ -377,7 +377,7 @@ const VaccineDetailBody: FC<VaccineDetailBodyProps> = ({ disease }) => {
               );
             const doses =
               vs &&
-              vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
+              vaccinationDosesData?.byVaccinationScheme[vs.id]?.ids.map(
                 idToVaccinationDose
               );
 

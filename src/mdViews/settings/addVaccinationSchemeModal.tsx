@@ -1,5 +1,4 @@
 import {
-  BoxProps,
   Button,
   FormControl,
   FormLabel,
@@ -11,34 +10,37 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Switch,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { VaccinationScheme, VaccinationSchemeType } from '../../core/models';
-import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
 import Select from 'react-select';
+import { v4 as uuidv4 } from 'uuid';
 
-interface ModalProps extends BoxProps {
+interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   medicationId: string;
+  onChange: (model: VaccinationScheme) => void;
 }
+
+const defaultVaccinationScheme = (medicationId: string): VaccinationScheme => ({
+  id: uuidv4(),
+  name: '',
+  medicationId,
+  type: 'standard',
+  isPreferred: false,
+  ageStart: undefined,
+  ageEnd: undefined,
+});
 
 export const AddVaccinationSchemeModal = ({
   isOpen,
   onClose,
   medicationId,
+  onChange,
 }: ModalProps) => {
-  const mapper = useMapper();
-  const vaccinationScheme = {
-    name: undefined,
-    type: 'standard',
-    isPreferred: false,
-    ageStart: undefined,
-    ageEnd: undefined,
-    medicationId: medicationId,
-  } as unknown as VaccinationScheme;
-  const initialRef = React.useRef(null);
+  const [vs, setVs] = useState(defaultVaccinationScheme(medicationId));
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -49,11 +51,12 @@ export const AddVaccinationSchemeModal = ({
           <FormControl>
             <FormLabel>Name</FormLabel>
             <Input
-              ref={initialRef}
-              placeholder=''
-              onChange={(value) =>
-                (vaccinationScheme.name = value.target.value)
-              }
+              value={vs.name}
+              onChange={({
+                target: { value },
+              }: ChangeEvent<HTMLInputElement>) => {
+                setVs({ ...vs, name: value });
+              }}
             />
           </FormControl>
 
@@ -65,48 +68,16 @@ export const AddVaccinationSchemeModal = ({
                 label: 'Normal',
               }}
               options={[
-                { value: 'standard', label: 'Normal' },
+                { value: 'standard', label: 'Standard' },
                 { value: 'fast', label: 'Fast' },
+                { value: 'booster', label: 'Booster' },
               ]}
               onChange={(newValue) => {
-                if (newValue) {
-                  vaccinationScheme.type =
-                    newValue.value as VaccinationSchemeType;
-                }
+                setVs({
+                  ...vs,
+                  type: newValue!.value as VaccinationSchemeType,
+                });
               }}
-            />
-          </FormControl>
-
-          <FormControl mt={4}>
-            <FormLabel>Preferred Scheme</FormLabel>
-            <Switch
-              id='preferredScheme'
-              mb={'15px'}
-              colorScheme='green'
-              size={'lg'}
-              onChange={() =>
-                (vaccinationScheme.isPreferred = !vaccinationScheme.isPreferred)
-              }
-            />
-          </FormControl>
-
-          <FormControl mt={4}>
-            <FormLabel>Minimum Age</FormLabel>
-            <Input
-              placeholder=''
-              onChange={(value) =>
-                (vaccinationScheme.ageStart = Number(value.target.value))
-              }
-            />
-          </FormControl>
-
-          <FormControl mt={4}>
-            <FormLabel>Maximum Age</FormLabel>
-            <Input
-              placeholder=''
-              onChange={(value) =>
-                (vaccinationScheme.ageEnd = Number(value.target.value))
-              }
             />
           </FormControl>
         </ModalBody>
@@ -116,13 +87,21 @@ export const AddVaccinationSchemeModal = ({
             colorScheme='blue'
             mr={3}
             onClick={() => {
-              mapper.saveVaccinationScheme(vaccinationScheme);
+              onChange(vs);
+              setVs(defaultVaccinationScheme(medicationId));
               onClose();
             }}
           >
             Save
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button
+            onClick={() => {
+              setVs(defaultVaccinationScheme(medicationId));
+              onClose();
+            }}
+          >
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

@@ -1,6 +1,5 @@
 import {
   Box,
-  BoxProps,
   Button,
   Flex,
   FormControl,
@@ -14,70 +13,82 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import {
   AgeUnit,
   VaccinationDoseRepeating,
   VaccinationDoseSingle,
 } from '../../core/models';
 import Select from 'react-select';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
+import { v4 as uuidv4 } from 'uuid';
 
-interface ModalProps extends BoxProps {
+interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   vaccinationSchemeId: string;
+  onChange: (model: VaccinationDoseSingle | VaccinationDoseRepeating) => void;
 }
 
-enum DOSETYPE {
-  SINGLE = 'single',
-  REPEATING = 'repeating',
-}
+type DoseType = 'single' | 'repeating';
 
-/*
-  doseQuantity: number;
-  isProtected: boolean;
-  notes: string;
-  vaccinationSchemeId: string;
+const defaultSingleDose = (
+  vaccinationSchemeId: string
+): VaccinationDoseSingle => ({
+  type: 'single',
+  id: uuidv4(),
+  vaccinationSchemeId,
+  doseQuantity: 0,
+  isProtected: false,
+  notes: 'Note',
+  numberInScheme: 1,
+  timeframeStart: 0,
+  timeframeEnd: 0,
+});
 
-  SINGLE:
-  numberInScheme: number;
-  timeStart: Date;
-  timeEnd: Date;
-
-  REPEATING:
-  interval: { value: { value: number; code: INTERVAL } };
- */
+const defaultRepeatingDose = (
+  vaccinationSchemeId: string
+): VaccinationDoseRepeating => ({
+  type: 'repeating',
+  id: uuidv4(),
+  vaccinationSchemeId,
+  doseQuantity: 0,
+  isProtected: false,
+  notes: 'Note',
+  interval: {
+    value: 0,
+    code: 'd',
+  },
+});
 
 export const AddVaccinationDoseModal = ({
   isOpen,
   onClose,
   vaccinationSchemeId,
+  onChange,
 }: ModalProps) => {
-  const mapper = useMapper();
-  const [doseType, setDoseType] = useState<DOSETYPE>(DOSETYPE.SINGLE);
-
-  const [doseQuantity, setDoseQuantity] = useState<number | undefined>(
-    undefined
+  const [doseType, setDoseType] = useState<DoseType>('single');
+  const [singleDose, setSingleDose] = useState(
+    defaultSingleDose(vaccinationSchemeId)
   );
-  const [notes, setNotes] = useState<string | undefined>(undefined);
-
-  // Repeating dose
-  const [intervalValue, setIntervalValue] = useState<number | undefined>(
-    undefined
+  const [repeatingDose, setRepeatingDose] = useState(
+    defaultRepeatingDose(vaccinationSchemeId)
   );
-  const [intervalCode, setIntervalCode] = useState<AgeUnit>('mo');
-
-  // Single dose
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [numberInScheme, setNumberInScheme] = useState<number | undefined>(
-    undefined
+  const currentDose = useMemo(
+    () => (doseType === 'single' ? singleDose : repeatingDose),
+    [doseType, singleDose, repeatingDose]
+  );
+  const setCurrentDose = useCallback(
+    (dose: VaccinationDoseSingle | VaccinationDoseRepeating): void => {
+      if (doseType === 'single') {
+        setSingleDose(dose as VaccinationDoseSingle);
+      } else {
+        setRepeatingDose(dose as VaccinationDoseRepeating);
+      }
+    },
+    [doseType, setSingleDose, setRepeatingDose]
   );
 
-  const initialRef = React.useRef(null);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -88,14 +99,13 @@ export const AddVaccinationDoseModal = ({
           <FormControl>
             <FormLabel>Type</FormLabel>
             <Select
-              ref={initialRef}
-              defaultValue={{
-                value: DOSETYPE.SINGLE,
-                label: 'Single',
+              value={{
+                value: doseType,
+                label: doseType.slice(0, 1).toUpperCase() + doseType.slice(1),
               }}
               options={[
-                { value: DOSETYPE.SINGLE, label: 'Single' },
-                { value: DOSETYPE.REPEATING, label: 'Repeating' },
+                { value: 'single', label: 'Single' },
+                { value: 'repeating', label: 'Repeating' },
               ]}
               onChange={(newValue) => {
                 setDoseType(newValue!.value);
@@ -106,9 +116,13 @@ export const AddVaccinationDoseModal = ({
           <FormControl mt={4}>
             <FormLabel>Dose Quantity</FormLabel>
             <Input
-              placeholder=''
-              onChange={(value) => {
-                setDoseQuantity(Number(value.target.value));
+              type={'number'}
+              step={0.01}
+              value={currentDose.doseQuantity}
+              onChange={({
+                target: { value },
+              }: ChangeEvent<HTMLInputElement>) => {
+                setCurrentDose({ ...currentDose, doseQuantity: Number(value) });
               }}
             />
           </FormControl>
@@ -116,68 +130,103 @@ export const AddVaccinationDoseModal = ({
           <FormControl mt={4}>
             <FormLabel>Notes</FormLabel>
             <Input
-              placeholder=''
-              onChange={(value) => {
-                setNotes(value.target.value);
+              value={currentDose.notes}
+              onChange={({
+                target: { value },
+              }: ChangeEvent<HTMLInputElement>) => {
+                setCurrentDose({ ...currentDose, notes: value });
               }}
             />
           </FormControl>
 
-          {doseType === DOSETYPE.SINGLE && (
+          {doseType === 'single' && (
             <>
               <FormControl mt={4}>
                 <FormLabel>Dose Number</FormLabel>
                 <Input
-                  placeholder=''
-                  onChange={(value) => {
-                    setNumberInScheme(Number(value.target.value));
+                  type={'number'}
+                  min={1}
+                  value={singleDose.numberInScheme}
+                  onChange={({
+                    target: { value },
+                  }: ChangeEvent<HTMLInputElement>) => {
+                    setSingleDose({
+                      ...singleDose,
+                      numberInScheme: Number(value),
+                    });
                   }}
                 />
               </FormControl>
 
               <FormControl mt={4}>
-                <FormLabel>Time Start</FormLabel>
-                <DatePicker
-                  selected={startDate}
-                  onChange={(date: Date) => setStartDate(date)}
+                <FormLabel>Timeframe Start (d)</FormLabel>
+                <Input
+                  type={'number'}
+                  min={0}
+                  max={singleDose.timeframeEnd}
+                  value={singleDose.timeframeStart ?? ''}
+                  onChange={({
+                    target: { value },
+                  }: ChangeEvent<HTMLInputElement>) => {
+                    setSingleDose({
+                      ...singleDose,
+                      timeframeStart: Number(value) || undefined,
+                    });
+                  }}
                 />
               </FormControl>
               <FormControl mt={4}>
-                <FormLabel>Time End</FormLabel>
-                <DatePicker
-                  selected={endDate}
-                  onChange={(date: Date) => setEndDate(date)}
+                <FormLabel>Timeframe End (d)</FormLabel>
+                <Input
+                  type={'number'}
+                  min={singleDose.timeframeStart}
+                  value={singleDose.timeframeEnd ?? ''}
+                  onChange={({
+                    target: { value },
+                  }: ChangeEvent<HTMLInputElement>) => {
+                    setSingleDose({
+                      ...singleDose,
+                      timeframeEnd: Number(value) || undefined,
+                    });
+                  }}
                 />
               </FormControl>
             </>
           )}
 
-          {doseType === DOSETYPE.REPEATING && (
+          {doseType === 'repeating' && (
             <Flex flexDirection={'row'}>
               <FormControl mt={4} mr={3}>
                 <FormLabel alignSelf={'flex-start'}>Interval</FormLabel>
                 <Input
-                  alignSelf={'flex-end'}
-                  placeholder=''
-                  onChange={(value) =>
-                    setIntervalValue(Number(value.target.value))
-                  }
+                  type={'number'}
+                  min={0}
+                  value={repeatingDose.interval.value}
+                  onChange={({
+                    target: { value },
+                  }: ChangeEvent<HTMLInputElement>) => {
+                    setRepeatingDose({
+                      ...repeatingDose,
+                      interval: {
+                        ...repeatingDose.interval,
+                        value: Number(value),
+                      },
+                    });
+                  }}
                 />
               </FormControl>
               <Box alignSelf={'flex-end'} w={'100px'} h={'40px'}>
                 <Select
-                  defaultValue={{
-                    value: 'mo',
-                    label: 'M',
-                  }}
-                  options={[
-                    { value: 'd', label: 'D' },
-                    { value: 'wk', label: 'W' },
-                    { value: 'mo', label: 'M' },
-                    { value: 'a', label: 'Y' },
-                  ]}
+                  value={{ value: 'd', label: 'D' }}
+                  options={[{ value: 'd', label: 'D' }]}
                   onChange={(newValue) => {
-                    newValue && setIntervalCode(newValue.value as AgeUnit);
+                    setRepeatingDose({
+                      ...repeatingDose,
+                      interval: {
+                        ...repeatingDose.interval,
+                        code: newValue!.value as AgeUnit,
+                      },
+                    });
                   }}
                 />
               </Box>
@@ -190,35 +239,23 @@ export const AddVaccinationDoseModal = ({
             colorScheme='blue'
             mr={3}
             onClick={() => {
-              if (doseType === DOSETYPE.SINGLE) {
-                const singleDose = {
-                  doseQuantity: doseQuantity,
-                  isProtected: false,
-                  notes: notes,
-                  vaccinationSchemeId: vaccinationSchemeId,
-                  startDate: startDate,
-                  endDate: endDate,
-                  numberInScheme: numberInScheme,
-                } as unknown as VaccinationDoseSingle;
-                mapper.saveDose(singleDose);
-              } else {
-                const repeatingDose = {
-                  doseQuantity: doseQuantity,
-                  isProtected: false,
-                  notes: notes,
-                  vaccinationSchemeId: vaccinationSchemeId,
-                  interval: {
-                    value: { value: intervalValue, code: intervalCode },
-                  },
-                } as unknown as VaccinationDoseRepeating;
-                mapper.saveDose(repeatingDose);
-              }
+              onChange(currentDose);
+              setSingleDose(defaultSingleDose(vaccinationSchemeId));
+              setRepeatingDose(defaultRepeatingDose(vaccinationSchemeId));
               onClose();
             }}
           >
             Save
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button
+            onClick={() => {
+              setSingleDose(defaultSingleDose(vaccinationSchemeId));
+              setRepeatingDose(defaultRepeatingDose(vaccinationSchemeId));
+              onClose();
+            }}
+          >
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

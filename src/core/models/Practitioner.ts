@@ -8,6 +8,7 @@ import {
 } from 'fhir/r4';
 import { cloneDeep } from 'lodash';
 import { settings } from '../../settings';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface Practitioner {
   id: string;
@@ -41,8 +42,9 @@ export class PractitionerMapper {
       this.fromResource(id === undefined ? undefined : lookupFunc(id));
   }
 
-  static fromModel({ name }: Practitioner): PractitionerMapper {
+  static fromModel({ id, name }: Practitioner): PractitionerMapper {
     return new PractitionerMapper({
+      id: id || uuidv4(),
       resourceType: 'Practitioner',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-practitioner`] },
       name: [HumanNameMapper.fromModel(name).toResource()],

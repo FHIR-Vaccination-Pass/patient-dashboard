@@ -8,6 +8,7 @@ import {
 } from 'fhir/r4';
 import { settings } from '../../settings';
 import { cloneDeep } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface Medication {
   id: string;
@@ -46,6 +47,7 @@ export class MedicationMapper implements Medication {
   }
 
   static fromModel({
+    id,
     code,
     form,
     manufacturerId,
@@ -53,6 +55,7 @@ export class MedicationMapper implements Medication {
     targetDiseaseCodes,
   }: Medication): MedicationMapper {
     return new MedicationMapper({
+      id: id || uuidv4(),
       resourceType: 'Medication',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-medication`] },
       code: {

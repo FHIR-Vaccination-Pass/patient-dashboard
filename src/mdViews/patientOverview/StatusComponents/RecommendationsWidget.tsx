@@ -22,7 +22,7 @@ export const RecommendationsWidget: FC = () => {
     medications,
     idToMedication,
   } = useMedications({});
-  const { idToVaccinationScheme, vaccinationDoses, idToVaccinationDose } =
+  const { idToVaccinationScheme, vaccinationDosesData, idToVaccinationDose } =
     useMedicationInfo(medications);
 
   return (
@@ -56,7 +56,7 @@ export const RecommendationsWidget: FC = () => {
           const vs = dose && idToVaccinationScheme(dose?.vaccinationSchemeId);
           const allDoses =
             vs &&
-            vaccinationDoses?.byVaccinationScheme[vs.id]?.ids.map(
+            vaccinationDosesData?.byVaccinationScheme[vs.id]?.ids.map(
               idToVaccinationDose
             );
 

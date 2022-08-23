@@ -32,15 +32,17 @@ export const vaccinationDoseApi = createApi({
   tagTypes: [resourceName],
   endpoints: (build) => ({
     get: build.query<GetResponse<TResource, GetResponseGroups>, GetArgs>({
-      query: () => ({
+      query: (args) => ({
         url: resourcePath,
         params: {
+          ...args,
           code: 'VaccinationDose',
           _profile: `${settings.fhir.profileBaseUrl}/vp-vaccination-dose`,
         },
       }),
       transformResponse: ({ entry }: Bundle) => {
-        const resources = entry!.map(({ resource }) => resource! as TResource);
+        const resources =
+          entry?.map(({ resource }) => resource! as TResource) ?? [];
 
         const response: GetResponse<TResource, GetResponseGroups> = {
           ids: [],

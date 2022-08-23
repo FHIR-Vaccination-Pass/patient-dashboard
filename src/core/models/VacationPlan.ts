@@ -6,6 +6,7 @@ import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface VacationPlan {
   id: string;
@@ -50,11 +51,13 @@ export class VacationPlanMapper {
   }
 
   fromModel({
+    id,
     departureDate,
     locations,
     patientId,
   }: VacationPlan): VacationPlanMapper {
     return new VacationPlanMapper({
+      id: id || uuidv4(),
       resourceType: 'Basic',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-vacation-plan`] },
       code: { coding: [{ code: 'VacationPlan' }] },
