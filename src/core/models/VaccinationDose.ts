@@ -3,6 +3,7 @@ import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
 import { cloneDeep } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 // normalize to days
 export type AgeUnit = 'min' | 'h' | 'd' | 'wk' | 'mo' | 'a';
@@ -111,7 +112,7 @@ export class VaccinationDoseMapper implements VaccinationDose {
     model: VaccinationDoseSingle | VaccinationDoseRepeating
   ): VaccinationDoseSingleMapper | VaccinationDoseRepeatingMapper {
     return VaccinationDoseMapper.fromResource({
-      id: model.id,
+      id: model.id || uuidv4(),
       resourceType: 'Basic',
       meta: {
         profile: [`${settings.fhir.profileBaseUrl}/vp-vaccination-dose`],

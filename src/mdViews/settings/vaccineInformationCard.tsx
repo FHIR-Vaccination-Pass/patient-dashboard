@@ -291,13 +291,15 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
   const [deleteDoseById, { isLoading: deleteDoseIsLoading }] =
     vaccinationDoseApi.endpoints.deleteById.useMutation();
 
-  const schemes: Record<string, VaccinationSchemeUpdate> | undefined =
-    vaccinationSchemes && vaccinationDoses && {};
-  if (vaccinationSchemes && vaccinationDoses) {
-    vaccinationSchemes?.forEach((vs) => (schemes![vs.id] = { vs, doses: [] }));
-    vaccinationDoses?.forEach((dose) =>
-      schemes![dose.vaccinationSchemeId].doses.push(dose)
-    );
+  let schemes: Record<string, VaccinationSchemeUpdate> | undefined = undefined;
+  if (vaccinationSchemes !== undefined && vaccinationDoses !== undefined) {
+    schemes = {};
+    vaccinationSchemes.forEach((vs) => (schemes![vs.id] = { vs, doses: [] }));
+    vaccinationDoses.forEach((dose) => {
+      if (dose.vaccinationSchemeId in schemes!) {
+        schemes![dose.vaccinationSchemeId].doses.push(dose);
+      }
+    });
   }
 
   const { organizations, idToOrganization } = useOrganizations({});
@@ -474,7 +476,8 @@ export const VaccineInformationCard: FC<VaccineInformationCardProps> = ({
       Object.values(updatedSchemes).forEach(({ vs, doses }) => {
         putVs(vs.toResource());
 
-        const originalDosesIds = schemes![vs.id].doses.map(({ id }) => id);
+        const originalDosesIds =
+          schemes![vs.id]?.doses.map(({ id }) => id) ?? [];
         const newDosesIds = doses.map(({ id }) => id);
 
         doses.forEach((dose) => {

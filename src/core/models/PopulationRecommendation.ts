@@ -9,6 +9,7 @@ import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
 import { cloneDeep } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface PopulationRecommendation {
   id: string;
@@ -63,7 +64,7 @@ export class PopulationRecommendationMapper
     diseaseId,
   }: PopulationRecommendation): PopulationRecommendationMapper {
     const newPopulationRecommendation = new PopulationRecommendationMapper({
-      id,
+      id: id || uuidv4(),
       resourceType: 'Basic',
       meta: {
         profile: [

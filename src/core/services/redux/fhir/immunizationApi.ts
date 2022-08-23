@@ -48,7 +48,8 @@ export const immunizationApi = createApi({
         },
       }),
       transformResponse: ({ entry }: Bundle) => {
-        const resources = entry!.map(({ resource }) => resource! as TResource);
+        const resources =
+          entry?.map(({ resource }) => resource! as TResource) ?? [];
 
         const response: GetResponse<TResource, GetResponseGroups> = {
           ids: [],

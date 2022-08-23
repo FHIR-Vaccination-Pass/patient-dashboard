@@ -9,6 +9,7 @@ import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 
 import { settings } from '../../settings';
 import { cloneDeep } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface Disease {
   id: string;
@@ -54,7 +55,7 @@ export class DiseaseMapper implements Disease {
 
   static fromModel({ id, code, name, description }: Disease): DiseaseMapper {
     return new DiseaseMapper({
-      id,
+      id: id || uuidv4(),
       resourceType: 'Basic',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-target-disease`] },
       code: { coding: [{ code: 'TargetDisease' }] },

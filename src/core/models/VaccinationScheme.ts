@@ -3,6 +3,7 @@ import fhirpath from 'fhirpath';
 import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
 import { cloneDeep } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 export type VaccinationSchemeType = 'standard' | 'fast' | 'booster';
 
@@ -61,7 +62,7 @@ export class VaccinationSchemeMapper implements VaccinationScheme {
     medicationId,
   }: VaccinationScheme): VaccinationSchemeMapper {
     return new VaccinationSchemeMapper({
-      id,
+      id: id || uuidv4(),
       resourceType: 'Basic',
       meta: {
         profile: [`${settings.fhir.profileBaseUrl}/vp-vaccination-scheme`],

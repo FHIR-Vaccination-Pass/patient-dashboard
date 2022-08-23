@@ -13,75 +13,51 @@ import {
   ModalOverlay,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { useMapper } from '../../core/services/resourceMapper/ResourceMapperContext';
-import Select, { OnChangeValue } from 'react-select';
-import { Medication } from '../../core/models/Medication';
-import {
-  convertArrayToOptionArray,
-  OptionType,
-} from '../../core/services/util/convertArrayToOptionArray';
+import Select from 'react-select';
+import { v4 as uuidv4 } from 'uuid';
+import { Medication, MedicationMapper } from '../../core/models';
+import { medicationApi } from '../../core/services/redux/fhir';
+import { useOrganizations, useTargetDiseases } from '../../hooks';
 
 interface ModalProps extends BoxProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-/*
-  id: string;
-  code: CodeableConcept;
-  form: CodeableConcept;
-  manufacturerId: string; // id refers to an Organization id
-  tradeName: string;
-  targetDiseaseIds: string[];
- */
+const defaultVaccine = (): Medication => ({
+  id: uuidv4(),
+  code: { coding: { system: 'http://fhir.de/CodeSystem/ifa/pzn', code: '' } },
+  form: { coding: { system: 'http://snomed.info/sct', code: '' } },
+  manufacturerId: '',
+  tradeName: '',
+  targetDiseaseCodes: [],
+});
 
 export const AddVaccineModal = ({ isOpen, onClose }: ModalProps) => {
-  const mapper = useMapper();
+  const { organizations, idToOrganization } = useOrganizations({});
+  const {
+    data: targetDiseasesData,
+    targetDiseases,
+    idToTargetDisease,
+  } = useTargetDiseases({});
 
-  const [vaccineCode, setVaccineCode] = useState<string | undefined>(undefined);
-  const [formCode, setFormCode] = useState<string | undefined>(undefined);
-  const [manufacturerName, setManufacturerName] = useState<string | undefined>(
-    undefined
-  );
-  const [tradeName, setTradeName] = useState<string | undefined>(undefined);
-  const [targetDiseaseIds, setTargetDiseaseIds] = useState<string[]>([]);
+  const [postMed] = medicationApi.endpoints.post.useMutation();
+  const [med, setMed] = useState(defaultVaccine());
 
-  const diseases = mapper.getAllDiseases();
-  const manufacturers = mapper.getAllOrganizations();
-  const targetDiseaseOptions = convertArrayToOptionArray(
-    diseases.map((disease) => disease.name)
-  );
+  const selectedOrganization = idToOrganization(med.manufacturerId);
+  const organizationOptions =
+    organizations?.map(({ id, name }) => ({ value: id, label: name })) ?? [];
 
-  const initialRef = React.useRef(null);
-
-  function addTargetDiseasesToDisease(
-    newTargetDiseases: OnChangeValue<OptionType, true>
-  ) {
-    setTargetDiseaseIds(
-      diseases
-        .filter((disease) =>
-          newTargetDiseases
-            .map((newTargetDisease) => newTargetDisease.label)
-            .includes(disease.name)
-        )
-        .map((disease) => disease.id)
-    );
-  }
-
-  function saveMedication() {
-    const medication = {
-      code: {
-        coding: { code: vaccineCode, system: 'http://hl7.org/fhir/sid/icd-10' },
-      },
-      form: { coding: { code: formCode, system: 'http://snomed.info/sct' } },
-      manufacturerId: manufacturers.find(
-        (manufacturer) => manufacturer.name === manufacturerName
-      )!.id,
-      tradeName: tradeName,
-      targetDiseaseIds: targetDiseaseIds,
-    } as unknown as Medication;
-    mapper.saveMedication(medication);
-  }
+  const selectedTargetDiseases =
+    (targetDiseasesData &&
+      med.targetDiseaseCodes
+        .flatMap((tdCode) => targetDiseasesData.byCode[tdCode]?.ids ?? [])
+        .map((tdId) => idToTargetDisease(tdId)!)) ??
+    [];
+  const targetDiseaseOptions = targetDiseases?.map(({ id, name }) => ({
+    value: id,
+    label: name,
+  }));
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -93,31 +69,46 @@ export const AddVaccineModal = ({ isOpen, onClose }: ModalProps) => {
           <FormControl>
             <FormLabel>Trade Name</FormLabel>
             <Input
-              ref={initialRef}
-              placeholder=''
-              onChange={(value) => setTradeName(value.target.value)}
+              value={med.tradeName}
+              onChange={({ target: { value } }) => {
+                setMed({ ...med, tradeName: value });
+              }}
             />
           </FormControl>
 
           <FormControl mt={4}>
             <FormLabel>Code</FormLabel>
             <Input
-              placeholder=''
-              onChange={(value) => setVaccineCode(value.target.value)}
+              value={med.code.coding.code}
+              onChange={({ target: { value } }) => {
+                setMed({
+                  ...med,
+                  code: {
+                    ...med.code,
+                    coding: { ...med.code.coding, code: value },
+                  },
+                });
+              }}
             />
           </FormControl>
 
           <FormControl mt={4}>
             <FormLabel>Manufacturer</FormLabel>
-            <Input
-              placeholder=''
-              isInvalid={
-                !manufacturers
-                  .map((manufacturer) => manufacturer.name)
-                  .includes(manufacturerName || '')
+            <Select
+              options={organizationOptions}
+              value={
+                selectedOrganization
+                  ? {
+                      value: selectedOrganization.id,
+                      label: selectedOrganization.name,
+                    }
+                  : {
+                      value: '',
+                      label: 'Manufacturer',
+                    }
               }
-              onChange={(value) => {
-                setManufacturerName(value.target.value);
+              onChange={(newValue) => {
+                setMed({ ...med, manufacturerId: newValue!.value });
               }}
             />
           </FormControl>
@@ -125,19 +116,36 @@ export const AddVaccineModal = ({ isOpen, onClose }: ModalProps) => {
           <FormControl mt={4}>
             <FormLabel>Form</FormLabel>
             <Input
-              ref={initialRef}
-              placeholder=''
-              onChange={(value) => setFormCode(value.target.value)}
+              value={med.form.coding.code}
+              onChange={({ target: { value } }) => {
+                setMed({
+                  ...med,
+                  form: {
+                    ...med.form,
+                    coding: { ...med.form.coding, code: value },
+                  },
+                });
+              }}
             />
           </FormControl>
 
           <FormControl mt={4}>
             <FormLabel>Target Diseases</FormLabel>
             <Select
-              ref={initialRef}
               isMulti
               options={targetDiseaseOptions}
-              onChange={addTargetDiseasesToDisease}
+              value={selectedTargetDiseases.map(({ id, name }) => ({
+                value: id,
+                label: name,
+              }))}
+              onChange={(newValues) => {
+                setMed({
+                  ...med,
+                  targetDiseaseCodes: newValues.map(
+                    ({ value }) => idToTargetDisease(value)!.code.coding.code
+                  ),
+                });
+              }}
             />
           </FormControl>
         </ModalBody>
@@ -147,13 +155,21 @@ export const AddVaccineModal = ({ isOpen, onClose }: ModalProps) => {
             colorScheme='blue'
             mr={3}
             onClick={() => {
-              saveMedication();
+              postMed(MedicationMapper.fromModel(med).toResource());
+              setMed(defaultVaccine());
               onClose();
             }}
           >
             Save
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button
+            onClick={() => {
+              setMed(defaultVaccine());
+              onClose();
+            }}
+          >
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

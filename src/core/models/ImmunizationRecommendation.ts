@@ -10,6 +10,7 @@ import fhirpath_r4_model from 'fhirpath/fhir-context/r4';
 import { settings } from '../../settings';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 export type ImmunizationRecommendationStatus =
   | 'complete'
@@ -79,7 +80,7 @@ export class ImmunizationRecommendationMapper
     vaccinationDoseId,
   }: ImmunizationRecommendation): ImmunizationRecommendationMapper {
     return new ImmunizationRecommendationMapper({
-      id,
+      id: id || uuidv4(),
       resourceType: 'ImmunizationRecommendation',
       meta: {
         profile: [

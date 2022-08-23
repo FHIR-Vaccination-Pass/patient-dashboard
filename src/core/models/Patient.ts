@@ -13,6 +13,7 @@ import {
 import { settings } from '../../settings';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface Patient {
   id: string;
@@ -65,7 +66,7 @@ export class PatientMapper implements Patient {
     keycloakUsername,
   }: Patient): PatientMapper {
     return new PatientMapper({
-      id,
+      id: id || uuidv4(),
       resourceType: 'Patient',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-patient`] },
       active,

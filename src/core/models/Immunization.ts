@@ -10,6 +10,7 @@ import {
 import { settings } from '../../settings';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 export type ImmunizationStatus = 'completed' | 'entered-in-error' | 'not-done';
 
@@ -63,7 +64,7 @@ export class ImmunizationMapper implements Immunization {
     vaccinationDoseId,
   }: Immunization): ImmunizationMapper {
     return new ImmunizationMapper({
-      id,
+      id: id || uuidv4(),
       resourceType: 'Immunization',
       meta: { profile: [`${settings.fhir.profileBaseUrl}/vp-immunization`] },
       status,
