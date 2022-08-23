@@ -31,7 +31,7 @@ export const RecommendationsWidget: FC = () => {
       boxShadow='0 4px 12px 0 rgba(0, 0, 0, 0.15)'
       borderRadius={'15px'}
       flexDir='column'
-      justifyContent='space-between'
+      justifyContent='flex-start'
       h={'100%'}
       w={'100%'}
       overflowY={'scroll'}
