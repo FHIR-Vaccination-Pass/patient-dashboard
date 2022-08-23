@@ -343,6 +343,7 @@ export const DiseaseInformationCard: FC<DiseaseInformationCardProps> = ({
                 borderRadius={'5px'}
                 mb={'10px'}
                 ml={'0px'}
+                minWidth={'400px'}
               >
                 {locations.map((location, index) => (
                   <HStack
